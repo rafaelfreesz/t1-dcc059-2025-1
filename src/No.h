@@ -19,7 +19,7 @@ public:
     int peso;
     vector<Aresta*> arestas;
 
-    // funcoes
+    // funções e operações
     void adicionarAresta(Aresta* novaAresta);
 
     // gets e sets
