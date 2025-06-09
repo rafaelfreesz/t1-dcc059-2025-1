@@ -7,6 +7,7 @@ public:
     Aresta();
     ~Aresta();
 
+    // acho que é pra pegar o id do nó pro qual ela aponta
     char id_no_alvo;
     int peso;
 

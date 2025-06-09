@@ -1,5 +1,6 @@
 #include "No.h"
 
+// ===== Construtor e destrutor =====
 No::No(char id, int peso){
     setID(id);
     setPeso(peso);
@@ -12,6 +13,13 @@ No::~No(){
     delete this;
 }
 
+// ===== Funções e operações =====
+void No::adicionarAresta(Aresta* novaAresta){
+    arestas.push_back(novaAresta);
+    // Adiciona a nova aresta ao final do vetor de arestas do nó
+}
+
+// ===== Gets e sets =====
 int No::getPeso(){
     return this->peso;
 }

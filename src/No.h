@@ -9,13 +9,20 @@ using namespace std;
 
 class No {
 public:
+
+    //construtor e destrutor
     No(char id, int peso);
     ~No();
 
+    // variaveis
     char id;
     int peso;
     vector<Aresta*> arestas;
 
+    // funcoes
+    void adicionarAresta(Aresta* novaAresta);
+
+    // gets e sets
     int getPeso();
     void setPeso(int peso);
     char getID();
