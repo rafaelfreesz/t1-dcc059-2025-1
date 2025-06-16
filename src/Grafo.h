@@ -8,7 +8,7 @@
 #include "No.h"
 #include <iostream>
 #include <vector>
-
+#include <map>
 
 using namespace std;
 class Grafo {
@@ -30,11 +30,18 @@ public:
     vector<char> vertices_de_articulacao(); // i
 
 
+
+
+
     int ordem;
     bool in_direcionado;
     bool in_ponderado_aresta;
     bool in_ponderado_vertice;
     vector<No*> lista_adj;
+private:
+    No* getNo(char id);
+    void fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
+
 };
 
 
