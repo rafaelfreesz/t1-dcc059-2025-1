@@ -9,6 +9,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 using namespace std;
 class Grafo {
@@ -38,10 +39,12 @@ public:
     bool in_ponderado_aresta;
     bool in_ponderado_vertice;
     vector<No*> lista_adj;
+
 private:
     No* getNo(char id);
     void fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
     void fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
+    void dijkstra_aux(char noAtual, map<char, int> &distancias, map<char, char> &predecessores);
 };
 
 
