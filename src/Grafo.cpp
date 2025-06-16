@@ -83,8 +83,7 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b) {
         reverse(caminho.begin(), caminho.end()); // Inverte o caminho para a ordem correta
     }
 
-
-    return {};
+    return caminho;
 }
 
 void Grafo::dijkstra_aux(char noAtual, map<char, int> &distancias, map<char, char> &predecessores) {
