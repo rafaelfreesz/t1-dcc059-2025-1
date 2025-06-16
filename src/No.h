@@ -10,7 +10,7 @@ using namespace std;
 class No {
 public:
 
-    //construtor e destrutor
+    // construtor e destrutor
     No(char id, int peso);
     ~No();
 

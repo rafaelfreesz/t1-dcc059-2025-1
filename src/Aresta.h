@@ -4,13 +4,15 @@
 using namespace std;
 class Aresta {
 public:
-    Aresta();
+    Aresta(char idAlvo, int peso = 0);
     ~Aresta();
 
-    // acho que é pra pegar o id do nó pro qual ela aponta
+    // ID do nó pro qual ela aponta
     char id_no_alvo;
     int peso;
 
+    char getIDalvo();
+    void setIDalvo(char novoID);
     int getPeso();
     void setPeso(int peso);
     
