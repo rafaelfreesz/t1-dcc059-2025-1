@@ -23,6 +23,7 @@ No* Grafo::getNo(char id) {
 vector<char> Grafo::fecho_transitivo_direto(char id_no) {
     map<char, bool> visitados;
     vector<char> resultado;
+    visitados[id_no] = true; // Marca o nó inicial como visitado
     fecho_transitivo_direto_aux(id_no, visitados, resultado);
     return resultado;
 }
@@ -41,8 +42,23 @@ void Grafo::fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, 
 }
 
 vector<char> Grafo::fecho_transitivo_indireto(char id_no) {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    map<char, bool> visitados;
+    vector<char> resultado;
+    visitados[id_no] = true; // Marca o nó inicial como visitado
+    fecho_transitivo_indireto_aux(id_no, visitados, resultado);
+    return resultado;
+}
+
+void Grafo::fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado) {
+    No* no = getNo(id_no);
+    for(const auto& aresta : no->arestas_invertidas) {
+        char id_alvo = aresta->id_no_alvo;
+        if(!visitados[id_alvo]){
+            visitados[id_alvo] = true;
+            resultado.push_back(id_alvo);
+            fecho_transitivo_indireto_aux(id_alvo, visitados, resultado);
+        }
+    }
 }
 
 vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b) {

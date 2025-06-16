@@ -16,8 +16,8 @@ public:
     Grafo();
     ~Grafo();
 
-    vector<char> fecho_transitivo_direto(char id_no); // a
-    vector<char> fecho_transitivo_indireto(char id_no); // b
+    vector<char> fecho_transitivo_direto(char id_no); // a RESOLVIDO
+    vector<char> fecho_transitivo_indireto(char id_no); // b RESOLVIDO
     vector<char> caminho_minimo_dijkstra(char id_no_a, char id_no_b); // c
     vector<char> caminho_minimo_floyd(char id_no, char id_no_b); // d
     Grafo* arvore_geradora_minima_prim(vector<char> ids_nos); // e
@@ -41,7 +41,7 @@ public:
 private:
     No* getNo(char id);
     void fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
-
+    void fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
 };
 
 

@@ -18,9 +18,11 @@ public:
     char id;
     int peso;
     vector<Aresta*> arestas;
+    vector<Aresta*> arestas_invertidas; 
 
     // funções e operações
     void adicionarAresta(Aresta* novaAresta);
+    void adicionarArestaInvertida(Aresta* novaAresta);
 
     // gets e sets
     int getPeso();
