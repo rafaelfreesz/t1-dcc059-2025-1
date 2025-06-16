@@ -1,6 +1,6 @@
 #include "Aresta.h"
 
-Aresta::Aresta(char idAlvo, int peso = 0){
+Aresta::Aresta(char idAlvo, int peso){
     setIDalvo(idAlvo);
 }
 
