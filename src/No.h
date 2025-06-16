@@ -5,16 +5,28 @@
 #include <vector>
 #include "Aresta.h"
 
-
 using namespace std;
+
 class No {
 public:
-    No();
+
+    // construtor e destrutor
+    No(char id, int peso);
     ~No();
 
+    // variaveis
     char id;
     int peso;
     vector<Aresta*> arestas;
+
+    // funções e operações
+    void adicionarAresta(Aresta* novaAresta);
+
+    // gets e sets
+    int getPeso();
+    void setPeso(int peso);
+    char getID();
+    void setID(char id);
 };
 
 
