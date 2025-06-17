@@ -21,12 +21,17 @@ void Gerenciador::comandos(Grafo* grafo) {
 
             char id_no = get_id_entrada();
             vector<char> fecho_transitivo_direto = grafo->fecho_transitivo_direto(id_no);
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
+            
+            cout << "Fecho transitivo direto do no " << id_no << ": " << endl;
+            cout << "{";
+            for(const char& id : fecho_transitivo_direto) {
+                cout<<id<<", ";
+            }
+            cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("fecho_trans_dir.txt")) {
                 cout<<"Metodo de impressao em arquivo nao implementado"<<endl<<endl;
             }
-
 
             break;
         }
@@ -35,7 +40,13 @@ void Gerenciador::comandos(Grafo* grafo) {
 
             char id_no = get_id_entrada();
             vector<char> fecho_transitivo_indireto = grafo->fecho_transitivo_indireto(id_no);
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
+            
+            cout << "Fecho transitivo indireto do no " << id_no << ": " << endl;
+            cout << "{";
+            for(const char& id : fecho_transitivo_indireto) {
+                cout<<id<<", ";
+            }
+            cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("fecho_trans_indir.txt")) {
                 cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
@@ -50,7 +61,13 @@ void Gerenciador::comandos(Grafo* grafo) {
             char id_no_1 = get_id_entrada();
             char id_no_2 = get_id_entrada();
             vector<char> caminho_minimo_dijkstra = grafo->caminho_minimo_dijkstra(id_no_1,id_no_2);
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
+            
+            cout << "Caminho minimo entre " << id_no_1 << " e " << id_no_2 << ": " << endl;
+            cout << "{";
+            for(const char& id : caminho_minimo_dijkstra) {
+                cout<<id<<", ";
+            }
+            cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt")) {
                 cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
