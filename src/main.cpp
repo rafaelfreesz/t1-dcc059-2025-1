@@ -22,4 +22,5 @@ int main(int argc, char *argv[]) {
     Gerenciador::comandos(grafo);
     delete grafo;
     return 0;
+    // g++ *.cpp -o execGrupoX && ./execGrupoX <arquivo_entrada>
 }

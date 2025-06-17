@@ -10,7 +10,6 @@ No::~No(){
     for(int i=0;i<arestas.size(); i++){
         delete arestas[i];
     }
-    delete this;
 }
 
 // ===== Funções e operações =====
