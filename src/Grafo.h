@@ -41,6 +41,7 @@ public:
 
     // funcoes adicionais de classe
     void adicionarNo(char idNovoNo, int pesoNovoNo);
+    void adicionarAresta(char origemID, char destinoID, int peso);
 };
 
 

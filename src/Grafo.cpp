@@ -15,9 +15,40 @@ Grafo::~Grafo() {
 }
 
 void adicionarNo(char idNovoNo, int pesoNovoNo){
-    No* novoNo = new No(idNovoNo, pesoNovoNo);
+    No* novoNo = new No(idNovoNo, in_ponderado_vertice? pesoNovoNo : 0);
     lista_adj.push_back(novoNo);
     ordem++;
+}
+
+void adicionarAresta(char origemID, char destinoID, int peso){
+    No* no1 = nullptr;
+    No* no2 = nullptr;
+
+    for(int i=0; i < lista_adj.size(); i++){
+        if(lista_adj[i]->getID() == origemID)
+            no1 = node;
+        if(lista_adj[i]->getID() == destinoID)
+            no2 = node;
+    // verifica os IDs de cada nó da lista e atribui corretamente se existirem
+    }
+
+    if(!no1 || !no2){
+        cout<<"Erro: vertice nao encontrado"<<endl;
+        return;
+        // erro se um dos nós não estiver no grafo
+    }
+
+    int peso_aresta = in_ponderado_aresta? peso : 1;
+    Aresta* novaAresta = new Aresta(destino, peso_aresta);
+    // cria a aresta apontando para o destino
+    no1->adicionarAresta(novaAresta);
+    // adiciona aresta ao nó de origem
+
+    if(!in_direcionado){
+        Aresta* arestaInversa = new Aresta(origem, peso_aresta);
+        no2->adicionarAresta(arestaInversa);
+        // adiciona aresta inversa se o grafo não for direcionado
+    }
 }
 
 vector<char> Grafo::fecho_transitivo_direto(char id_no) {
