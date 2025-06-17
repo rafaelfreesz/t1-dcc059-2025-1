@@ -2,6 +2,7 @@
 
 Aresta::Aresta(char idAlvo, int peso){
     setIDalvo(idAlvo);
+    setPeso(peso);
 }
 
 Aresta::~Aresta(){
