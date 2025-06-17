@@ -9,6 +9,9 @@ Grafo::Grafo(bool direcionado, bool ponderado_vertice, bool ponderado_aresta) {
 }
 
 Grafo::~Grafo() {
+    for(No* no : lista_adj){
+        delete no;
+    }
 }
 
 void adicionarNo(char idNovoNo, int pesoNovoNo){
