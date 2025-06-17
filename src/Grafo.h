@@ -12,6 +12,16 @@
 
 using namespace std;
 class Grafo {
+
+private: //COLOQUEI PRIVATE (opcional)
+
+    int ordem;
+    bool in_direcionado;
+    bool in_ponderado_aresta;
+    bool in_ponderado_vertice;
+    vector<No*> lista_adj;
+    unordered_map<char, int> pesosVertices;
+
 public:
     Grafo();
     ~Grafo();
@@ -28,6 +38,7 @@ public:
     vector<char> centro(); // h 3
     vector<char> periferia(); // h 4
     vector<char> vertices_de_articulacao(); // i
+    void carregarArquivo(const string& nomeArquivo); // LINHA NOVA
 
 
     int ordem;
