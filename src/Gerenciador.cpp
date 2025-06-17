@@ -228,3 +228,111 @@ bool Gerenciador::pergunta_imprimir_arquivo(string nome_arquivo) {
             return pergunta_imprimir_arquivo(nome_arquivo);
     }
 }
+
+#include "Gerenciador.h"
+
+// MÉTODO NOVO
+Grafo* Gerenciador::carregarGrafoDoArquivo(const std::string& nomeArquivo) {
+    std::ifstream arquivo(nomeArquivo);
+    if (!arquivo) {
+        throw std::runtime_error("Erro ao abrir: " + nomeArquivo);
+    }
+
+    // Lê dados da linha 1
+    bool direcionado, ponderadoVertices, ponderadoArestas;
+    if (!(arquivo >> direcionado >> ponderadoVertices >> ponderadoArestas)) {
+        throw std::runtime_error("Formato inválido na linha 1");
+    }
+
+    // Criar o grafo e setar propriedades
+    Grafo* grafo = new Grafo();
+    grafo->in_direcionado = direcionado;
+    grafo->in_ponderado_vertice = ponderadoVertices;
+    grafo->in_ponderado_aresta = ponderadoArestas;
+
+    // Lê número de vértices (linha 2)
+    int numVertices;
+    if (!(arquivo >> numVertices) || numVertices <= 0) {
+        delete grafo;
+        throw std::runtime_error("Número de vértices inválido");
+    }
+    grafo->ordem = numVertices;
+
+    // Lê vértices
+    char id;
+    int peso;
+    for (int i = 0; i < numVertices; i++) {
+        if (ponderadoVertices) {
+            if (!(arquivo >> id >> peso)) {
+                delete grafo;
+                throw std::runtime_error("Erro ao ler vértice " + std::to_string(i+1));
+            }
+        } else {
+            if (!(arquivo >> id)) {
+                delete grafo;
+                throw std::runtime_error("Erro ao ler vértice " + std::to_string(i+1));
+            }
+            peso = 0; // Peso padrão para vértices não ponderados
+        }
+        
+        // Criar e adicionar vértice
+        No* novoNo = new No(id, peso);
+        grafo->lista_adj.push_back(novoNo);
+    }
+
+    // Lê arestas
+    std::string linha;
+    std::getline(arquivo, linha); // Consumir a quebra de linha restante
+    
+    while (std::getline(arquivo, linha)) {
+        if (linha.empty()) continue;
+        
+        std::istringstream iss(linha);
+        char origem, destino;
+        int pesoAresta = 1; // Default para grafos não ponderados
+        
+        if (!(iss >> origem >> destino)) {
+            delete grafo;
+            throw std::runtime_error("Formato inválido de aresta: " + linha);
+        }
+        
+        if (ponderadoArestas && !(iss >> pesoAresta)) {
+            delete grafo;
+            throw std::runtime_error("Peso faltando em aresta: " + linha);
+        }
+
+        // Encontrar nó de origem na lista
+        auto it = std::find_if(grafo->lista_adj.begin(), grafo->lista_adj.end(), 
+            [&](No* no) { return no->getID() == origem; });
+        
+        if (it == grafo->lista_adj.end()) {
+            delete grafo;
+            throw std::runtime_error("Vértice de origem não encontrado: " + std::string(1, origem));
+        }
+        
+        // Adicionar aresta
+        Aresta* novaAresta = new Aresta(destino, pesoAresta);
+        (*it)->adicionarAresta(novaAresta);
+        
+        // Se o grafo não for direcionado, precisamos adicionar a aresta inversa também
+        // para que o grafo seja simétrico.
+        if (!direcionado) {
+            // Primeiro, encontramos o nó de destino na lista de nós.
+            auto it_dest = std::find_if(grafo->lista_adj.begin(), grafo->lista_adj.end(),
+                [&](No* no) { return no->getID() == destino; });
+            
+            // Se o nó de destino não for encontrado, lançamos uma exceção.
+            if (it_dest == grafo->lista_adj.end()) {
+                delete grafo;
+                throw std::runtime_error("Vertice de destino nao encontrado: " + std::string(1, destino));
+            }
+            
+            // Agora, adicionamos a aresta inversa ao nó de destino.
+            Aresta* arestaInversa = new Aresta(origem, pesoAresta);
+            (*it_dest)->adicionarAresta(arestaInversa);
+        }
+    }
+
+    return grafo;
+}
+
