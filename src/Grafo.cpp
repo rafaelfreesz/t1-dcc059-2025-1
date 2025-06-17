@@ -1,10 +1,20 @@
 #include "Grafo.h"
 
 
-Grafo::Grafo() {
+Grafo::Grafo(bool direcionado, bool ponderado_vertice, bool ponderado_aresta) {
+    this->in_direcionado = direcionado;
+    this->ponderado_vertice = ponderado_vertice;
+    this->ponderado_aresta = ponderado_aresta;
+    this->ordem = 0; // tem 0 vertices inicialmente
 }
 
 Grafo::~Grafo() {
+}
+
+void adicionarNo(char idNovoNo, int pesoNovoNo){
+    No* novoNo = new No(idNovoNo, pesoNovoNo);
+    lista_adj.push_back(novoNo);
+    ordem++;
 }
 
 vector<char> Grafo::fecho_transitivo_direto(char id_no) {
