@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Grafo.h"
 #include <algorithm>
+#include <sstream>
 
 using namespace std;
 class Gerenciador {
