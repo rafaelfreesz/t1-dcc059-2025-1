@@ -19,6 +19,10 @@ void No::adicionarAresta(Aresta* novaAresta){
     // Adiciona a nova aresta ao final do vetor de arestas do nó
 }
 
+void No::adicionarArestaInvertida(Aresta* novaAresta){
+    arestas_invertidas.push_back(novaAresta);
+}
+
 // ===== Gets e sets =====
 int No::getPeso(){
     return this->peso;

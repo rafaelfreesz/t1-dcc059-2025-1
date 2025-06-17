@@ -7,20 +7,101 @@ Grafo::Grafo() {
 Grafo::~Grafo() {
 }
 
+//TODO: Procurar saber se o char é aleatório ou se segue como um número
+No* Grafo::getNo(char id) {
+    for (No* no : lista_adj) {
+        if (no->getID() == id) {
+            return no;
+        }
+    }
+    //TODO: Tratar erro melhor
+    cout << "No com id " << id << " nao encontrado." << endl;
+    exit(1);
+}
+
+
 vector<char> Grafo::fecho_transitivo_direto(char id_no) {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    map<char, bool> visitados;
+    vector<char> resultado;
+    visitados[id_no] = true; // Marca o nó inicial como visitado
+    fecho_transitivo_direto_aux(id_no, visitados, resultado);
+    return resultado;
+}
+
+void Grafo::fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado) {
+    No* no = getNo(id_no);
+    for(const auto& aresta : no->arestas) {
+        char id_alvo = aresta->id_no_alvo;
+        if(!visitados[id_alvo]){
+            visitados[id_alvo] = true;
+            resultado.push_back(id_alvo);
+            fecho_transitivo_direto_aux(id_alvo, visitados, resultado);
+        }
+    }
+    
 }
 
 vector<char> Grafo::fecho_transitivo_indireto(char id_no) {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    map<char, bool> visitados;
+    vector<char> resultado;
+    visitados[id_no] = true; // Marca o nó inicial como visitado
+    fecho_transitivo_indireto_aux(id_no, visitados, resultado);
+    return resultado;
+}
+
+void Grafo::fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado) {
+    No* no = getNo(id_no);
+    for(const auto& aresta : no->arestas_invertidas) {
+        char id_alvo = aresta->id_no_alvo;
+        if(!visitados[id_alvo]){
+            visitados[id_alvo] = true;
+            resultado.push_back(id_alvo);
+            fecho_transitivo_indireto_aux(id_alvo, visitados, resultado);
+        }
+    }
 }
 
 vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b) {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    vector<char> caminho;
+    map<char, int> distancias;
+    distancias[id_no_a] = 0;
+    map<char, char> predecessores;
+    dijkstra_aux(id_no_a, distancias, predecessores);
+
+    if (distancias.find(id_no_b) == distancias.end()) {
+        return caminho; // Retorna vazio se nao houver caminho
+    } else {
+        char atual = id_no_b;
+        while (atual != id_no_a) {
+            caminho.push_back(atual);
+            if (predecessores.find(atual) == predecessores.end()) {
+                return {}; // Retorna vazio se nao houver caminho
+            }
+            atual = predecessores[atual];
+        }
+        caminho.push_back(id_no_a);
+        reverse(caminho.begin(), caminho.end()); // Inverte o caminho para a ordem correta
+    }
+
+    return caminho;
 }
+
+void Grafo::dijkstra_aux(char noAtual, map<char, int> &distancias, map<char, char> &predecessores) {
+    No* no = getNo(noAtual);
+
+    for (const auto& aresta : no->arestas) {
+        char id_alvo = aresta->id_no_alvo;
+        int peso = aresta->getPeso();
+        
+        int nova_distancia = distancias[noAtual] + peso;
+        if(distancias.find(id_alvo) == distancias.end() || nova_distancia < distancias[id_alvo]) {
+            distancias[id_alvo] = nova_distancia;
+            predecessores[id_alvo] = noAtual;
+            dijkstra_aux(id_alvo, distancias, predecessores);
+        }
+    }
+}
+
 
 vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
     cout<<"Metodo nao implementado"<<endl;
@@ -65,86 +146,4 @@ vector<char> Grafo::periferia() {
 vector<char> Grafo::vertices_de_articulacao() {
     cout<<"Metodo nao implementado"<<endl;
     return {};
-}
-
-
-//MÉTODO NOVO (TESTE)
-
-
-void Grafo::carregarArquivo(const string& nomeArquivo) {
-    ifstream arquivo(nomeArquivo);
-    if (!arquivo) {
-        throw runtime_error("Erro ao abrir: " + nomeArquivo);
-    }
-
-    // Essa vai ser pra ler dados da linha 1 
-    if (!(arquivo >> direcionado >> ponderadoVertices >> ponderadoArestas)) {
-        throw runtime_error("Formato inválido na linha 1");
-    }
-
-    // Essa vai ser pra ler número de vértices (linha 2)
-    int numVertices;
-    if (!(arquivo >> numVertices) || numVertices <= 0) {
-        throw runtime_error("Número de vértices inválido");
-    }
-
-    // Essa vai ser pra ler info dos vértices
-    char id;
-    float peso;
-    for (int i = 0; i < numVertices; i++) {
-        if (ponderadoVertices) {
-            if (!(arquivo >> id >> peso)) {
-                throw runtime_error("Erro ao ler vértice " + to_string(i+1));
-            }
-            pesosVertices[id] = peso;
-        } else {
-            if (!(arquivo >> id)) {
-                throw runtime_error("Erro ao ler vértice " + to_string(i+1));
-            }
-        }
-        lista_adj.push_back(new No(id, peso));
-    }
-
-    // Essa vai ser pra ler arestas
-    string linha;
-    getline(arquivo, linha); // Consumir quebra de linha residual
-    
-    char origem, destino;
-    float pesoAresta = 1.0f; // Default para grafos não ponderados
-    
-    while (getline(arquivo, linha)) {
-        if (linha.empty()) continue;
-        
-        istringstream iss(linha);
-        if (!(iss >> origem >> destino)) {
-            throw runtime_error("Formato inválido de aresta: " + linha);
-        }
-        
-        if (ponderadoArestas && !(iss >> pesoAresta)) {
-            throw runtime_error("Peso faltando em aresta: " + linha);
-        }
-
-        // Essa vai ser pra Encontrar nó de origem na lista
-        auto it = find_if(lista_adj.begin(), lista_adj.end(), 
-            [&](No* no) { return no->getID() == origem; });
-        
-        if (it == lista_adj.end()) {
-            throw runtime_error("Vértice de origem não encontrado: " + string(1, origem));
-        }
-        
-        // Essa vai ser pra Adicionar aresta
-        (*it)->adicionarAresta(new Aresta(destino, pesoAresta));
-        
-        // Essa vai ser pra Se não for direcionado, adicionar aresta inversa
-        if (!direcionado) {
-            auto it_dest = find_if(lista_adj.begin(), lista_adj.end(),
-                [&](No* no) { return no->getID() == destino; });
-            
-            if (it_dest == lista_adj.end()) {
-                throw runtime_error("Vértice de destino não encontrado: " + string(1, destino));
-            }
-            
-            (*it_dest)->adicionarAresta(new Aresta(origem, pesoAresta));
-        }
-    }
 }
