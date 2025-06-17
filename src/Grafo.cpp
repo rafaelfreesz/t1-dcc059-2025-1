@@ -1,10 +1,14 @@
 #include "Grafo.h"
 
 
+Grafo::Grafo(){
+    
+}
+
 Grafo::Grafo(bool direcionado, bool ponderado_vertice, bool ponderado_aresta) {
     this->in_direcionado = direcionado;
-    this->ponderado_vertice = ponderado_vertice;
-    this->ponderado_aresta = ponderado_aresta;
+    this->in_ponderado_vertice = ponderado_vertice;
+    this->in_ponderado_aresta = ponderado_aresta;
     this->ordem = 0; // tem 0 vertices inicialmente
 }
 
@@ -14,21 +18,21 @@ Grafo::~Grafo() {
     }
 }
 
-void adicionarNo(char idNovoNo, int pesoNovoNo){
+void Grafo::adicionarNo(char idNovoNo, int pesoNovoNo){
     No* novoNo = new No(idNovoNo, in_ponderado_vertice? pesoNovoNo : 0);
     lista_adj.push_back(novoNo);
     ordem++;
 }
 
-void adicionarAresta(char origemID, char destinoID, int peso){
+void Grafo::adicionarAresta(char origemID, char destinoID, int peso){
     No* no1 = nullptr;
     No* no2 = nullptr;
 
     for(int i=0; i < lista_adj.size(); i++){
         if(lista_adj[i]->getID() == origemID)
-            no1 = node;
+            no1 = lista_adj[i];
         if(lista_adj[i]->getID() == destinoID)
-            no2 = node;
+            no2 = lista_adj[i];
     // verifica os IDs de cada nó da lista e atribui corretamente se existirem
     }
 
@@ -39,13 +43,13 @@ void adicionarAresta(char origemID, char destinoID, int peso){
     }
 
     int peso_aresta = in_ponderado_aresta? peso : 1;
-    Aresta* novaAresta = new Aresta(destino, peso_aresta);
+    Aresta* novaAresta = new Aresta(destinoID, peso_aresta);
     // cria a aresta apontando para o destino
     no1->adicionarAresta(novaAresta);
     // adiciona aresta ao nó de origem
 
     if(!in_direcionado){
-        Aresta* arestaInversa = new Aresta(origem, peso_aresta);
+        Aresta* arestaInversa = new Aresta(origemID, peso_aresta);
         no2->adicionarAresta(arestaInversa);
         // adiciona aresta inversa se o grafo não for direcionado
     }

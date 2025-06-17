@@ -15,6 +15,7 @@ class Grafo {
 public:
 
     // construtores e destrutores
+    Grafo();
     Grafo(bool direcionado, bool ponderado_vertice, bool ponderado_aresta);
     ~Grafo();
 
