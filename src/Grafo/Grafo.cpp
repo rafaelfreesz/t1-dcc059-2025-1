@@ -1,5 +1,7 @@
 #include "Grafo.h"
-#include <fstream> 
+#include <fstream>
+#include <iostream>
+using namespace std;
 
 Grafo::Grafo(const char* arquivoEntrada) {
     ifstream file(arquivoEntrada);
@@ -8,17 +10,14 @@ Grafo::Grafo(const char* arquivoEntrada) {
         exit(1);
     }
 
-    // 1. Leia as flags (direcionado, ponderado_vertice, ponderado_aresta)
     int digrafo, pesoNo, pesoAresta;
     file >> digrafo >> pesoNo >> pesoAresta;
     this->in_direcionado = digrafo == 1;
     this->in_ponderado_vertice = pesoNo == 1;
     this->in_ponderado_aresta = pesoAresta == 1;
 
-    // 2. Leia a ordem do grafo
     file >> this->ordem;
 
-    // 3. Crie os nós (vértices) e adicione à lista_adj
     for (int i = 0; i < this->ordem; ++i) {
         char id;
         int peso = 0;
@@ -29,7 +28,6 @@ Grafo::Grafo(const char* arquivoEntrada) {
         this->insereNo(id, peso);
     }
 
-    // 4. Leia as arestas até o fim do arquivo
     char origem, destino;
     int pesoA = 1, pesoNoAresta = 0;
     while (file >> origem >> destino) {
@@ -59,7 +57,6 @@ Grafo::~Grafo() {
 }
 
 void Grafo::insereNo(char id, int peso) {
-    // Verifica se o nó já existe
     for (No* no : lista_adj) {
         if (no->id == id)
             return;
@@ -73,8 +70,6 @@ void Grafo::insereNo(char id, int peso) {
 void Grafo::insereAresta(char origem, char destino, int pesoAresta, int /*pesoNo*/) {
     No* noOrigem = nullptr;
     No* noDestino = nullptr;
-
-    // Busca os nós de origem e destino
     for (No* no : lista_adj) {
         if (no->id == origem)
             noOrigem = no;
@@ -84,13 +79,11 @@ void Grafo::insereAresta(char origem, char destino, int pesoAresta, int /*pesoNo
     if (!noOrigem || !noDestino)
         return;
 
-    // Cria a aresta de origem para destino
     Aresta* aresta = new Aresta();
     aresta->id_no_alvo = destino;
     aresta->peso = pesoAresta;
     noOrigem->arestas.push_back(aresta);
 
-    // Se não for direcionado, adiciona a aresta inversa
     if (!in_direcionado) {
         Aresta* aresta2 = new Aresta();
         aresta2->id_no_alvo = origem;
@@ -100,22 +93,22 @@ void Grafo::insereAresta(char origem, char destino, int pesoAresta, int /*pesoNo
 }
 
 // Métodos de funcionalidades (não implementados)
-vector<char> Grafo::fecho_transitivo_direto(int id_no) {
+vector<char> Grafo::fecho_transitivo_direto(char id_no) {
     cout<<"Metodo nao implementado"<<endl;
     return {};
 }
 
-vector<char> Grafo::fecho_transitivo_indireto(int id_no) {
+vector<char> Grafo::fecho_transitivo_indireto(char id_no) {
     cout<<"Metodo nao implementado"<<endl;
     return {};
 }
 
-vector<char> Grafo::caminho_minimo_dijkstra(int id_no_a, int id_no_b) {
+vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b) {
     cout<<"Metodo nao implementado"<<endl;
     return {};
 }
 
-vector<char> Grafo::caminho_minimo_floyd(int id_no, int id_no_b) {
+vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
     cout<<"Metodo nao implementado"<<endl;
     return {};
 }
@@ -130,7 +123,7 @@ Grafo * Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos) {
     return nullptr;
 }
 
-Grafo * Grafo::arvore_caminhamento_profundidade(int id_no) {
+Grafo * Grafo::arvore_caminhamento_profundidade(char id_no) {
     cout<<"Metodo nao implementado"<<endl;
     return nullptr;
 }

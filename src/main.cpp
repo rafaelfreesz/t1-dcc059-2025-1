@@ -1,15 +1,8 @@
-/*
- * Programa principal para execução do TAD Grafo.
- * Lê o nome do arquivo de entrada via linha de comando,
- * constrói o grafo e apresenta o menu de funcionalidades.
- */
 #include "Gerenciador.h"
 
 int main(int argc, char *argv[])
 {
-    cout << endl
-         << "--------------------------------------------------------------------------------------------------" << endl
-         << endl;
+    cout << endl << "--------------------------------------------------------------------------------------------------"<< endl;
 
     // Verifica se o nome do arquivo foi passado como argumento
     if (argc != 2) {
