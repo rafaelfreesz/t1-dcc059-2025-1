@@ -1,7 +1,3 @@
-//
-// Created by Rafael on 28/05/2025.
-//
-
 #ifndef GRAFO_H
 #define GRAFO_H
 
@@ -9,13 +5,13 @@
 #include <iostream>
 #include <vector>
 
-
 using namespace std;
 class Grafo {
 public:
-    Grafo();
+    Grafo(const char* arquivoEntrada); 
     ~Grafo();
 
+    // Métodos de funcionalidades
     vector<char> fecho_transitivo_direto(int id_no); // a
     vector<char> fecho_transitivo_indireto(int id_no); // b
     vector<char> caminho_minimo_dijkstra(int id_no_a, int id_no_b); // c
@@ -29,6 +25,9 @@ public:
     vector<char> periferia(); // h 4
     vector<char> vertices_de_articulacao(); // i
 
+    // Métodos de manipulação
+    void insereNo(char id, int peso = 0);
+    void insereAresta(char origem, char destino, int pesoAresta = 1, int pesoNo = 0);
 
     int ordem;
     bool in_direcionado;
@@ -36,7 +35,5 @@ public:
     bool in_ponderado_vertice;
     vector<No*> lista_adj;
 };
-
-
 
 #endif //GRAFO_H
