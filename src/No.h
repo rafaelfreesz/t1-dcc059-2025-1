@@ -25,7 +25,6 @@ public:
     void adicionarAresta(Aresta* novaAresta);
     void adicionarArestaInvertida(Aresta* novaAresta);
     string toString();
-    string toStringArestas();
 
     // gets e sets
     int getPeso();
