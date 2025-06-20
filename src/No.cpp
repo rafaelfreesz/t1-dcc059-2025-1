@@ -38,3 +38,7 @@ char No::getID(){
 void No::setID(char id){
     this->id = id;
 }
+
+string No::toString() {
+    return string(1, id) + " " + to_string(peso);
+}
