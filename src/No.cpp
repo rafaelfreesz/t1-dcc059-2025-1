@@ -38,3 +38,15 @@ char No::getID(){
 void No::setID(char id){
     this->id = id;
 }
+
+string No::toString() {
+    return string(1, id) + " " + to_string(peso);
+}
+
+string No::toStringArestas() {
+    stringstream ss;
+    for (Aresta* aresta : arestas) {
+        ss << this->id << " " << aresta->getIDalvo() << " " << aresta->getPeso() << "\n";
+    }
+    return ss.str();
+}

@@ -126,7 +126,8 @@ void Gerenciador::comandos(Grafo* grafo) {
 
                 vector<char> ids = get_conjunto_ids(grafo,tam);
                 Grafo* arvore_geradora_minima_kruskal = grafo->arvore_geradora_minima_kruskal(ids);
-                cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
+                cout << "Arvore geradora minima pelo método de Kruskal: ";
+                cout << arvore_geradora_minima_kruskal->toString() << endl;
 
                 if(pergunta_imprimir_arquivo("agm_kruskal.txt")) {
                     cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
@@ -257,7 +258,7 @@ Grafo* Gerenciador::carregarGrafoDoArquivo(const std::string& nomeArquivo) {
 
     // Lê dados da linha 1
     bool direcionado, ponderadoVertices, ponderadoArestas;
-    if (!(arquivo >> direcionado >> ponderadoVertices >> ponderadoArestas)) {
+    if (!(arquivo >> direcionado >> ponderadoArestas >> ponderadoVertices)) {
         throw std::runtime_error("Formato inválido na linha 1");
     }
 

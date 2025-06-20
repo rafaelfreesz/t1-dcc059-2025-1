@@ -10,6 +10,8 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -45,6 +47,7 @@ public:
     // funcoes adicionais de classe
     void adicionarNo(char idNovoNo, int pesoNovoNo);
     void adicionarAresta(char origemID, char destinoID, int peso);
+    string toString();
   
 private:
     No* getNo(char id);

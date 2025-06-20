@@ -2,6 +2,7 @@
 #define NO_H
 
 #include <string>
+#include <sstream>
 #include <vector>
 #include "Aresta.h"
 
@@ -23,6 +24,8 @@ public:
     // funções e operações
     void adicionarAresta(Aresta* novaAresta);
     void adicionarArestaInvertida(Aresta* novaAresta);
+    string toString();
+    string toStringArestas();
 
     // gets e sets
     int getPeso();
