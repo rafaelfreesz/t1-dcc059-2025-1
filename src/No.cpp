@@ -10,13 +10,16 @@ No::~No(){
     for(int i=0;i<arestas.size(); i++){
         delete arestas[i];
     }
-    delete this;
 }
 
 // ===== Funções e operações =====
 void No::adicionarAresta(Aresta* novaAresta){
     arestas.push_back(novaAresta);
     // Adiciona a nova aresta ao final do vetor de arestas do nó
+}
+
+void No::adicionarArestaInvertida(Aresta* novaAresta){
+    arestas_invertidas.push_back(novaAresta);
 }
 
 // ===== Gets e sets =====
