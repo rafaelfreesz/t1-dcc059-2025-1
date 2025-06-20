@@ -9,13 +9,14 @@
 #include <iostream>
 #include <vector>
 
-
 using namespace std;
+
 class Grafo {
 public:
     Grafo();
     ~Grafo();
-
+    void carregarGrafo(string nome_arquivo);
+    
     vector<char> fecho_transitivo_direto(char id_no); // a
     vector<char> fecho_transitivo_indireto(char id_no); // b
     vector<char> caminho_minimo_dijkstra(char id_no_a, char id_no_b); // c
