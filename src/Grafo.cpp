@@ -323,6 +323,10 @@ void Grafo::salvarPropriedades(int raio, int diametro, vector<char> centro, vect
 }
 
 Grafo::Grafo() {
+    this->ordem = 0;
+    this->in_direcionado = false;
+    this->in_ponderado_aresta = false;
+    this->in_ponderado_vertice = false;
 }
 
 Grafo::~Grafo() {
@@ -398,9 +402,72 @@ Grafo * Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos) {
     return nullptr;
 }
 
-Grafo * Grafo::arvore_caminhamento_profundidade(char id_no) {
-    cout<<"Metodo nao implementado"<<endl;
-    return nullptr;
+void Grafo::dfs_arvore(No* u, 
+                       map<char, int>& cores, 
+                       vector<pair<char, char>>& arestas_arvore, 
+                       vector<pair<char, char>>& arestas_retorno) {
+
+    cores[u->id] = 1; 
+
+    for (Aresta* aresta : u->arestas) {
+        char v_id = aresta->id_no_alvo;
+        No* v = getNo(v_id);
+        if (v == nullptr) continue; 
+
+        if (cores[v_id] == 0) {
+            arestas_arvore.push_back({u->id, v_id}); 
+            dfs_arvore(v, cores, arestas_arvore, arestas_retorno); 
+        }
+        else if (cores[v_id] == 1) {
+            arestas_retorno.push_back({u->id, v_id}); 
+        }
+    }
+    cores[u->id] = 2; 
+}
+
+Grafo* Grafo::arvore_caminhamento_profundidade(char id_no) {
+    No* no_inicial = getNo(id_no);
+    if (no_inicial == nullptr) {
+        cout << "Erro: Vertice de partida '" << id_no << "' nao encontrado." << endl;
+        return nullptr;
+    }
+    
+    map<char, int> cores;
+    for (No* no : this->lista_adj) {
+        cores[no->id] = 0; 
+    }
+    
+    vector<pair<char, char>> arestas_arvore;
+    vector<pair<char, char>> arestas_retorno;
+    
+    dfs_arvore(no_inicial, cores, arestas_arvore, arestas_retorno);
+    
+    Grafo* arvore = new Grafo(); 
+    arvore->in_direcionado = true; 
+
+    set<char> nos_na_arvore;
+    nos_na_arvore.insert(no_inicial->id);
+    for (const auto& aresta : arestas_arvore) {
+        nos_na_arvore.insert(aresta.first);
+        nos_na_arvore.insert(aresta.second);
+    }
+
+    for (char id : nos_na_arvore) {
+        No* novo_no = new No();
+        novo_no->id = id;
+        arvore->lista_adj.push_back(novo_no);
+    }
+    arvore->ordem = nos_na_arvore.size();
+
+    for (const auto& par_aresta : arestas_arvore) {
+        No* origem = arvore->getNo(par_aresta.first);
+        if (origem != nullptr) {
+            origem->arestas.push_back(new Aresta(par_aresta.second, 0));
+        }
+    }
+    arvore->arestas_de_retorno = arestas_retorno;
+    
+    return arvore;
 }
 
 int Grafo::raio() {

@@ -2,6 +2,20 @@
 #include <fstream>
 
 
+void Gerenciador::imprimirResultadoDFS(Grafo* arvore) {
+    cout << "ARVORE DE CAMINHAMENTO EM PROFUNDIDADE" << endl;
+    arvore->imprimirGrafo(); // imprime a estrutura principal da árvore usando a função genérica 
+    cout << "ARESTAS DE RETORNO (CICLOS):" << endl; // adiciona as arestas de retorno
+    if (arvore->arestas_de_retorno.empty()) {
+        cout << "Nenhuma" << endl;
+    } else {
+        for (const auto& aresta : arvore->arestas_de_retorno) {
+            cout << "  " << aresta.first << " -> " << aresta.second << endl;
+        }
+    }
+    cout << "=========================================" << endl << endl;
+}
+
 void Gerenciador::comandos(Grafo* grafo) {
     cout<<"Digite uma das opcoes abaixo e pressione enter:"<<endl<<endl;
     cout<<"(a) Fecho transitivo direto de um no;"<<endl;
@@ -132,9 +146,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             Grafo* arvore_caminhamento_profundidade = grafo->arvore_caminhamento_profundidade(id_no);
 
             if(arvore_caminhamento_profundidade != nullptr) {
-                cout << "ARVORE DE CAMINHAMENTO EM PROFUNDIDADE" << endl;
-                arvore_caminhamento_profundidade->imprimirGrafo();
-            
+                Gerenciador::imprimirResultadoDFS(arvore_caminhamento_profundidade);
                 if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
                     arvore_caminhamento_profundidade->salvarGrafo("arvore_caminhamento_profundidade.txt");
                 }
