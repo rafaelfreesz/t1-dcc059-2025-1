@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <map>
 #include <sstream>
 #include "Grafo.h"
 #include "No.h"
@@ -85,9 +86,6 @@ void Grafo::carregarGrafo(string nome_arquivo) {
 
     arquivo.close();
 }
-
-#include <fstream>
-#include <iomanip>
 
 //Função para imprimir o grafo na tela
 void Grafo::imprimirGrafo() {
@@ -330,9 +328,49 @@ Grafo::Grafo() {
 Grafo::~Grafo() {
 }
 
+No* Grafo::getNo(char id) {
+    for (No* no : this->lista_adj) {
+        if (no->id == id) {
+            return no;
+        }
+    }
+    return nullptr;   
+}
+
+void Grafo::dfs_fecho_direto(No* no_atual, map<char, bool>& visitados, vector<char>& fecho) {
+    visitados[no_atual->id] = true;
+
+    for (Aresta* aresta : no_atual->arestas) {
+        char id_vizinho = aresta->id_no_alvo;
+
+        if (!visitados[id_vizinho]) {
+            fecho.push_back(id_vizinho);
+            No* proximo_no = getNo(id_vizinho);
+
+            if (proximo_no != nullptr) {
+                dfs_fecho_direto(proximo_no, visitados, fecho);
+            }
+        }
+    }
+}
+
 vector<char> Grafo::fecho_transitivo_direto(char id_no) {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    vector<char> fecho;
+    No* no_inicial = getNo(id_no);
+
+    if (no_inicial == nullptr) {
+        cout << "Erro: vertice de partida '" << id_no << "' nao encontrado." << endl;
+        return fecho;
+    }
+
+    map<char, bool> visitados;
+
+    for (No* no : lista_adj) {
+        visitados[no->id] = false;
+    }
+    
+    dfs_fecho_direto(no_inicial, visitados, fecho);
+    return fecho;
 }
 
 vector<char> Grafo::fecho_transitivo_indireto(char id_no) {

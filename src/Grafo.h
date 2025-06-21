@@ -8,7 +8,7 @@
 #include "No.h"
 #include <iostream>
 #include <vector>
-
+#include <map>
 using namespace std;
 
 class Grafo {
@@ -46,6 +46,10 @@ public:
     bool in_ponderado_aresta;
     bool in_ponderado_vertice;
     vector<No*> lista_adj;
+
+    private:
+    No* getNo(char id);
+    void dfs_fecho_direto(No* no_atual, map<char, bool>& visitados, vector<char>& fecho);
 };
 
 
