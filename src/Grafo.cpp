@@ -8,39 +8,38 @@ Grafo::Grafo() {
     in_ponderado_aresta = false;
     in_ponderado_vertice = false;
     lista_adj = vector<No*>();
-    adj = vector<vector<int>>(ordem); // Initialize adjacency list with size 'ordem'
 }
 
-void adicionarAresta(int v, int u) {
-        //adj[v].push_back(u);
-    }
-
-void dfs(int v, const vector<vector<int>>& adj, set<int>& visited) {
-    for (int u : adj[v]) {
-        if (visited.find(u) == visited.end()) {
-            visited.insert(u);
-            dfs(u, adj, visited);
+void aux_dfs(No* no, set<char>& visitado) {
+    if (visitado.find(no->id) == visitado.end()) {
+        visitado.insert(no->id);
+        for (No* vizinho : no->vizinhos) {
+            aux_dfs(vizinho, visitado);
         }
     }
 }
-
-    void dfs(int v, set<int>& visitado) {
-        /*for (int u : adj[v]) {
-            if (visitado.find(u) == visitado.end()) {
-                visitado.insert(u);
-                dfs(u, visitado);
-            }
-        }*/ 
-    }
 
 Grafo::~Grafo() {
 }
 
 vector<char> Grafo::fecho_transitivo_direto(int id_no) {
-
+    No* origem = nullptr;
+    for (No* no : lista_adj) {
+        if (no->id == id_no) {
+            origem = no;
+            break;
+        }
+    }
+    if (origem == nullptr) {
+        cout << "No com id " << id_no << " nao encontrado." << endl;
+        return {};
+    }
+    set<char> visitado;
+    aux_dfs(origem, visitado);
+    vector<char> resultado(visitado.begin(), visitado.end());
+    return resultado; //talvez esteja certo, nao sei >>vale rever<<
 
     cout<<"Metodo nao implementado"<<endl;
-    return {};
 }
 
 vector<char> Grafo::fecho_transitivo_indireto(int id_no) {

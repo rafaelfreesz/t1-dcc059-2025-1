@@ -15,6 +15,9 @@ public:
     char id;
     int peso;
     vector<Aresta*> arestas;
+    vector<No*> vizinhos;
+
+    No(char id) : id(id){}
 };
 
 
