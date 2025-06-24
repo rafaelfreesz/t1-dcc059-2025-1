@@ -1,7 +1,9 @@
 #include "Grafo.h"
 #include <set>
-
-
+#include <filesystem>
+#include <fstream>
+#include <sstream>
+using namespace std;
 Grafo::Grafo() {
     ordem = 0;
     in_direcionado = false;
@@ -10,7 +12,75 @@ Grafo::Grafo() {
     lista_adj = vector<No*>();
 }
 
-void aux_dfs(No* no, set<char>& visitado) {
+void Grafo::carregaArquivo(const string& grafo){
+    
+    filesystem::path base_path = "/home/gabhriel/faculdade/t1-dcc059/instancias/";
+    filesystem::path full_path = base_path / grafo;
+
+
+    ifstream arquivo(full_path);
+    if (!arquivo.is_open()) {
+        cerr << "Erro ao abrir arquivo: " << full_path << endl;
+        return;
+    }
+
+    // Read graph properties
+    arquivo >> in_direcionado >> in_ponderado_aresta >> in_ponderado_vertice;
+    arquivo >> ordem;
+
+    // Read vertices
+    for (int i = 0; i < ordem; ++i) {
+        char id;
+        int peso = 0;
+        
+        if (in_ponderado_vertice) {
+            arquivo >> id >> peso;
+        } else {
+            arquivo >> id;
+        }
+        
+        No* novo_no = new No(id, peso);
+        lista_adj.push_back(novo_no);
+    }
+
+    // Read edges
+    string linha;
+    while (getline(arquivo, linha)) {
+        if (linha.empty()) continue;
+        
+        istringstream iss(linha);
+        char id_a, id_b;
+        int peso = 1;
+        
+        if (in_ponderado_aresta) {
+            iss >> id_a >> id_b >> peso;
+        } else {
+            iss >> id_a >> id_b;
+        }
+        
+        // Find nodes and create edge
+        No* origem = nullptr;
+        No* destino = nullptr;
+        
+        for (No* no : lista_adj) {
+            if (no->id == id_a) origem = no;
+            if (no->id == id_b) destino = no;
+        }
+        
+        if (origem && destino) {
+            origem->vizinhos.push_back(destino);
+            if (!in_direcionado) {
+                destino->vizinhos.push_back(origem);
+            }
+        }
+    }
+
+    arquivo.close();
+    cout << "Grafo carregado com sucesso de: " << full_path << endl;
+}
+
+
+void Grafo::aux_dfs(No* no, set<char>& visitado) {
     if (visitado.find(no->id) == visitado.end()) {
         visitado.insert(no->id);
         for (No* vizinho : no->vizinhos) {
