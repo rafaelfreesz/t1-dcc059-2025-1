@@ -1,13 +1,44 @@
 #include "Grafo.h"
+#include <set>
 
 
 Grafo::Grafo() {
+    ordem = 0;
+    in_direcionado = false;
+    in_ponderado_aresta = false;
+    in_ponderado_vertice = false;
+    lista_adj = vector<No*>();
+    adj = vector<vector<int>>(ordem); // Initialize adjacency list with size 'ordem'
 }
+
+void adicionarAresta(int v, int u) {
+        //adj[v].push_back(u);
+    }
+
+void dfs(int v, const vector<vector<int>>& adj, set<int>& visited) {
+    for (int u : adj[v]) {
+        if (visited.find(u) == visited.end()) {
+            visited.insert(u);
+            dfs(u, adj, visited);
+        }
+    }
+}
+
+    void dfs(int v, set<int>& visitado) {
+        /*for (int u : adj[v]) {
+            if (visitado.find(u) == visitado.end()) {
+                visitado.insert(u);
+                dfs(u, visitado);
+            }
+        }*/ 
+    }
 
 Grafo::~Grafo() {
 }
 
 vector<char> Grafo::fecho_transitivo_direto(int id_no) {
+
+
     cout<<"Metodo nao implementado"<<endl;
     return {};
 }
