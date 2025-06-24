@@ -5,6 +5,9 @@
 #include "Grafo.h"
 #include "No.h"
 #include "Aresta.h"
+#include <vector>
+#include <limits>
+#include <algorithm>
 
 using namespace std;
 
@@ -342,9 +345,62 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b) {
     return {};
 }
 
-vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+vector<char> Grafo::caminho_minimo_floyd(char id_no_a, char id_no_b) {
+    int n = this->ordem;
+    
+    // Mapear vértices para índices numéricos
+    vector<char> vertices(n);
+    for(int i = 0; i < n; i++) {
+        vertices[i] = lista_adj[i]->id;
+    }
+    
+    // Inicializar matriz de distâncias e predecessores
+    vector<vector<int>> dist(n, vector<int>(n, numeric_limits<int>::max()));
+    vector<vector<int>> next(n, vector<int>(n, -1));
+    
+    // Preencher distâncias iniciais
+    for(int i = 0; i < n; i++) {
+        dist[i][i] = 0;
+        No* no = lista_adj[i];
+        
+        for(Aresta* aresta : no->arestas) {
+            int j = distance(vertices.begin(), find(vertices.begin(), vertices.end(), aresta->id_no_alvo));
+            dist[i][j] = aresta->peso;
+            next[i][j] = j;
+        }
+    }
+    
+    // Algoritmo de Floyd-Warshall
+    for(int k = 0; k < n; k++) {
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                if(dist[i][k] != numeric_limits<int>::max() && 
+                   dist[k][j] != numeric_limits<int>::max() &&
+                   dist[i][j] > dist[i][k] + dist[k][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    next[i][j] = next[i][k];
+                }
+            }
+        }
+    }
+    
+    // Reconstruir o caminho
+    int u = distance(vertices.begin(), find(vertices.begin(), vertices.end(), id_no_a));
+    int v = distance(vertices.begin(), find(vertices.begin(), vertices.end(), id_no_b));
+    
+    if(next[u][v] == -1) {
+        return {}; // Não há caminho
+    }
+    
+    vector<char> path;
+    path.push_back(vertices[u]);
+    
+    while(u != v) {
+        u = next[u][v];
+        path.push_back(vertices[u]);
+    }
+    
+    return path;
 }
 
 Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
@@ -362,24 +418,132 @@ Grafo * Grafo::arvore_caminhamento_profundidade(char id_no) {
     return nullptr;
 }
 
+vector<vector<int>> Grafo::calcular_matriz_distancias() {
+    int n = this->ordem;
+    vector<char> vertices(n);
+    for(int i = 0; i < n; i++) {
+        vertices[i] = lista_adj[i]->id;
+    }
+    
+    vector<vector<int>> dist(n, vector<int>(n, numeric_limits<int>::max()));
+    
+    for(int i = 0; i < n; i++) {
+        dist[i][i] = 0;
+        No* no = lista_adj[i];
+        
+        for(Aresta* aresta : no->arestas) {
+            int j = distance(vertices.begin(), find(vertices.begin(), vertices.end(), aresta->id_no_alvo));
+            dist[i][j] = aresta->peso;
+            
+            if(!in_direcionado) {
+                dist[j][i] = aresta->peso;
+            }
+        }
+    }
+    
+    for(int k = 0; k < n; k++) {
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                if(dist[i][k] != numeric_limits<int>::max() && 
+                   dist[k][j] != numeric_limits<int>::max() &&
+                   dist[i][j] > dist[i][k] + dist[k][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                }
+            }
+        }
+    }
+    
+    return dist;
+}
+
 int Grafo::raio() {
-    cout<<"Metodo nao implementado"<<endl;
-    return 0;
+    vector<vector<int>> dist = calcular_matriz_distancias();
+    int n = this->ordem;
+    
+    vector<int> excentricidades(n, 0);
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            if(dist[i][j] > excentricidades[i] && dist[i][j] != numeric_limits<int>::max()) {
+                excentricidades[i] = dist[i][j];
+            }
+        }
+    }
+    
+    return *min_element(excentricidades.begin(), excentricidades.end());
 }
 
 int Grafo::diametro() {
-    cout<<"Metodo nao implementado"<<endl;
-    return 0;
+    vector<vector<int>> dist = calcular_matriz_distancias();
+    int n = this->ordem;
+    
+    vector<int> excentricidades(n, 0);
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            if(dist[i][j] > excentricidades[i] && dist[i][j] != numeric_limits<int>::max()) {
+                excentricidades[i] = dist[i][j];
+            }
+        }
+    }
+    
+    return *max_element(excentricidades.begin(), excentricidades.end());
 }
 
 vector<char> Grafo::centro() {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    vector<vector<int>> dist = calcular_matriz_distancias();
+    int n = this->ordem;
+    vector<char> vertices(n);
+    for(int i = 0; i < n; i++) {
+        vertices[i] = lista_adj[i]->id;
+    }
+    
+    vector<int> excentricidades(n, 0);
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            if(dist[i][j] > excentricidades[i] && dist[i][j] != numeric_limits<int>::max()) {
+                excentricidades[i] = dist[i][j];
+            }
+        }
+    }
+    
+    int raio = *min_element(excentricidades.begin(), excentricidades.end());
+    vector<char> centros;
+    
+    for(int i = 0; i < n; i++) {
+        if(excentricidades[i] == raio) {
+            centros.push_back(vertices[i]);
+        }
+    }
+    
+    return centros;
 }
 
 vector<char> Grafo::periferia() {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    vector<vector<int>> dist = calcular_matriz_distancias();
+    int n = this->ordem;
+    vector<char> vertices(n);
+    for(int i = 0; i < n; i++) {
+        vertices[i] = lista_adj[i]->id;
+    }
+    
+    vector<int> excentricidades(n, 0);
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            if(dist[i][j] > excentricidades[i] && dist[i][j] != numeric_limits<int>::max()) {
+                excentricidades[i] = dist[i][j];
+            }
+        }
+    }
+    
+    int diametro = *max_element(excentricidades.begin(), excentricidades.end());
+    vector<char> periferias;
+    
+    for(int i = 0; i < n; i++) {
+        if(excentricidades[i] == diametro) {
+            periferias.push_back(vertices[i]);
+        }
+    }
+    
+    return periferias;
 }
 
 vector<char> Grafo::vertices_de_articulacao() {
