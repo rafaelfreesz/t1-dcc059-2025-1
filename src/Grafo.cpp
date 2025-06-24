@@ -157,8 +157,67 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
 }
 
 Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
-    cout<<"Metodo nao implementado"<<endl;
-    return nullptr;
+    struct prox{
+        char id_no_proximo;
+        int custo;
+    };
+
+    map<char, prox> map_prox; // mapa para armazenar o próximo nó e seu custo
+    for(char id_no : ids_nos) {
+        map_prox[id_no] = {ids_nos[0], INT_MAX}; // inicializa o mapa com custo infinito
+    }
+
+    Grafo *resultado = new Grafo(); // grafo resultado
+    resultado->in_direcionado = this->in_direcionado;
+    resultado->in_ponderado_aresta = this->in_ponderado_aresta;
+    resultado->in_ponderado_vertice = this->in_ponderado_vertice;
+    resultado->ordem = ids_nos.size();
+
+    // cria o nó inicial e adiciona ao grafo resultado
+    No *no_inicial = new No(ids_nos[0], getNo(ids_nos[0])->getPeso());
+    resultado->lista_adj.push_back(no_inicial);
+    map_prox[ids_nos[0]] = {'\0', INT_MAX}; // marca no incial como resolvido
+
+    
+    No *no_atual = getNo(ids_nos[0]);
+    int cont = 1; // contador de nós adicionados
+    while(cont < ids_nos.size()) {
+        for(Aresta *aresta : no_atual->arestas) {
+            char id_no_alvo = aresta->getIDalvo();
+            if(find(ids_nos.begin(), ids_nos.end(), id_no_alvo) != ids_nos.end()) {
+                if(map_prox[id_no_alvo].custo > aresta->getPeso() and map_prox[id_no_alvo].id_no_proximo != '\0') {
+                    // Atualiza o mapa de próximos se o custo for menor
+                    map_prox[id_no_alvo] = {no_atual->getID(), aresta->getPeso()};
+                }
+            }
+        }
+
+        auto it = min_element(map_prox.begin(), map_prox.end(),
+            [](const pair<char, prox> &a, const pair<char, prox> &b) {
+                return a.second.custo < b.second.custo;
+            });
+        
+        // Adiciona o nó com aresta de menor custo ao grafo resultado
+        No *novo_no = new No(it->first, getNo(it->first)->getPeso());
+        Aresta *nova_aresta = new Aresta(it->second.id_no_proximo, it->second.custo);
+        novo_no->adicionarAresta(nova_aresta);
+        resultado->lista_adj.push_back(novo_no);
+        if(!resultado->in_direcionado) {
+            // se o grafo nao for direcionado, adiciona a aresta inversa
+            No *no_alvo = resultado->getNo(it->second.id_no_proximo);
+            Aresta *nova_aresta_inversa = new Aresta(it->first, it->second.custo);
+            no_alvo->adicionarAresta(nova_aresta_inversa);
+        }
+        
+        no_atual = getNo(it->first); // atualiza o nó atual
+        
+        map_prox[it->first] = {'\0', INT_MAX}; // marca o nó atual como resolvido
+        
+        cont++;
+    }
+    
+    
+    return resultado;
 }
 
 Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
@@ -301,7 +360,11 @@ string Grafo::toString() {
     ss << ordem << endl;
 
     for (No* no : lista_adj) {
-        ss << no->toString() << endl;
+        ss << no->getID();
+        if (in_ponderado_vertice) {
+            ss << " " << no->getPeso();
+        }
+        ss << endl;
     }
 
     vector<ArestaInicioFim*> arestas;
@@ -315,7 +378,11 @@ string Grafo::toString() {
             });
 
             if (it == arestas.end() || in_direcionado) {
-                ss << no->getID() << " " << aresta->getIDalvo() << " " << aresta->getPeso() << endl;
+                ss << no->getID() << " " << aresta->getIDalvo();
+                if (in_ponderado_aresta) {
+                    ss << " " << aresta->getPeso();
+                }
+                ss << endl;
                 ArestaInicioFim* aresta_inicio_fim = new ArestaInicioFim();
                 aresta_inicio_fim->id_inicio = no->getID();
                 aresta_inicio_fim->aresta = aresta;

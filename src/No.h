@@ -24,7 +24,6 @@ public:
     // funções e operações
     void adicionarAresta(Aresta* novaAresta);
     void adicionarArestaInvertida(Aresta* novaAresta);
-    string toString();
 
     // gets e sets
     int getPeso();
