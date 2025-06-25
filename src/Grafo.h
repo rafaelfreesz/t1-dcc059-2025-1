@@ -7,6 +7,7 @@
 
 #include "No.h"
 #include <iostream>
+#include <set>
 #include <vector>
 
 
@@ -32,12 +33,11 @@ public:
     vector<char> vertices_de_articulacao(); // i
 
     
+private:
     int ordem;
     bool in_direcionado;
     bool in_ponderado_aresta;
     bool in_ponderado_vertice;
-
-private:
     vector<No*> lista_adj;
 };
 
