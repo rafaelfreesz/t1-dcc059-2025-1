@@ -316,8 +316,59 @@ Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
 }
 
 Grafo * Grafo::arvore_caminhamento_profundidade(char id_no) {
-    cout<<"Metodo nao implementado"<<endl;
-    return nullptr;
+    map<char, bool> visitado;
+    
+    Grafo *resultado = new Grafo(false, false, true);
+
+    for(No *no: lista_adj) {
+        visitado[no->getID()] = false; // inicializa todos os nós como não visitados
+        // resultado->adicionarNo(no->getID(), no->getPeso());
+        
+    }
+
+    resultado->adicionarNo(id_no, getNo(id_no)->getPeso());
+    arvore_caminhamento_profundidade_aux(id_no, '\0' , visitado, *resultado);
+
+    for(No *no: lista_adj) {
+        if(no->getID() == id_no)
+            continue; // pula o nó inicial, pois ele já foi visitado
+        if(!visitado[no->getID()]) {
+            resultado->adicionarNo(no->getID(), getNo(id_no)->getPeso());
+            arvore_caminhamento_profundidade_aux(no->getID(), '\0' , visitado, *resultado);
+        }
+    }
+    return resultado;
+}
+
+void Grafo::arvore_caminhamento_profundidade_aux(char id_no, char id_pai, map<char, bool> &visitados, Grafo &resultado) 
+{
+    visitados[id_no] = true; // marca o nó atual como visitado
+    No* no = getNo(id_no);
+    
+    for(Aresta *aresta : no->arestas) {
+        char id_alvo = aresta->id_no_alvo;
+        if(!visitados[id_alvo]) {
+            resultado.adicionarNo(id_alvo, getNo(id_alvo)->getPeso());
+            resultado.adicionarAresta(id_no, id_alvo, 1); // peso 1 significa que é uma aresta de ligação
+            arvore_caminhamento_profundidade_aux(id_alvo, id_no, visitados, resultado);
+        }
+        else{
+            // Se o nó já foi visitado, mas é diferente do pai, adiciona a aresta de retorno
+            bool aresta_existente = false;
+            for(Aresta *aresta: resultado.getNo(id_no)->arestas) {
+                if(aresta->id_no_alvo == id_alvo) {
+                    // Se a aresta já existe, não adiciona novamente
+                    aresta_existente = true;
+                }
+            }
+
+            if(aresta_existente)
+                continue;
+            
+            if(id_pai != id_alvo)
+                resultado.adicionarAresta(id_no, id_alvo, -1); // peso -1 significa que é uma aresta de retorno
+        }
+    }
 }
 
 int Grafo::raio() {
@@ -353,11 +404,10 @@ string Grafo::toString() {
     };
     
     stringstream ss;
-    ss << "Grafo: " << endl;
     ss << (in_direcionado ? "1" : "0") << " ";
     ss << (in_ponderado_aresta ? "1" : "0") << " ";
     ss << (in_ponderado_vertice ? "1" : "0") << endl;
-    ss << ordem << endl;
+    ss << to_string(ordem) << endl;
 
     for (No* no : lista_adj) {
         ss << no->getID();

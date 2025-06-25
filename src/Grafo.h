@@ -55,6 +55,7 @@ private:
     void fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
     void fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
     void dijkstra_aux(char noAtual, map<char, int> &distancias, map<char, char> &predecessores);
+    void arvore_caminhamento_profundidade_aux(char id_no, char id_pai, map<char, bool> &visitados, Grafo &resultado);
 };
 
 
