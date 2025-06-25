@@ -14,7 +14,7 @@ Grafo::Grafo() {
 
 void Grafo::carregaArquivo(const string& grafo){
     
-    filesystem::path base_path = "/home/gabhriel/faculdade/t1-dcc059/instancias/";
+    filesystem::path base_path = "../t1-dcc059/instancias/";
     filesystem::path full_path = base_path / grafo;
 
 
