@@ -34,10 +34,11 @@ public:
 
     //getters
     int get_ordem(){return ordem;};
-    bool get_in_direcionado(){return in_direcionado;};
-    bool get_in_ponderado_aresta(){return in_ponderado_aresta;};
-    bool get_in_ponderado_vertice(){return in_ponderado_vertice;};
+    bool get_direcionado(){return in_direcionado;};
+    bool get_ponderado_aresta(){return in_ponderado_aresta;};
+    bool get_ponderado_vertice(){return in_ponderado_vertice;};
     vector<No*> get_lista_adj(){return lista_adj;}
+    vector<No*> get_vertices(){return vertices;};
 
     //setters
     void set_ordem(int new_ordem){ordem = new_ordem;};
@@ -45,6 +46,7 @@ public:
     void set_ponderado_aresta(bool pon_aresta){in_ponderado_aresta = pon_aresta;};
     void set_ponderado_vertice(bool pon_vertice){in_ponderado_vertice = pon_vertice;};
     void set_lista_adj(vector<No*> new_list){lista_adj = new_list;};
+    void set_vertices(vector<No*> v){vertices = v;};
 
     
 private:
@@ -53,6 +55,7 @@ private:
     bool in_ponderado_aresta;
     bool in_ponderado_vertice;
     vector<No*> lista_adj;
+    vector<No*> vertices;
 };
 
 
