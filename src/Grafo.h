@@ -29,9 +29,9 @@ public:
     vector<char> fecho_transitivo_indireto(char id_no); // b RESOLVIDO
     vector<char> caminho_minimo_dijkstra(char id_no_a, char id_no_b); // c
     vector<char> caminho_minimo_floyd(char id_no, char id_no_b); // d
-    Grafo* arvore_geradora_minima_prim(vector<char> ids_nos); // e
-    Grafo* arvore_geradora_minima_kruskal(vector<char> ids_nos); // f
-    Grafo* arvore_caminhamento_profundidade(char id_no); // g
+    Grafo* arvore_geradora_minima_prim(vector<char> ids_nos); // e RESOLVIDO
+    Grafo* arvore_geradora_minima_kruskal(vector<char> ids_nos); // f RESOLVIDO
+    Grafo* arvore_caminhamento_profundidade(char id_no); // g RESOLVIDO
     int raio(); // h 1
     int diametro(); // h 2
     vector<char> centro(); // h 3
