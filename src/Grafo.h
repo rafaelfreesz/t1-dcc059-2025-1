@@ -14,7 +14,9 @@
 using namespace std;
 class Grafo {
 public:
-    Grafo();
+    Grafo();                      // Construtor padrão
+    Grafo(const string& grafo);   // Construtor que carrega o grafo a partir do arquivo
+    
     ~Grafo();
 
     void carregaArquivo(const string& grafo);
@@ -31,6 +33,8 @@ public:
     vector<char> centro(); // h 3
     vector<char> periferia(); // h 4
     vector<char> vertices_de_articulacao(); // i
+
+    void imprimeInfo() const;
 
     //getters
     int get_ordem(){return ordem;};
