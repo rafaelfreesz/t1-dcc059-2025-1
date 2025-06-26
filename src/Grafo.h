@@ -32,6 +32,11 @@ public:
     vector<char> periferia(); // h 4
     vector<char> vertices_de_articulacao(); // i
 
+    int get_ordem(){return ordem;};
+    bool get_in_direcionado(){return in_direcionado;};
+    bool get_in_ponderado_aresta(){return in_ponderado_aresta;};
+    bool get_in_ponderado_vertice(){return in_ponderado_vertice;};
+    vector<No*> get_lista_adj(){return lista_adj;}
     
 private:
     int ordem;
