@@ -186,7 +186,7 @@ vector<char> Gerenciador::get_conjunto_ids(Grafo *grafo, int tam) {
         char id_no =get_id_entrada();
         bool existe = false;
         for(No* no: grafo->get_lista_adj()){
-            if(no->id == id_no){
+            if(no->get_id() == id_no){
                 existe = true;
                 break;
             }
