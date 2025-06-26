@@ -32,11 +32,20 @@ public:
     vector<char> periferia(); // h 4
     vector<char> vertices_de_articulacao(); // i
 
+    //getters
     int get_ordem(){return ordem;};
     bool get_in_direcionado(){return in_direcionado;};
     bool get_in_ponderado_aresta(){return in_ponderado_aresta;};
     bool get_in_ponderado_vertice(){return in_ponderado_vertice;};
     vector<No*> get_lista_adj(){return lista_adj;}
+
+    //setters
+    void set_ordem(int new_ordem){ordem = new_ordem;};
+    void set_direcionado(bool direcionado){in_direcionado = direcionado;};
+    void set_ponderado_aresta(bool pon_aresta){in_ponderado_aresta = pon_aresta;};
+    void set_ponderado_vertice(bool pon_vertice){in_ponderado_vertice = pon_vertice;};
+    void set_lista_adj(vector<No*> new_list){lista_adj = new_list;};
+
     
 private:
     int ordem;
