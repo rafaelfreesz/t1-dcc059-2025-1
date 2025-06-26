@@ -53,12 +53,27 @@ void Grafo::carregaArquivo(const string& grafo){
 
     vector<No*> v = get_vertices();
     if (get_ponderado_vertice() == true){
-        while (getline(arquivo, line)) {
-            No *p = new No(line.at(0), line.at(1));
+        for (int i = 0; i < ordem; ++i) {
+            getline(arquivo, line);
+
+            if (!line.empty()){
+                char nome;
+                int peso;
+                std::istringstream iss(line);
+                iss >> nome >> peso;
+                
+                No *p = new No(nome, peso);
+                this->vertices.push_back(p);
+            }
         }
+        // set_vertices(v);
     } else {
-        while (getline(arquivo, line)){
-            No *p = new No(line.at(0));
+        for (int i = 0; i < ordem; ++i){
+            getline(arquivo, line);
+            if (!line.empty()){
+                No *p = new No(line.at(0));
+                this->vertices.push_back(p);
+            }
         }
             
     }
