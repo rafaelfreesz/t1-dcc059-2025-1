@@ -1,22 +1,20 @@
 #ifndef NO_H
 #define NO_H
 
-#include <string>
 #include <vector>
-#include "Aresta.h"
+#include "../Aresta/Aresta.h"
 
+class Aresta;
 
-using namespace std;
 class No {
 public:
-    No();
-    ~No();
-
-    char id;
+    char id; // Usar char para compatibilidade com Grafo
     int peso;
-    vector<Aresta*> arestas;
+    std::vector<Aresta*> arestas;
+
+    No();
+    No(char id, int peso = 0);
+    ~No();
 };
 
-
-
-#endif //NO_H
+#endif // NO_H
