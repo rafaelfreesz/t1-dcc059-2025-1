@@ -17,7 +17,8 @@ public:
     vector<Aresta*> arestas;
     vector<No*> vizinhos;
 
-    No(char id, int peso) : id(id), peso(peso){}
+    No(char id, int peso) : id(id), peso(peso){} //vertice ponderado
+    No(char id) : id(id){} //vertice não ponderado
 };
 
 
