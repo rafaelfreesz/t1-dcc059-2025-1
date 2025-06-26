@@ -14,7 +14,7 @@ class No {
         ~No();
 
         // Getters
-        char get_nome() const;
+        char get_id() const;
         int get_peso() const;
         vector<Aresta*> get_arestas() const;
         vector<No*> get_vizinhos() const;
