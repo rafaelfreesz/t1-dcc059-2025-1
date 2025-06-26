@@ -8,19 +8,26 @@
 
 using namespace std;
 class No {
-public:
-    No();
-    ~No();
+    public:
+        No(char id, int peso) : id(id), peso(peso){} //vertice ponderado
+        No(char id) : id(id){} //vertice não ponderado
+        ~No();
 
-    char id;
-    int peso;
-    vector<Aresta*> arestas;
-    vector<No*> vizinhos;
+        // Getters
+        char get_nome() const;
+        int get_peso() const;
+        vector<Aresta*> get_arestas() const;
+        vector<No*> get_vizinhos() const;
 
-    No(char id, int peso) : id(id), peso(peso){} //vertice ponderado
-    No(char id) : id(id){} //vertice não ponderado
+        // Setters
+        void set_peso(int novo_peso);
+
+    private:
+        char id;
+        int peso;
+        vector<Aresta*> arestas;
+        vector<No*> vizinhos;
 };
-
 
 
 #endif //NO_H
