@@ -152,8 +152,79 @@ void Grafo::dijkstra_aux(char noAtual, map<char, int> &distancias, map<char, cha
 
 
 vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+
+    // Verifica se os nós existem no grafo
+    No* no1 = getNo(id_no);
+    No* no2 = getNo(id_no_b);
+
+    vector<char> caminhoIDs;
+    vector<int> caminhoIndices;
+    
+    map<char, int> idIndice;
+    map<int, char> indiceID;
+    
+    int n = lista_adj.size(); // Define a ordem N das matrizes
+    
+    for(int i=0; i<n; i++){
+        char id = lista_adj[i]->getID(); // Obtém o ID do nó
+        idIndice[id] = i; // Mapeia o ID do nó para o índice
+        indiceID[i] = id; // Mapeia o índice para o ID do nó
+    }
+
+    // Inicialização das matrizes de distância e predecessores
+    vector<vector<int>> distancia(n, vector<int>(n, INT_MAX));
+    vector<vector<int>> predecessor(n, vector<int>(n, -1));
+
+    for(int i=0;i<n;i++){
+        distancia[i][i] = 0; // Diagonal principal
+        for(Aresta* aresta : lista_adj[i]->arestas){
+            int j = idIndice[aresta->getIDalvo()]; // Obtém o índice do nó de destino
+            distancia[i][j] = aresta->getPeso(); // Define a distância da aresta
+            predecessor[i][j] = i; // Define o predecessor
+        }
+    }
+
+    // Algoritmo de verificação de menor caminho
+    for(int i=0;i<n;i++) {
+        for(int j=0;j<n;j++) {
+            for(int k=0;k<n;k++) {
+                if(distancia[j][i] != INT_MAX && distancia[i][k] != INT_MAX &&
+                   distancia[j][i] + distancia[i][k] < distancia[j][k]){
+                    distancia[j][k] = distancia[j][i] + distancia[i][k];
+                    predecessor[j][k] = predecessor[i][k];
+                   }
+            }
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (distancia[i][i] < 0) {
+            cout << "Ciclo negativo detectado envolvendo o nó " << indiceID[i] << endl;
+            return {};
+        }
+    }
+
+    // Reconstrução do caminho
+    int origem = idIndice[id_no];
+    int destino = idIndice[id_no_b];
+
+    if(distancia[origem][destino] == INT_MAX){
+        cout<<"Sem caminho de " << id_no << " para " << id_no_b << endl;
+        return {};
+    }
+
+    for(int i = destino; i != origem; i = predecessor[origem][i]){
+        if(i == -1) return {}; // Se não houver predecessor, retorna vazio
+        caminhoIndices.push_back(i); // Adiciona o índice do nó ao caminho
+    }
+    caminhoIndices.push_back(origem);
+    reverse(caminhoIndices.begin(), caminhoIndices.end());
+
+    for(int idx : caminhoIndices){
+        caminhoIDs.push_back(indiceID[idx]); // Converte os índices de volta para IDs
+    }
+
+    return caminhoIDs;
 }
 
 Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
