@@ -1,8 +1,12 @@
 #include "Grafo.h"
+#include "No.h"
+#include <cstdlib>
 #include <set>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <string>
+#include <vector>
 using namespace std;
 Grafo::Grafo() {
     ordem = 0;
@@ -11,72 +15,108 @@ Grafo::Grafo() {
     in_ponderado_vertice = false;
     lista_adj = vector<No*>();
 }
-
+//recebe string com o nome do grafo do comando de execução.
+//./execGrupoX nome_do_txt <---string recebida
 void Grafo::carregaArquivo(const string& grafo){
     
-    filesystem::path base_path = "../t1-dcc059/instancias/";
-    filesystem::path full_path = base_path / grafo;
+    // filesystem::path base_path = "../t1-dcc059/instancias/";
+    // filesystem::path full_path = base_path / grafo;
 
 
-    ifstream arquivo(full_path);
+    ifstream arquivo("../t1-dcc059/instancias/"+grafo);
+    string line;
+    size_t location;
+
     if (!arquivo.is_open()) {
-        cerr << "Erro ao abrir arquivo: " << full_path << endl;
-        return;
+        cerr << "Erro ao abrir arquivo: " << grafo << endl;
+        exit(1);
     }
+    //linha zero. [ex: (0 0 0), (0 1 1)]
+    getline(arquivo, line);
+    //trata excelçoes na quantidade de argumentos da linha
+    if (line.size() > 3 || line.size() < 2){
+        cout << "Erro: formato inválido da lista de adjacencia. linha 0" << endl;
+        exit(0);
+    }
+    set_direcionado(line.at(0)); //define se o grafo é orientado
+    set_ponderado_aresta(line.at(1)); //define se o grafo é ponderado nas arestas
+    set_ponderado_vertice(line.at(2)); //define se o grafo é ponderado nos vertices
+
+    //linha um. ordem do grafo
+    getline(arquivo, line);
+    //trata exceções na quantidade de argumentos da linha
+    if (line.size()>0){
+        cout << "Erro: grafo deve possuir apenas UM(1) valor para a ordem." << endl;
+        exit(0);
+    }
+    set_ordem(line.at(0));
+
+    vector<No*> v = get_vertices();
+    if (get_ponderado_vertice() == true){
+        while (getline(arquivo, line)) {
+            No *p = new No(line.at(0), line.at(1));
+        }
+    } else {
+        while (getline(arquivo, line)){
+            No *p = new No(line.at(0));
+        }
+            
+    }
+    
 
     // Read graph properties
-    arquivo >> in_direcionado >> in_ponderado_aresta >> in_ponderado_vertice;
-    arquivo >> ordem;
+    // arquivo >> in_direcionado >> in_ponderado_aresta >> in_ponderado_vertice;
+    // arquivo >> ordem;
 
     // Read vertices
-    for (int i = 0; i < ordem; ++i) {
-        char id;
-        int peso = 0;
+    // for (int i = 0; i < ordem; ++i) {
+    //     char id;
+    //     int peso = 0;
         
-        if (in_ponderado_vertice) {
-            arquivo >> id >> peso;
-        } else {
-            arquivo >> id;
-        }
+    //     if (in_ponderado_vertice) {
+    //         arquivo >> id >> peso;
+    //     } else {
+    //         arquivo >> id;
+    //     }
         
-        No* novo_no = new No(id, peso);
-        lista_adj.push_back(novo_no);
-    }
+    //     No* novo_no = new No(id, peso);
+    //     lista_adj.push_back(novo_no);
+    // }
 
-    // Read edges
-    string linha;
-    while (getline(arquivo, linha)) {
-        if (linha.empty()) continue;
+    // // Read edges
+    // string linha;
+    // while (getline(arquivo, linha)) {
+    //     if (linha.empty()) continue;
         
-        istringstream iss(linha);
-        char id_a, id_b;
-        int peso = 1;
+    //     istringstream iss(linha);
+    //     char id_a, id_b;
+    //     int peso = 1;
         
-        if (in_ponderado_aresta) {
-            iss >> id_a >> id_b >> peso;
-        } else {
-            iss >> id_a >> id_b;
-        }
+    //     if (in_ponderado_aresta) {
+    //         iss >> id_a >> id_b >> peso;
+    //     } else {
+    //         iss >> id_a >> id_b;
+    //     }
         
-        // Find nodes and create edge
-        No* origem = nullptr;
-        No* destino = nullptr;
+    //     // Find nodes and create edge
+    //     No* origem = nullptr;
+    //     No* destino = nullptr;
         
-        for (No* no : lista_adj) {
-            if (no->id == id_a) origem = no;
-            if (no->id == id_b) destino = no;
-        }
+    //     for (No* no : lista_adj) {
+    //         if (no->id == id_a) origem = no;
+    //         if (no->id == id_b) destino = no;
+    //     }
         
-        if (origem && destino) {
-            origem->vizinhos.push_back(destino);
-            if (!in_direcionado) {
-                destino->vizinhos.push_back(origem);
-            }
-        }
-    }
+    //     if (origem && destino) {
+    //         origem->vizinhos.push_back(destino);
+    //         if (!in_direcionado) {
+    //             destino->vizinhos.push_back(origem);
+    //         }
+    //     }
+    // }
 
-    arquivo.close();
-    cout << "Grafo carregado com sucesso de: " << full_path << endl;
+    // arquivo.close();
+    // cout << "Grafo carregado com sucesso de: " << grafo << endl;
 }
 
 
