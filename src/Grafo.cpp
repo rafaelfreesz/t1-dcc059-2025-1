@@ -109,7 +109,7 @@ vector<char> Grafo::fecho_transitivo_direto(int id_no) {
     vector<char> resultado(visitado.begin(), visitado.end());
     return resultado; //talvez esteja certo, nao sei >>vale rever<<
 
-    cout<<"Metodo nao implementado"<<endl;
+    // cout<<"Metodo nao implementado"<<endl;
 }
 
 vector<char> Grafo::fecho_transitivo_indireto(int id_no) {
