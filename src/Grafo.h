@@ -40,7 +40,7 @@ public:
     int get_ordem(){return ordem;};
     bool get_direcionado(){return in_direcionado;};
     bool get_ponderado_aresta(){return in_ponderado_aresta;};
-    bool get_ponderado_vertice(){return in_ponderado_vertice;};
+    bool get_ponderado_vertice()const{return in_ponderado_vertice;};
     vector<No*> get_lista_adj(){return lista_adj;}
     vector<No*> get_vertices(){return vertices;};
 
