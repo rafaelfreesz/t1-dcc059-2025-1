@@ -14,13 +14,13 @@ class No {
         ~No();
 
         // Getters
-        char get_id() const;
-        int get_peso() const;
-        vector<Aresta*> get_arestas() const;
-        vector<No*> get_vizinhos() const;
+        char get_id() const {return id;};
+        int get_peso() const {return peso;};
+        vector<Aresta*> get_arestas() const {return arestas;};
+        vector<No*> get_vizinhos() const {return vizinhos;};
 
         // Setters
-        void set_peso(int novo_peso);
+        void set_peso(int novo_peso) {peso = novo_peso;};
 
     private:
         char id;
