@@ -111,6 +111,16 @@ void Gerenciador::comandos(Grafo* grafo) {
             if(tam > 0 && tam <= grafo->ordem) {
 
                 vector<char> ids = get_conjunto_ids(grafo,tam);
+
+                Grafo *subgrafo = grafo->getSubgrafo(ids);
+                if(subgrafo->numComponentesConexas() > 1) {
+                    cout<<"O subgrafo escolhido nao é conexo, impossivel calcular a arvore geradora minima\n\n";
+                    delete subgrafo;
+                    break;
+                }
+                delete subgrafo;
+
+
                 Grafo* arvore_geradora_minima_prim = grafo->arvore_geradora_minima_prim(ids);
                 cout<< "Arvore geradora minima pelo método de Prim: " << endl;
                 cout << arvore_geradora_minima_prim->toString() << endl;
@@ -137,8 +147,17 @@ void Gerenciador::comandos(Grafo* grafo) {
             if(tam > 0 && tam <= grafo->ordem) {
 
                 vector<char> ids = get_conjunto_ids(grafo,tam);
+
+                Grafo *subgrafo = grafo->getSubgrafo(ids);
+                if(subgrafo->numComponentesConexas() > 1) {
+                    cout<<"O subgrafo escolhido nao é conexo, impossivel calcular a arvore geradora minima\n\n";
+                    delete subgrafo;
+                    break;
+                }
+                delete subgrafo;
+
                 Grafo* arvore_geradora_minima_kruskal = grafo->arvore_geradora_minima_kruskal(ids);
-                cout << "Arvore geradora minima pelo método de Kruskal: ";
+                cout << "Arvore geradora minima pelo método de Kruskal: " << endl;
                 cout << arvore_geradora_minima_kruskal->toString() << endl;
 
                 if(pergunta_imprimir_arquivo("agm_kruskal.txt")) {

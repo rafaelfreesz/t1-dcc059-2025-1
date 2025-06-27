@@ -49,6 +49,9 @@ public:
     void adicionarNo(char idNovoNo, int pesoNovoNo);
     void adicionarAresta(char origemID, char destinoID, int peso);
     string toString();
+    string output_csAcademy();
+    int numComponentesConexas();
+    Grafo* getSubgrafo(vector<char> ids_nos);
   
 private:
     No* getNo(char id);

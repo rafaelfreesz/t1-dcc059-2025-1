@@ -393,8 +393,6 @@ Grafo * Grafo::arvore_caminhamento_profundidade(char id_no) {
 
     for(No *no: lista_adj) {
         visitado[no->getID()] = false; // inicializa todos os nós como não visitados
-        // resultado->adicionarNo(no->getID(), no->getPeso());
-        
     }
 
     resultado->adicionarNo(id_no, getNo(id_no)->getPeso());
@@ -404,7 +402,7 @@ Grafo * Grafo::arvore_caminhamento_profundidade(char id_no) {
         if(no->getID() == id_no)
             continue; // pula o nó inicial, pois ele já foi visitado
         if(!visitado[no->getID()]) {
-            resultado->adicionarNo(no->getID(), getNo(id_no)->getPeso());
+            resultado->adicionarNo(no->getID(), no->getPeso());
             arvore_caminhamento_profundidade_aux(no->getID(), '\0' , visitado, *resultado);
         }
     }
@@ -467,7 +465,7 @@ vector<char> Grafo::vertices_de_articulacao() {
     return {};
 }
 
-string Grafo::toString() {
+string Grafo::output_csAcademy() {
     
     struct ArestaInicioFim {
         char id_inicio;
@@ -512,4 +510,64 @@ string Grafo::toString() {
         }
     }
     return ss.str();
+}
+
+string Grafo::toString() {
+    stringstream ss;
+
+    sort(lista_adj.begin(), lista_adj.end(),
+         [](No* a, No* b) {
+             return a->getID() < b->getID();
+         });
+
+    for(No* no : lista_adj) {
+        ss << no->getID() << ":";
+        int cont = 0;
+        for(Aresta* aresta : no->arestas) {
+            ss << (cont++ == 0 ? " " : " -> ") << aresta->getIDalvo();
+        }
+        ss << endl;
+    }
+    return ss.str();
+}
+
+int Grafo::numComponentesConexas() {
+    map<char, bool> visitado;
+    
+    Grafo *resultado = new Grafo(false, false, true);
+
+    for(No *no: lista_adj) {
+        visitado[no->getID()] = false; // inicializa todos os nós como não visitados
+    }
+
+    int componentes = 0; // contador de componentes conexas
+    for(No *no: lista_adj) {
+        if(!visitado[no->getID()]) {
+            componentes++; // incrementa o contador de componentes conexas
+            resultado->adicionarNo(no->getID(), no->getPeso());
+            arvore_caminhamento_profundidade_aux(no->getID(), '\0' , visitado, *resultado);
+        }
+    }
+    return componentes;
+}
+
+Grafo* Grafo::getSubgrafo(vector<char> ids_nos) {
+    Grafo* subgrafo = new Grafo(in_direcionado, in_ponderado_vertice, in_ponderado_aresta);
+
+    for (char id : ids_nos) {
+        No* no = getNo(id);
+        subgrafo->adicionarNo(no->getID(), no->getPeso());
+    }
+    
+    for(char id_no : ids_nos) {
+        No* no = getNo(id_no);
+        
+        for (Aresta* aresta : no->arestas) {
+            if (find(ids_nos.begin(), ids_nos.end(), aresta->getIDalvo()) != ids_nos.end()) {
+                subgrafo->adicionarAresta(no->getID(), aresta->getIDalvo(), aresta->getPeso());
+            }
+        }
+    }
+    
+    return subgrafo;
 }
