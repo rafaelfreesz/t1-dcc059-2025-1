@@ -53,7 +53,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("fecho_trans_indir.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                imprimeVetorNoArquivo("fecho_trans_indir.txt", fecho_transitivo_indireto);
             }
 
 ;
@@ -75,7 +75,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                imprimeVetorNoArquivo("caminho_minimo_dijkstra.txt", caminho_minimo_dijkstra);
             }
 
 
@@ -97,7 +97,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("caminho_minimo_floyd.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                imprimeVetorNoArquivo("caminho_minimo_floyd.txt", caminho_minimo_floyd);
             }
 
 
@@ -127,7 +127,7 @@ void Gerenciador::comandos(Grafo* grafo) {
                 cout << arvore_geradora_minima_prim->toString() << endl;
 
                 if(pergunta_imprimir_arquivo("agm_prim.txt")) {
-                    cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                    imprimeGrafoNoArquivo("agm_prim.txt", *arvore_geradora_minima_prim);
                 }
 
                 delete arvore_geradora_minima_prim;
@@ -162,7 +162,7 @@ void Gerenciador::comandos(Grafo* grafo) {
                 cout << arvore_geradora_minima_kruskal->toString() << endl;
 
                 if(pergunta_imprimir_arquivo("agm_kruskal.txt")) {
-                    cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                    imprimeGrafoNoArquivo("agm_kruskal.txt", *arvore_geradora_minima_kruskal);
                 }
 
                 delete arvore_geradora_minima_kruskal;
