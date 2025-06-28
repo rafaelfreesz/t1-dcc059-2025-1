@@ -183,7 +183,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout << "Aresta com peso -1 são arestas de retorno" << endl;
 
             if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                imprimeGrafoNoArquivo("arvore_caminhamento_profundidade.txt", *arvore_caminhamento_profundidade);
             }
 
             delete arvore_caminhamento_profundidade;
@@ -406,3 +406,14 @@ void Gerenciador::imprimeVetorNoArquivo(const std::string& nomeArquivo, vector<c
     std::cout << "Conteúdo impresso no arquivo com sucesso" << std::endl;
 }
 
+void Gerenciador::imprimeGrafoNoArquivo(const std::string& nomeArquivo, Grafo& grafoArquivo){
+    std::ofstream outfile;
+    outfile.open(nomeArquivo, ios::out);
+    if(!outfile) throw std::runtime_error("Erro ao criar: " + nomeArquivo);
+
+    outfile << grafoArquivo.toString() << endl << endl;
+
+    outfile.close();
+
+    std::cout << "Conteúdo impresso no arquivo com sucesso" << std::endl;
+}
