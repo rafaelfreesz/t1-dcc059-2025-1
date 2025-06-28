@@ -31,7 +31,8 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("fecho_trans_dir.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl<<endl;
+                imprimeVetorNoArquivo("fecho_trans_dir.txt", fecho_transitivo_direto);
+                cout<<endl<<endl;
             }
 
             break;
@@ -385,5 +386,23 @@ Grafo* Gerenciador::carregarGrafoDoArquivo(const std::string& nomeArquivo) {
     }
 
     return grafo;
+}
+
+void Gerenciador::imprimeVetorNoArquivo(const std::string& nomeArquivo, vector<char> vetorArquivo){
+    std::ofstream outfile;
+    outfile.open(nomeArquivo, ios::out);
+    if(!outfile) throw std::runtime_error("Erro ao criar: " + nomeArquivo);
+
+    outfile << "{";
+    for(int i = 0; i < vetorArquivo.size(); ++i) {
+        outfile << vetorArquivo[i];
+        if(i < vetorArquivo.size() - 1)
+            outfile << ", ";
+    }
+    outfile<<"}"<<endl<<endl;
+
+    outfile.close();
+
+    std::cout << "Conteúdo impresso no arquivo com sucesso" << std::endl;
 }
 
