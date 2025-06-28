@@ -31,7 +31,8 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("fecho_trans_dir.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl<<endl;
+                imprimeVetorNoArquivo("fecho_trans_dir.txt", fecho_transitivo_direto);
+                cout<<endl<<endl;
             }
 
             break;
@@ -52,7 +53,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("fecho_trans_indir.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                imprimeVetorNoArquivo("fecho_trans_indir.txt", fecho_transitivo_indireto);
             }
 
 ;
@@ -74,7 +75,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                imprimeVetorNoArquivo("caminho_minimo_dijkstra.txt", caminho_minimo_dijkstra);
             }
 
 
@@ -96,7 +97,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout<<"}"<<endl<<endl;
 
             if(pergunta_imprimir_arquivo("caminho_minimo_floyd.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                imprimeVetorNoArquivo("caminho_minimo_floyd.txt", caminho_minimo_floyd);
             }
 
 
@@ -111,12 +112,22 @@ void Gerenciador::comandos(Grafo* grafo) {
             if(tam > 0 && tam <= grafo->ordem) {
 
                 vector<char> ids = get_conjunto_ids(grafo,tam);
+
+                Grafo *subgrafo = grafo->getSubgrafo(ids);
+                if(subgrafo->numComponentesConexas() > 1) {
+                    cout<<"O subgrafo escolhido nao é conexo, impossivel calcular a arvore geradora minima\n\n";
+                    delete subgrafo;
+                    break;
+                }
+                delete subgrafo;
+
+
                 Grafo* arvore_geradora_minima_prim = grafo->arvore_geradora_minima_prim(ids);
                 cout<< "Arvore geradora minima pelo método de Prim: " << endl;
                 cout << arvore_geradora_minima_prim->toString() << endl;
 
                 if(pergunta_imprimir_arquivo("agm_prim.txt")) {
-                    cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                    imprimeGrafoNoArquivo("agm_prim.txt", *arvore_geradora_minima_prim);
                 }
 
                 delete arvore_geradora_minima_prim;
@@ -137,12 +148,21 @@ void Gerenciador::comandos(Grafo* grafo) {
             if(tam > 0 && tam <= grafo->ordem) {
 
                 vector<char> ids = get_conjunto_ids(grafo,tam);
+
+                Grafo *subgrafo = grafo->getSubgrafo(ids);
+                if(subgrafo->numComponentesConexas() > 1) {
+                    cout<<"O subgrafo escolhido nao é conexo, impossivel calcular a arvore geradora minima\n\n";
+                    delete subgrafo;
+                    break;
+                }
+                delete subgrafo;
+
                 Grafo* arvore_geradora_minima_kruskal = grafo->arvore_geradora_minima_kruskal(ids);
-                cout << "Arvore geradora minima pelo método de Kruskal: ";
+                cout << "Arvore geradora minima pelo método de Kruskal: " << endl;
                 cout << arvore_geradora_minima_kruskal->toString() << endl;
 
                 if(pergunta_imprimir_arquivo("agm_kruskal.txt")) {
-                    cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                    imprimeGrafoNoArquivo("agm_kruskal.txt", *arvore_geradora_minima_kruskal);
                 }
 
                 delete arvore_geradora_minima_kruskal;
@@ -163,7 +183,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout << "Aresta com peso -1 são arestas de retorno" << endl;
 
             if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                imprimeGrafoNoArquivo("arvore_caminhamento_profundidade.txt", *arvore_caminhamento_profundidade);
             }
 
             delete arvore_caminhamento_profundidade;
@@ -368,3 +388,32 @@ Grafo* Gerenciador::carregarGrafoDoArquivo(const std::string& nomeArquivo) {
     return grafo;
 }
 
+void Gerenciador::imprimeVetorNoArquivo(const std::string& nomeArquivo, vector<char> vetorArquivo){
+    std::ofstream outfile;
+    outfile.open(nomeArquivo, ios::out);
+    if(!outfile) throw std::runtime_error("Erro ao criar: " + nomeArquivo);
+
+    outfile << "{";
+    for(int i = 0; i < vetorArquivo.size(); ++i) {
+        outfile << vetorArquivo[i];
+        if(i < vetorArquivo.size() - 1)
+            outfile << ", ";
+    }
+    outfile<<"}"<<endl<<endl;
+
+    outfile.close();
+
+    std::cout << "Conteúdo impresso no arquivo com sucesso" << std::endl;
+}
+
+void Gerenciador::imprimeGrafoNoArquivo(const std::string& nomeArquivo, Grafo& grafoArquivo){
+    std::ofstream outfile;
+    outfile.open(nomeArquivo, ios::out);
+    if(!outfile) throw std::runtime_error("Erro ao criar: " + nomeArquivo);
+
+    outfile << grafoArquivo.toString() << endl << endl;
+
+    outfile.close();
+
+    std::cout << "Conteúdo impresso no arquivo com sucesso" << std::endl;
+}
