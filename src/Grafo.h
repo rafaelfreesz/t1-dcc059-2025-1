@@ -13,6 +13,8 @@
 #include <string>
 #include <sstream>
 #include <climits>
+#include <queue>
+#include <functional>
 
 using namespace std;
 
@@ -27,7 +29,7 @@ public:
     // funções para implementar
     vector<char> fecho_transitivo_direto(char id_no); // a RESOLVIDO
     vector<char> fecho_transitivo_indireto(char id_no); // b RESOLVIDO
-    vector<char> caminho_minimo_dijkstra(char id_no_a, char id_no_b); // c
+    vector<char> caminho_minimo_dijkstra(const char id_no_a, const char id_no_b); // c
     vector<char> caminho_minimo_floyd(char id_no, char id_no_b); // d
     Grafo* arvore_geradora_minima_prim(vector<char> ids_nos); // e RESOLVIDO
     Grafo* arvore_geradora_minima_kruskal(vector<char> ids_nos); // f RESOLVIDO
@@ -57,7 +59,6 @@ private:
     No* getNo(char id);
     void fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
     void fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
-    void dijkstra_aux(char noAtual, map<char, int> &distancias, map<char, char> &predecessores);
     void arvore_caminhamento_profundidade_aux(char id_no, char id_pai, map<char, bool> &visitados, Grafo &resultado);
 };
 
