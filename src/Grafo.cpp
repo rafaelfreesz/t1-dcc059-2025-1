@@ -109,45 +109,49 @@ void Grafo::fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados
     }
 }
 
-vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b) {
+
+vector<char> Grafo::caminho_minimo_dijkstra(const char id_no_a, const char id_no_b) {
     vector<char> caminho;
+    priority_queue<pair<int, char>, vector<pair<int, char>>, greater<pair<int, char>>> pq;
     map<char, int> distancias;
-    distancias[id_no_a] = 0;
     map<char, char> predecessores;
-    dijkstra_aux(id_no_a, distancias, predecessores);
 
-    if (distancias.find(id_no_b) == distancias.end()) {
-        return caminho; // Retorna vazio se nao houver caminho
-    } else {
-        char atual = id_no_b;
-        while (atual != id_no_a) {
-            caminho.push_back(atual);
-            if (predecessores.find(atual) == predecessores.end()) {
-                return {}; // Retorna vazio se nao houver caminho
+    distancias[id_no_a] = 0;
+    pq.push({0, id_no_a}); 
+
+    while (!pq.empty()) {
+        char atual = pq.top().second; 
+        pq.pop();
+
+        if (atual == id_no_b) {
+            break;
+        }
+
+        No* noAtual = getNo(atual);
+        for (const auto& aresta : noAtual->arestas) {
+            char id_alvo = aresta->id_no_alvo;
+            int peso = aresta->getPeso();
+            int nova_distancia = distancias[atual] + peso;
+
+            if (distancias.find(id_alvo) == distancias.end() || nova_distancia < distancias[id_alvo]) {
+                distancias[id_alvo] = nova_distancia;
+                predecessores[id_alvo] = atual;
+                pq.push({nova_distancia, id_alvo});
             }
-            atual = predecessores[atual];
         }
-        caminho.push_back(id_no_a);
-        reverse(caminho.begin(), caminho.end()); // Inverte o caminho para a ordem correta
     }
 
+    char atual = id_no_b;
+    while (atual != id_no_a) {
+        if (predecessores.find(atual) == predecessores.end()) {
+            return {}; // Se não houver caminho, retorna vazio
+        }
+        caminho.push_back(atual);
+        atual = predecessores[atual];
+    }
+    caminho.push_back(id_no_a);
+    reverse(caminho.begin(), caminho.end()); // Inverte o caminho para a ordem correta
     return caminho;
-}
-
-void Grafo::dijkstra_aux(char noAtual, map<char, int> &distancias, map<char, char> &predecessores) {
-    No* no = getNo(noAtual);
-
-    for (const auto& aresta : no->arestas) {
-        char id_alvo = aresta->id_no_alvo;
-        int peso = aresta->getPeso();
-        
-        int nova_distancia = distancias[noAtual] + peso;
-        if(distancias.find(id_alvo) == distancias.end() || nova_distancia < distancias[id_alvo]) {
-            distancias[id_alvo] = nova_distancia;
-            predecessores[id_alvo] = noAtual;
-            dijkstra_aux(id_alvo, distancias, predecessores);
-        }
-    }
 }
 
 
