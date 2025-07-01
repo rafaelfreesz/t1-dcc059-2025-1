@@ -175,7 +175,7 @@ Grafo::~Grafo() {
 }
 
 
-vector<char> Grafo::fecho_transitivo_direto(int id_no) {
+vector<char> Grafo::fecho_transitivo_direto(char id_no) {
     No* origem = nullptr;
     for (No* no : lista_adj) {
         if (no->get_id() == id_no) {
