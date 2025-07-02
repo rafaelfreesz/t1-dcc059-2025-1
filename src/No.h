@@ -2,6 +2,7 @@
 #define NO_H
 
 #include <string>
+#include <sstream>
 #include <vector>
 #include "Aresta.h"
 

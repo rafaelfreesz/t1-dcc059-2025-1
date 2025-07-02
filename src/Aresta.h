@@ -15,7 +15,6 @@ public:
     void setIDalvo(char novoID);
     int getPeso();
     void setPeso(int peso);
-    
 };
 
 
