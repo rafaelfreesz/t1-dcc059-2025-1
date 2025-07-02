@@ -203,12 +203,27 @@ void Gerenciador::comandos(Grafo* grafo) {
         map<char, int> indiceMap;
         vector<vector<int>> matrizDistancias;
 
+
         // Obter todos os IDs e mapear para índices
         for (int i = 0; i < grafo->ordem; i++) {
             char id = grafo->lista_adj[i]->getID();
             todosIDs.push_back(id);
             indiceMap[id] = i;
         }
+
+        // 2. Calcular distâncias mínimas entre todos os pares
+        int n = todosIDs.size();
+        matrizDistancias.resize(n, vector<int>(n, INT_MAX));
+
+        for (int i = 0; i < n; i++) {
+            matrizDistancias[i][i] = 0;
+        
+        for (Aresta* aresta : grafo->lista_adj[i]->arestas) {
+            char destinoID = aresta->getIDalvo();
+            int j = indiceMap[destinoID];
+            matrizDistancias[i][j] = aresta->getPeso();
+        }
+    }
 
             /*vector<char> articulacao = grafo->vertices_de_articulacao();
             cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
