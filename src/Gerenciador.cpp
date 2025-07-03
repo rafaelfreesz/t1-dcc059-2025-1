@@ -209,15 +209,15 @@ void Gerenciador::comandos(Grafo* grafo) {
             for (int i = 0; i < grafo->ordem; i++) {
                 char id = grafo->lista_adj[i]->getID();
                 todosIDs.push_back(id);
-                indiceMap[id] = i;  // Mapeamento direto para acesso eficiente
+                indiceMap[id] = i;  // Mapeamento direto, aparentemente é mais eficiente
             }
         
             // Matriz de distâncias
-            // Diferença fundamental: Aqui armazenamos distâncias numéricas, não caminhos
+            // Aqui armazenamos distâncias numéricas, não caminhos
             int n = todosIDs.size();
             matrizDistancias.resize(n, vector<int>(n, INT_MAX));  // INT_MAX = infinito
         
-            // Configura auto-distâncias (0) e distâncias diretas das arestas
+            // Configura auto-distâncias setadas pra 0 e distâncias diretas das arestas
             for (int i = 0; i < n; i++) {
                 matrizDistancias[i][i] = 0;  // Distância para si mesmo
                 
