@@ -11,8 +11,9 @@ class No {
     public:
         No(char id, int peso) : id(id), peso(peso){} //vertice ponderado
         No(char id) : id(id){} //vertice não ponderado
-        ~No();
-
+        ~No() {
+        for (Aresta* a : arestas) delete a;
+    }
         // Getters
         char get_id() const {return id;};
         int get_peso() const {return peso;};
@@ -21,6 +22,8 @@ class No {
 
         // Setters
         void set_peso(int novo_peso) {peso = novo_peso;};
+        void add_vizinho(No* viz) { vizinhos.push_back(viz); }
+        void add_aresta(char id_dest, int peso) { arestas.push_back(new Aresta(id_dest, peso)); }
 
     private:
         char id;
