@@ -62,7 +62,8 @@ void Grafo::carregaArquivo(const string &grafo)
         cout << "Erro: grafo deve possuir apenas UM(1) valor para a ordem." << endl;
         exit(0);
     }
-    set_ordem(line.at(0));
+    ordem = stoi(line); // converte string inteira pra int
+
 
     vector<No *> v = get_vertices();
     if (get_ponderado_vertice() == true)
