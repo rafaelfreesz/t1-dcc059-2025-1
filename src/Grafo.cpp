@@ -77,6 +77,8 @@ vector<char> Grafo::fecho_transitivo_direto(char id_no) {
     return resultado;
 }
 
+
+// Visita recursivamente os nós, como a busca em profundidade, e retorna os nós visitados
 void Grafo::fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado) {
     No* no = getNo(id_no);
     for(const auto& aresta : no->arestas) {
@@ -92,11 +94,12 @@ void Grafo::fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, 
 vector<char> Grafo::fecho_transitivo_indireto(char id_no) {
     map<char, bool> visitados;
     vector<char> resultado;
-    visitados[id_no] = true; // Marca o nó inicial como visitado
+    visitados[id_no] = true; 
     fecho_transitivo_indireto_aux(id_no, visitados, resultado);
     return resultado;
 }
 
+// Mesma ideia do fecho direto, mas visita as arestas invertidas
 void Grafo::fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado) {
     No* no = getNo(id_no);
     for(const auto& aresta : no->arestas_invertidas) {
@@ -119,20 +122,25 @@ vector<char> Grafo::caminho_minimo_dijkstra(const char id_no_a, const char id_no
     distancias[id_no_a] = 0;
     pq.push({0, id_no_a}); 
 
-    while (!pq.empty()) {
+    while (!pq.empty()) { // Enquanto houver nós na fila de prioridade
+        // Pega o nó com a menor distância
         char atual = pq.top().second; 
         pq.pop();
 
+        // Se é o nó de destino, termina a busca
         if (atual == id_no_b) {
             break;
         }
 
         No* noAtual = getNo(atual);
-        for (const auto& aresta : noAtual->arestas) {
+        for (const auto& aresta : noAtual->arestas) { //Olhamos cada aresta do nó atual
             char id_alvo = aresta->id_no_alvo;
             int peso = aresta->getPeso();
             int nova_distancia = distancias[atual] + peso;
 
+            // Calculamos a distância
+            // Se a distância não existe no map, é tratada como infinita
+            // Se a nova distância for menor que a distância já registrada, atualiza
             if (distancias.find(id_alvo) == distancias.end() || nova_distancia < distancias[id_alvo]) {
                 distancias[id_alvo] = nova_distancia;
                 predecessores[id_alvo] = atual;
@@ -141,6 +149,7 @@ vector<char> Grafo::caminho_minimo_dijkstra(const char id_no_a, const char id_no
         }
     }
 
+    // Reconstrução através dos predecessores
     char atual = id_no_b;
     while (atual != id_no_a) {
         if (predecessores.find(atual) == predecessores.end()) {
