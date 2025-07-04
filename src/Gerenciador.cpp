@@ -1,4 +1,5 @@
 #include "Gerenciador.h"
+#include "Grafo.h"
 #include <fstream>
 
 

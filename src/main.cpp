@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Gerenciador.h"
+#include "Grafo.h"
 
 using namespace std;
 int main(int argc, char *argv[])
