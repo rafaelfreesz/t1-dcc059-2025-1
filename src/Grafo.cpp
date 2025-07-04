@@ -48,21 +48,22 @@ void Grafo::adicionarAresta(char origemID, char destinoID, int peso){
     no1->adicionarAresta(novaAresta);
     // adiciona aresta ao nó de origem
 
+    Aresta* arestaInversa = new Aresta(origemID, peso_aresta);
     if(!in_direcionado){
-        Aresta* arestaInversa = new Aresta(origemID, peso_aresta);
-        no2->adicionarAresta(arestaInversa);
         // adiciona aresta inversa se o grafo não for direcionado
+        no2->adicionarAresta(arestaInversa);
+    } else {
+        // Adiciona aresta invertida nas invertidas para Fecho Transitivo Indireto
+        no2->adicionarArestaInvertida(arestaInversa);
     }
 }
 
-//TODO: Procurar saber se o char é aleatório ou se segue como um número
 No* Grafo::getNo(char id) {
     for (No* no : lista_adj) {
         if (no->getID() == id) {
             return no;
         }
     }
-    //TODO: Tratar erro melhor
     cout << "No com id " << id << " nao encontrado." << endl;
     exit(1);
 }
@@ -86,7 +87,6 @@ void Grafo::fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, 
             fecho_transitivo_direto_aux(id_alvo, visitados, resultado);
         }
     }
-    
 }
 
 vector<char> Grafo::fecho_transitivo_indireto(char id_no) {
@@ -196,7 +196,7 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
                    distancia[j][i] + distancia[i][k] < distancia[j][k]){
                     distancia[j][k] = distancia[j][i] + distancia[i][k];
                     predecessor[j][k] = predecessor[i][k];
-                   }
+                }
             }
         }
     }
