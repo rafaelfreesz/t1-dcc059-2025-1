@@ -2,157 +2,109 @@
 #include "No.h"
 #include <cstdlib>
 #include <set>
-//#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
 using namespace std;
-Grafo::Grafo()
-{
+
+// Construtor padrão do grafo
+Grafo::Grafo() {
     ordem = 0;
     in_direcionado = false;
     in_ponderado_aresta = false;
     in_ponderado_vertice = false;
-    lista_adj = vector<No *>();
+    lista_adj = vector<No*>();
 }
-// Novo construtor com nome do arquivo
-Grafo::Grafo(const std::string &nome_arquivo) : Grafo()
-{                                 // chama o construtor padrão
-    carregaArquivo(nome_arquivo); // carrega o grafo ao criar o objeto
+
+// Construtor que recebe o nome do arquivo e carrega o grafo
+Grafo::Grafo(const std::string& nome_arquivo) : Grafo() {
+    carregaArquivo(nome_arquivo);
 }
-// recebe string com o nome do grafo do comando de execução.
-//./execGrupoX nome_do_txt <---string recebida
-void Grafo::carregaArquivo(const string &grafo)
-{
 
-    // filesystem::path base_path = "../t1-dcc059/instancias/";
-    // filesystem::path full_path = base_path / grafo;
-
+// Carrega o grafo a partir de um arquivo
+void Grafo::carregaArquivo(const string& grafo) {
     string caminho = "../instancias/" + grafo;
     cout << "Tentando abrir arquivo em: " << caminho << endl;
 
     ifstream arquivo(caminho);
     string line;
-    size_t location;
 
-    if (!arquivo.is_open())
-    {
+    if (!arquivo.is_open()) {
         cerr << "Erro ao abrir arquivo: " << grafo << endl;
         exit(1);
     }
-    // linha zero. [ex: (0 0 0), (0 1 1)]
+
+    // Lê as configurações iniciais do grafo
     getline(arquivo, line);
-    // trata excelçoes na quantidade de argumentos da linha
-    if (line.length() != 5)
-    {
-        cout << line.length() << endl;
-        cout << "Erro: formato inválido da lista de adjacencia. linha 0" << endl;
-        exit(0);
+    if (line.length() < 5) {
+        cout << "Erro: formato inválido da linha de configuração." << endl;
+        exit(1);
     }
-    set_direcionado(line.at(0) == '1');       // define se o grafo é orientado
-    set_ponderado_aresta(line.at(2) == '1');  // define se o grafo é ponderado nas arestas
-    set_ponderado_vertice(line.at(4) == '1'); // define se o grafo é ponderado nos vertices
+    set_direcionado(line.at(0) == '1');
+    set_ponderado_aresta(line.at(2) == '1');
+    set_ponderado_vertice(line.at(4) == '1');
 
-    // linha um. ordem do grafo
+    // Lê a ordem do grafo (número de vértices)
     getline(arquivo, line);
-    // trata exceções na quantidade de argumentos da linha
-    if (line.length() != 1)
-    {
-        cout << "Erro: grafo deve possuir apenas UM(1) valor para a ordem." << endl;
-        exit(0);
-    }
-    ordem = stoi(line); // converte string inteira pra int
+    ordem = stoi(line);
 
-    vector<No *> v = get_vertices();
-    if (get_ponderado_vertice() == true)
-    {
-        for (int i = 0; i < ordem; ++i)
-        {
-            getline(arquivo, line);
-
-            if (!line.empty())
-            {
-                char nome;
+    // Lê os vértices
+    for (int i = 0; i < ordem; ++i) {
+        getline(arquivo, line);
+        if (!line.empty()) {
+            if (in_ponderado_vertice) {
+                istringstream iss(line);
+                char id;
                 int peso;
-                std::istringstream iss(line);
-                iss >> nome >> peso;
-
-                No *p = new No(nome, peso);
-                lista_adj.push_back(p);
-            }
-        }
-        cout << endl;
-        // set_vertices(v);
-    }
-    else
-    {
-        for (int i = 0; i < ordem; ++i)
-        {
-            getline(arquivo, line);
-            if (!line.empty())
-            {
-                No *p = new No(line.at(0));
-                lista_adj.push_back(p);
+                iss >> id >> peso;
+                No* no = new No(id, peso);
+                lista_adj.push_back(no);
+            } else {
+                char id = line.at(0);
+                No* no = new No(id);
+                lista_adj.push_back(no);
             }
         }
     }
 
-    // Read graph properties
-    // arquivo >> in_direcionado >> in_ponderado_aresta >> in_ponderado_vertice;
-    // arquivo >> ordem;
-
-    // Read vertices
-    while (getline(arquivo, line))
-    {
-        if (line.empty())
-            continue;
+    // Lê as arestas
+    while (getline(arquivo, line)) {
+        if (line.empty()) continue;
         istringstream iss(line);
         char origem_id, destino_id;
         int peso = 1;
 
-        if (in_ponderado_aresta)
-        {
+        if (in_ponderado_aresta) {
             iss >> origem_id >> destino_id >> peso;
-        }
-        else
-        {
+        } else {
             iss >> origem_id >> destino_id;
         }
 
-        No *origem = nullptr;
-        No *destino = nullptr;
+        No* origem = nullptr;
+        No* destino = nullptr;
 
-        for (No *no : lista_adj)
-        {
-            if (no->get_id() == origem_id)
-                origem = no;
-            if (no->get_id() == destino_id)
-                destino = no;
+        for (No* no : lista_adj) {
+            if (no->get_id() == origem_id) origem = no;
+            if (no->get_id() == destino_id) destino = no;
         }
 
-        if (origem && destino)
-        {
+        if (origem && destino) {
             origem->add_vizinho(destino);
             origem->add_aresta(destino_id, peso);
 
-
-            if (!in_direcionado)
-            {
+            if (!in_direcionado) {
                 destino->add_vizinho(origem);
                 destino->add_aresta(origem_id, peso);
-
             }
         }
     }
 
     arquivo.close();
 }
-// cout << "Grafo carregado com sucesso de: " << grafo << endl;
 
-
-void Grafo::imprimeInfo() const
-{
+// Imprime informações gerais do grafo
+void Grafo::imprimeInfo() const {
     cout << "----- Informações do Grafo -----" << endl;
     cout << "Ordem: " << ordem << endl;
     cout << "Direcionado: " << (in_direcionado ? "Sim" : "Não") << endl;
@@ -160,35 +112,51 @@ void Grafo::imprimeInfo() const
     cout << "Ponderado nos Vértices: " << (in_ponderado_vertice ? "Sim" : "Não") << endl;
 
     cout << "\nVértices:" << endl;
-    for (const auto &no : lista_adj )
-    {
+    for (const auto& no : lista_adj) {
         cout << "- " << no->get_id();
-        if (get_ponderado_vertice())
-        {
+        if (in_ponderado_vertice) {
             cout << " (peso: " << no->get_peso() << ")";
         }
         cout << endl;
     }
-
     cout << "---------------------------------" << endl;
 }
 
-void Grafo::aux_dfs(No *no, set<char> &visitado)
-{
-    if (visitado.find(no->get_id()) == visitado.end())
-    {
+// Função auxiliar de DFS (busca em profundidade)
+void Grafo::aux_dfs(No* no, set<char>& visitado) {
+    if (visitado.find(no->get_id()) == visitado.end()) {
         visitado.insert(no->get_id());
-        for (No *vizinho : no->get_vizinhos())
-        {
+        for (No* vizinho : no->get_vizinhos()) {
             aux_dfs(vizinho, visitado);
         }
     }
 }
 
-Grafo::~Grafo()
-{
+// Destrutor do grafo
+Grafo::~Grafo() {
+    for (No* no : lista_adj) delete no;
 }
 
+// Retorna o fecho transitivo direto de um nó (DFS)
+vector<char> Grafo::fecho_transitivo_direto(char id_no) {
+    No* origem = nullptr;
+    for (No* no : lista_adj) {
+        if (no->get_id() == id_no) {
+            origem = no;
+            break;
+        }
+    }
+    if (origem == nullptr) {
+        cout << "No com id " << id_no << " nao encontrado." << endl;
+        return {};
+    }
+    set<char> visitado;
+    aux_dfs(origem, visitado);
+    visitado.erase(id_no);
+    return vector<char>(visitado.begin(), visitado.end());
+}
+
+// Retorna o fecho transitivo indireto de um nó
 vector<char> Grafo::fecho_transitivo_indireto(char id_no) {
     set<char> fecho;
     for (No* no : lista_adj) {
@@ -198,72 +166,57 @@ vector<char> Grafo::fecho_transitivo_indireto(char id_no) {
             fecho.insert(no->get_id());
         }
     }
-    fecho.erase(id_no); // opcional: remover o próprio nó
+    fecho.erase(id_no);
     return vector<char>(fecho.begin(), fecho.end());
 }
 
-vector<char> Grafo::fecho_transitivo_indireto(char id_no)
-{
+// Métodos ainda não implementados
+vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b) {
     cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
-{
+vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
     cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b)
-{
-    cout << "Metodo nao implementado" << endl;
-    return {};
-}
-
-Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
-{
+Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
     cout << "Metodo nao implementado" << endl;
     return nullptr;
 }
 
-Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
-{
+Grafo * Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos) {
     cout << "Metodo nao implementado" << endl;
     return nullptr;
 }
 
-Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
-{
+Grafo * Grafo::arvore_caminhamento_profundidade(char id_no) {
     cout << "Metodo nao implementado" << endl;
     return nullptr;
 }
 
-int Grafo::raio()
-{
+int Grafo::raio() {
     cout << "Metodo nao implementado" << endl;
     return 0;
 }
 
-int Grafo::diametro()
-{
+int Grafo::diametro() {
     cout << "Metodo nao implementado" << endl;
     return 0;
 }
 
-vector<char> Grafo::centro()
-{
+vector<char> Grafo::centro() {
     cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-vector<char> Grafo::periferia()
-{
+vector<char> Grafo::periferia() {
     cout << "Metodo nao implementado" << endl;
     return {};
 }
 
-vector<char> Grafo::vertices_de_articulacao()
-{
+vector<char> Grafo::vertices_de_articulacao() {
     cout << "Metodo nao implementado" << endl;
     return {};
 }
