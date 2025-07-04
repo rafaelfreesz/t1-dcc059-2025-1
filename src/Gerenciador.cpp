@@ -344,9 +344,6 @@ void Gerenciador::comandos(Grafo* grafo) {
             }
 
             break;*/
-
-        }
-        
         case 'i': {
 
             vector<char> articulacao = grafo->vertices_de_articulacao();
