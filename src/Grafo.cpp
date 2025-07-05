@@ -13,8 +13,8 @@ Grafo::Grafo(bool direcionado, bool ponderado_vertice, bool ponderado_aresta) {
 }
 
 Grafo::~Grafo() {
-    for(No* no : lista_adj){
-        delete no;
+    for(No* no : lista_adj) {
+        delete no; // Deleta cada nó
     }
 }
 
@@ -68,7 +68,6 @@ No* Grafo::getNo(char id) {
     exit(1);
 }
 
-
 vector<char> Grafo::fecho_transitivo_direto(char id_no) {
     map<char, bool> visitados;
     vector<char> resultado;
@@ -111,7 +110,6 @@ void Grafo::fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados
         }
     }
 }
-
 
 vector<char> Grafo::caminho_minimo_dijkstra(const char id_no_a, const char id_no_b) {
     vector<char> caminho;
@@ -162,7 +160,6 @@ vector<char> Grafo::caminho_minimo_dijkstra(const char id_no_a, const char id_no
     reverse(caminho.begin(), caminho.end()); // Inverte o caminho para a ordem correta
     return caminho;
 }
-
 
 vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
 
@@ -240,7 +237,7 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
     return caminhoIDs;
 }
 
-Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
+Grafo* Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
     struct prox{
         char id_no_proximo;
         int custo;
@@ -299,7 +296,6 @@ Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
         
         cont++;
     }
-    
     
     return resultado;
 }
