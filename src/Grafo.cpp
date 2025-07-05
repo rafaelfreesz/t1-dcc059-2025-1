@@ -444,24 +444,113 @@ void Grafo::arvore_caminhamento_profundidade_aux(char id_no, char id_pai, map<ch
     }
 }
 
+vector<vector<int>> Grafo::floydWarshall() {
+    // Mapeamento de IDs para índices numéricos
+    vector<char> todosIDs;
+    map<char, int> indiceMap;
+    map<int, char> idMap;
+    int n = ordem;
+    
+    for(int i = 0; i < n; i++) {
+        char id = lista_adj[i]->getID();
+        todosIDs.push_back(id);
+        indiceMap[id] = i;
+        idMap[i] = id;
+    }
+
+    // Inicialização da matriz de distâncias
+    vector<vector<int>> matrizDistancias(n, vector<int>(n, INT_MAX));
+
+    // Configuração da diagonal e arestas diretas
+    for(int i = 0; i < n; i++) {
+        matrizDistancias[i][i] = 0;
+        No* no = lista_adj[i];
+        
+        for(Aresta* aresta : no->arestas) {
+            char destinoID = aresta->getIDalvo();
+            if(indiceMap.find(destinoID) != indiceMap.end()) {
+                int j = indiceMap[destinoID];
+                matrizDistancias[i][j] = aresta->getPeso();
+            }
+        }
+    }
+
+    // Algoritmo principal de Floyd-Warshall
+    for(int k = 0; k < n; k++) {
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                if(matrizDistancias[i][k] != INT_MAX && 
+                   matrizDistancias[k][j] != INT_MAX &&
+                   matrizDistancias[i][k] + matrizDistancias[k][j] < matrizDistancias[i][j]) {
+                    matrizDistancias[i][j] = matrizDistancias[i][k] + matrizDistancias[k][j];
+                }
+            }
+        }
+    }
+
+    return matrizDistancias;
+}
+
+vector<int> Grafo::excentricidades(const vector<vector<int>>& matrizDistancias) {
+    int n = matrizDistancias.size();
+    vector<int> excentricidades(n, 0);
+
+    for(int i = 0; i < n; i++) {
+        int maxDist = 0;
+        for(int j = 0; j < n; j++) {
+            if(matrizDistancias[i][j] != INT_MAX && 
+               matrizDistancias[i][j] > maxDist) {
+                maxDist = matrizDistancias[i][j];
+            }
+        }
+        excentricidades[i] = maxDist;
+    }
+
+    return excentricidades;
+}
+
 int Grafo::raio() {
-    cout<<"Metodo nao implementado"<<endl;
-    return 0;
+    vector<vector<int>> dist = floydWarshall();
+    vector<int> ecc = excentricidades(dist);
+    int raio = *min_element(ecc.begin(), ecc.end());
+    return raio;
 }
 
 int Grafo::diametro() {
-    cout<<"Metodo nao implementado"<<endl;
-    return 0;
+    vector<vector<int>> dist = floydWarshall();
+    vector<int> ecc = excentricidades(dist);
+    int diametro = *max_element(ecc.begin(), ecc.end());
+    return diametro;
 }
 
 vector<char> Grafo::centro() {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    vector<vector<int>> dist = floydWarshall();
+    vector<int> ecc = excentricidades(dist);
+    int r = raio();
+    vector<char> centroIDs;
+    
+    for(int i = 0; i < ecc.size(); i++) {
+        if(ecc[i] == r) {
+            centroIDs.push_back(lista_adj[i]->getID());
+        }
+    }
+    
+    return centroIDs;
 }
 
 vector<char> Grafo::periferia() {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    vector<vector<int>> dist = floydWarshall();
+    vector<int> ecc = excentricidades(dist);
+    int d = diametro();
+    vector<char> periferiaIDs;
+    
+    for(int i = 0; i < ecc.size(); i++) {
+        if(ecc[i] == d) {
+            periferiaIDs.push_back(lista_adj[i]->getID());
+        }
+    }
+    
+    return periferiaIDs;
 }
 
 vector<char> Grafo::vertices_de_articulacao() {

@@ -191,159 +191,58 @@ void Gerenciador::comandos(Grafo* grafo) {
         }
 
         case 'h': {
-
-            //TESTANDO E SUJEITO A ALTERAÇÃO
-            //Formatar o código melhor, testar, e verificar se posso usar mais métodos já existentes
-            // Garante que o grafo é ponderado nas arestas, segundo especificação
-            if (!grafo->in_ponderado_aresta) {
-                cout << "Erro: Requer grafo ponderado nas arestas." << endl;
-                break;
-            }
+            int r = grafo->raio();
+            int d = grafo->diametro();
+            vector<char> c = grafo->centro();
+            vector<char> p = grafo->periferia();
         
-            // Lista para armazenar todos os IDs dos vértices e mapa para ID->índice numérico
-            vector<char> todosIDs;
-            map<char, int> indiceMap;
-            vector<vector<int>> matrizDistancias;
-        
-            // Popula as estruturas com base nos vértices do grafo
-            for (int i = 0; i < grafo->ordem; i++) {
-                char id = grafo->lista_adj[i]->getID();
-                todosIDs.push_back(id);
-                indiceMap[id] = i;  // Mapeamento direto, aparentemente é mais eficiente
-            }
-        
-            // Matriz de distâncias
-            // Aqui armazenamos distâncias numéricas, não caminhos
-            int n = todosIDs.size();
-            matrizDistancias.resize(n, vector<int>(n, INT_MAX));  // INT_MAX = infinito
-        
-            // Configura auto-distâncias setadas pra 0 e distâncias diretas das arestas
-            for (int i = 0; i < n; i++) {
-                matrizDistancias[i][i] = 0;  // Distância para si mesmo
-                
-                // Percorre todas as arestas do vértice atual
-                for (Aresta* aresta : grafo->lista_adj[i]->arestas) {
-                    char destinoID = aresta->getIDalvo();
-                    int j = indiceMap[destinoID];  // Índice numérico do destino
-                    matrizDistancias[i][j] = aresta->getPeso();  // Armazena apenas o valor numérico
-                }
-            }
-        
-            // Usa Floyd
-            // Diferente do Floyd já implementado
-            // Implementação focada em valores numéricos (não em caminhos)
-            // Enquanto o Floyd em Grafo.cpp reconstrui caminhos (sequência de vértices),
-            // esta versão calcula apenas distâncias mínimas (valores inteiros)
-            for (int k = 0; k < n; k++) {           // Vértice intermediário
-                for (int i = 0; i < n; i++) {       // Vértice origem
-                    for (int j = 0; j < n; j++) {   // Vértice destino
-                        // Ignora pares não conectados
-                        if (matrizDistancias[i][k] != INT_MAX && 
-                            matrizDistancias[k][j] != INT_MAX) {
-                            
-                            // Calcula distância via vértice intermediário k
-                            int novaDist = matrizDistancias[i][k] + matrizDistancias[k][j];
-                            
-                            // Atualiza se encontrarmos caminho mais curto
-                            if (novaDist < matrizDistancias[i][j]) {
-                                matrizDistancias[i][j] = novaDist;  // Armazena apenas o número
-                            }
-                        }
-                    }
-                }
-            }
-        
-            // PARA LEMBRETE
-            //Excentricidade = maior distância mínima de um vértice para outros
-            vector<int> excentricidades(n, 0);
-            for (int i = 0; i < n; i++) {
-                int maxDist = 0;
-                // Encontra a maior distância na linha i da matriz
-                for (int j = 0; j < n; j++) {
-                    // Considera apenas conexões válidas (não infinito)
-                    if (matrizDistancias[i][j] != INT_MAX && 
-                        matrizDistancias[i][j] > maxDist) {
-                        maxDist = matrizDistancias[i][j];
-                    }
-                }
-                excentricidades[i] = maxDist;
-            }
+            // Raio (apenas o valor)
+            cout << r << endl;
             
-            // PARA LEMBRETE
-            //Cálculo do raio e diâmetro
-            // Raio = menor excentricidade, Diâmetro = maior excentricidade
-            int raio = *min_element(excentricidades.begin(), excentricidades.end());
-            int diametro = *max_element(excentricidades.begin(), excentricidades.end());
-        
-            // Identificação do centro e periferia
-            // Centro = vértices com excentricidade = raio
-            // Periferia = vértices com excentricidade = diâmetro
-            vector<char> centro;
-            vector<char> periferia;
-            for (int i = 0; i < n; i++) {
-                if (excentricidades[i] == raio) {
-                    centro.push_back(todosIDs[i]);  // Usa ID original
-                }
-                if (excentricidades[i] == diametro) {
-                    periferia.push_back(todosIDs[i]);
-                }
-            }
-        
-            // Exibição dos resultados 
-            cout << "\nRaio: " << raio << endl;
-            cout << "Diâmetro: " << diametro << endl;
+            // Diâmetro (apenas o valor)
+            cout << d << endl;
             
-            // Formata e exibe centro
-            cout << "Centro: {";
-            for (int i = 0; i < centro.size(); i++) {
-                cout << centro[i];
-                if (i < centro.size() - 1) cout << ", ";
+            // Centro (elementos separados por vírgula)
+            for (int i = 0; i < c.size(); i++) {
+                cout << c[i];
+                if (i < c.size() - 1) cout << ",";
             }
-            cout << "}" << endl;
+            cout << endl;
             
-            // Formata e exibe periferia
-            cout << "Periferia: {";
-            for (int i = 0; i < periferia.size(); i++) {
-                cout << periferia[i];
-                if (i < periferia.size() - 1) cout << ", ";
+            // Periferia (elementos separados por vírgula)
+            for (int i = 0; i < p.size(); i++) {
+                cout << p[i];
+                if (i < p.size() - 1) cout << ",";
             }
-            cout << "}" << endl;
+            cout << endl;
         
-            // Salvamento opcional
-            // Usa a função que já tem
-            if (pergunta_imprimir_arquivo("raio_diametro.txt")) {
-                ofstream outfile("raio_diametro.txt");
+            // Opção de salvar em arquivo
+            if(pergunta_imprimir_arquivo("raio_diametro_centro_periferia.txt")) {
+                ofstream outfile("raio_diametro_centro_periferia.txt");
                 if (outfile) {
-                    outfile << "Raio: " << raio << "\n";
-                    outfile << "Diâmetro: " << diametro << "\n";
-                    outfile << "Centro: {";
-                    for (int i = 0; i < centro.size(); i++) {
-                        outfile << centro[i];
-                        if (i < centro.size() - 1) outfile << ", ";
+                    outfile << r << endl;
+                    outfile << d << endl;
+                    
+                    for (int i = 0; i < c.size(); i++) {
+                        outfile << c[i];
+                        if (i < c.size() - 1) outfile << ",";
                     }
-                    outfile << "}\n";
-                    outfile << "Periferia: {";
-                    for (int i = 0; i < periferia.size(); i++) {
-                        outfile << periferia[i];
-                        if (i < periferia.size() - 1) outfile << ", ";
+                    outfile << endl;
+                    
+                    for (int i = 0; i < p.size(); i++) {
+                        outfile << p[i];
+                        if (i < p.size() - 1) outfile << ",";
                     }
-                    outfile << "}";
-                    outfile.close();
-                    cout << "Resultados salvos em raio_diametro.txt" << endl;
+                    outfile << endl;
+                    
+                    cout << "Resultados salvos em raio_diametro_centro_periferia.txt" << endl;
+                } else {
+                    cout << "Erro ao salvar arquivo!" << endl;
                 }
             }
             break;
         }
-        
-            //PLACEHOLDER
-            /*vector<char> articulacao = grafo->vertices_de_articulacao();
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
 
-            if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
-            }
-
-            break;*/
         case 'i': {
 
             vector<char> articulacao = grafo->vertices_de_articulacao();
@@ -561,4 +460,3 @@ void Gerenciador::imprimeGrafoNoArquivo(const std::string& nomeArquivo, Grafo& g
 
     std::cout << "Conteúdo impresso no arquivo com sucesso" << std::endl;
 }
-

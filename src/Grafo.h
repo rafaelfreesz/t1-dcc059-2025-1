@@ -38,6 +38,8 @@ public:
     int diametro(); // h 2
     vector<char> centro(); // h 3
     vector<char> periferia(); // h 4
+    vector<vector<int>> floydWarshall();
+    vector<int> excentricidades(const vector<vector<int>>& dist);
     vector<char> vertices_de_articulacao(); // i
 
     // variaveis do grafo
@@ -60,7 +62,6 @@ private:
     void fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
     void fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado);
     void arvore_caminhamento_profundidade_aux(char id_no, char id_pai, map<char, bool> &visitados, Grafo &resultado);
-    std::vector<int> calcularExcentricidades();
 };
 
 
