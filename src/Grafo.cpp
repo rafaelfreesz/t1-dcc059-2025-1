@@ -13,8 +13,8 @@ Grafo::Grafo(bool direcionado, bool ponderado_vertice, bool ponderado_aresta) {
 }
 
 Grafo::~Grafo() {
-    for(No* no : lista_adj){
-        delete no;
+    for(No* no : lista_adj) {
+        delete no; // Deleta cada nó
     }
 }
 
@@ -48,25 +48,25 @@ void Grafo::adicionarAresta(char origemID, char destinoID, int peso){
     no1->adicionarAresta(novaAresta);
     // adiciona aresta ao nó de origem
 
+    Aresta* arestaInversa = new Aresta(origemID, peso_aresta);
     if(!in_direcionado){
-        Aresta* arestaInversa = new Aresta(origemID, peso_aresta);
-        no2->adicionarAresta(arestaInversa);
         // adiciona aresta inversa se o grafo não for direcionado
+        no2->adicionarAresta(arestaInversa);
+    } else {
+        // Adiciona aresta invertida nas invertidas para Fecho Transitivo Indireto
+        no2->adicionarArestaInvertida(arestaInversa);
     }
 }
 
-//TODO: Procurar saber se o char é aleatório ou se segue como um número
 No* Grafo::getNo(char id) {
     for (No* no : lista_adj) {
         if (no->getID() == id) {
             return no;
         }
     }
-    //TODO: Tratar erro melhor
     cout << "No com id " << id << " nao encontrado." << endl;
     exit(1);
 }
-
 
 vector<char> Grafo::fecho_transitivo_direto(char id_no) {
     map<char, bool> visitados;
@@ -76,6 +76,8 @@ vector<char> Grafo::fecho_transitivo_direto(char id_no) {
     return resultado;
 }
 
+
+// Visita recursivamente os nós, como a busca em profundidade, e retorna os nós visitados
 void Grafo::fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado) {
     No* no = getNo(id_no);
     for(const auto& aresta : no->arestas) {
@@ -86,17 +88,17 @@ void Grafo::fecho_transitivo_direto_aux(char id_no, map<char, bool> &visitados, 
             fecho_transitivo_direto_aux(id_alvo, visitados, resultado);
         }
     }
-    
 }
 
 vector<char> Grafo::fecho_transitivo_indireto(char id_no) {
     map<char, bool> visitados;
     vector<char> resultado;
-    visitados[id_no] = true; // Marca o nó inicial como visitado
+    visitados[id_no] = true; 
     fecho_transitivo_indireto_aux(id_no, visitados, resultado);
     return resultado;
 }
 
+// Mesma ideia do fecho direto, mas visita as arestas invertidas
 void Grafo::fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados, vector<char> &resultado) {
     No* no = getNo(id_no);
     for(const auto& aresta : no->arestas_invertidas) {
@@ -109,7 +111,6 @@ void Grafo::fecho_transitivo_indireto_aux(char id_no, map<char, bool> &visitados
     }
 }
 
-
 vector<char> Grafo::caminho_minimo_dijkstra(const char id_no_a, const char id_no_b) {
     vector<char> caminho;
     priority_queue<pair<int, char>, vector<pair<int, char>>, greater<pair<int, char>>> pq;
@@ -119,20 +120,25 @@ vector<char> Grafo::caminho_minimo_dijkstra(const char id_no_a, const char id_no
     distancias[id_no_a] = 0;
     pq.push({0, id_no_a}); 
 
-    while (!pq.empty()) {
+    while (!pq.empty()) { // Enquanto houver nós na fila de prioridade
+        // Pega o nó com a menor distância
         char atual = pq.top().second; 
         pq.pop();
 
+        // Se é o nó de destino, termina a busca
         if (atual == id_no_b) {
             break;
         }
 
         No* noAtual = getNo(atual);
-        for (const auto& aresta : noAtual->arestas) {
+        for (const auto& aresta : noAtual->arestas) { //Olhamos cada aresta do nó atual
             char id_alvo = aresta->id_no_alvo;
             int peso = aresta->getPeso();
             int nova_distancia = distancias[atual] + peso;
 
+            // Calculamos a distância
+            // Se a distância não existe no map, é tratada como infinita
+            // Se a nova distância for menor que a distância já registrada, atualiza
             if (distancias.find(id_alvo) == distancias.end() || nova_distancia < distancias[id_alvo]) {
                 distancias[id_alvo] = nova_distancia;
                 predecessores[id_alvo] = atual;
@@ -141,6 +147,7 @@ vector<char> Grafo::caminho_minimo_dijkstra(const char id_no_a, const char id_no
         }
     }
 
+    // Reconstrução através dos predecessores
     char atual = id_no_b;
     while (atual != id_no_a) {
         if (predecessores.find(atual) == predecessores.end()) {
@@ -153,7 +160,6 @@ vector<char> Grafo::caminho_minimo_dijkstra(const char id_no_a, const char id_no
     reverse(caminho.begin(), caminho.end()); // Inverte o caminho para a ordem correta
     return caminho;
 }
-
 
 vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
 
@@ -196,7 +202,7 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
                    distancia[j][i] + distancia[i][k] < distancia[j][k]){
                     distancia[j][k] = distancia[j][i] + distancia[i][k];
                     predecessor[j][k] = predecessor[i][k];
-                   }
+                }
             }
         }
     }
@@ -231,7 +237,7 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b) {
     return caminhoIDs;
 }
 
-Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
+Grafo* Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
     struct prox{
         char id_no_proximo;
         int custo;
@@ -290,7 +296,6 @@ Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
         
         cont++;
     }
-    
     
     return resultado;
 }
@@ -444,24 +449,113 @@ void Grafo::arvore_caminhamento_profundidade_aux(char id_no, char id_pai, map<ch
     }
 }
 
+vector<vector<int>> Grafo::floydWarshall() {
+    // Mapeamento de IDs para índices numéricos
+    vector<char> todosIDs;
+    map<char, int> indiceMap;
+    map<int, char> idMap;
+    int n = ordem;
+    
+    for(int i = 0; i < n; i++) {
+        char id = lista_adj[i]->getID();
+        todosIDs.push_back(id);
+        indiceMap[id] = i;
+        idMap[i] = id;
+    }
+
+    // Inicialização da matriz de distâncias
+    vector<vector<int>> matrizDistancias(n, vector<int>(n, INT_MAX));
+
+    // Configuração da diagonal e arestas diretas
+    for(int i = 0; i < n; i++) {
+        matrizDistancias[i][i] = 0;
+        No* no = lista_adj[i];
+        
+        for(Aresta* aresta : no->arestas) {
+            char destinoID = aresta->getIDalvo();
+            if(indiceMap.find(destinoID) != indiceMap.end()) {
+                int j = indiceMap[destinoID];
+                matrizDistancias[i][j] = aresta->getPeso();
+            }
+        }
+    }
+
+    // Algoritmo principal de Floyd-Warshall
+    for(int k = 0; k < n; k++) {
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < n; j++) {
+                if(matrizDistancias[i][k] != INT_MAX && 
+                   matrizDistancias[k][j] != INT_MAX &&
+                   matrizDistancias[i][k] + matrizDistancias[k][j] < matrizDistancias[i][j]) {
+                    matrizDistancias[i][j] = matrizDistancias[i][k] + matrizDistancias[k][j];
+                }
+            }
+        }
+    }
+
+    return matrizDistancias;
+}
+
+vector<int> Grafo::excentricidades(const vector<vector<int>>& matrizDistancias) {
+    int n = matrizDistancias.size();
+    vector<int> excentricidades(n, 0);
+
+    for(int i = 0; i < n; i++) {
+        int maxDist = 0;
+        for(int j = 0; j < n; j++) {
+            if(matrizDistancias[i][j] != INT_MAX && 
+               matrizDistancias[i][j] > maxDist) {
+                maxDist = matrizDistancias[i][j];
+            }
+        }
+        excentricidades[i] = maxDist;
+    }
+
+    return excentricidades;
+}
+
 int Grafo::raio() {
-    cout<<"Metodo nao implementado"<<endl;
-    return 0;
+    vector<vector<int>> dist = floydWarshall();
+    vector<int> ecc = excentricidades(dist);
+    int raio = *min_element(ecc.begin(), ecc.end());
+    return raio;
 }
 
 int Grafo::diametro() {
-    cout<<"Metodo nao implementado"<<endl;
-    return 0;
+    vector<vector<int>> dist = floydWarshall();
+    vector<int> ecc = excentricidades(dist);
+    int diametro = *max_element(ecc.begin(), ecc.end());
+    return diametro;
 }
 
 vector<char> Grafo::centro() {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    vector<vector<int>> dist = floydWarshall();
+    vector<int> ecc = excentricidades(dist);
+    int r = raio();
+    vector<char> centroIDs;
+    
+    for(int i = 0; i < ecc.size(); i++) {
+        if(ecc[i] == r) {
+            centroIDs.push_back(lista_adj[i]->getID());
+        }
+    }
+    
+    return centroIDs;
 }
 
 vector<char> Grafo::periferia() {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    vector<vector<int>> dist = floydWarshall();
+    vector<int> ecc = excentricidades(dist);
+    int d = diametro();
+    vector<char> periferiaIDs;
+    
+    for(int i = 0; i < ecc.size(); i++) {
+        if(ecc[i] == d) {
+            periferiaIDs.push_back(lista_adj[i]->getID());
+        }
+    }
+    
+    return periferiaIDs;
 }
 
 vector<char> Grafo::vertices_de_articulacao() {
@@ -575,3 +669,4 @@ Grafo* Grafo::getSubgrafo(vector<char> ids_nos) {
     
     return subgrafo;
 }
+

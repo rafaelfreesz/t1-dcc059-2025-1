@@ -38,6 +38,8 @@ public:
     int diametro(); // h 2
     vector<char> centro(); // h 3
     vector<char> periferia(); // h 4
+    vector<vector<int>> floydWarshall(); // utilizado no h, diferente do caminho_minimo_floyd
+    vector<int> excentricidades(const vector<vector<int>>& dist);
     vector<char> vertices_de_articulacao(); // i
 
     // variaveis do grafo

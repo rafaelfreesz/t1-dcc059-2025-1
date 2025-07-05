@@ -191,15 +191,58 @@ void Gerenciador::comandos(Grafo* grafo) {
         }
 
         case 'h': {
-            vector<char> articulacao = grafo->vertices_de_articulacao();
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
-
-            if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+            int r = grafo->raio();
+            int d = grafo->diametro();
+            vector<char> c = grafo->centro();
+            vector<char> p = grafo->periferia();
+        
+            // Raio (apenas o valor)
+            cout << r << endl;
+            
+            // Diâmetro (apenas o valor)
+            cout << d << endl;
+            
+            // Centro (elementos separados por vírgula)
+            for (int i = 0; i < c.size(); i++) {
+                cout << c[i];
+                if (i < c.size() - 1) cout << ",";
             }
-
+            cout << endl;
+            
+            // Periferia (elementos separados por vírgula)
+            for (int i = 0; i < p.size(); i++) {
+                cout << p[i];
+                if (i < p.size() - 1) cout << ",";
+            }
+            cout << endl;
+        
+            // Opção de salvar em arquivo
+            if(pergunta_imprimir_arquivo("raio_diametro_centro_periferia.txt")) {
+                ofstream outfile("raio_diametro_centro_periferia.txt");
+                if (outfile) {
+                    outfile << r << endl;
+                    outfile << d << endl;
+                    
+                    for (int i = 0; i < c.size(); i++) {
+                        outfile << c[i];
+                        if (i < c.size() - 1) outfile << ",";
+                    }
+                    outfile << endl;
+                    
+                    for (int i = 0; i < p.size(); i++) {
+                        outfile << p[i];
+                        if (i < p.size() - 1) outfile << ",";
+                    }
+                    outfile << endl;
+                    
+                    cout << "Resultados salvos em raio_diametro_centro_periferia.txt" << endl;
+                } else {
+                    cout << "Erro ao salvar arquivo!" << endl;
+                }
+            }
             break;
         }
+
         case 'i': {
 
             vector<char> articulacao = grafo->vertices_de_articulacao();
