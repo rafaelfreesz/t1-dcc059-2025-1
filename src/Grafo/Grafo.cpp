@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <tuple> // Para Kruskal (peso, origem, destino)
 #include <numeric> // Para iota em DSU
+#include <sstream> // Para stringstream
 
 using namespace std;
 
@@ -25,37 +26,58 @@ Grafo::Grafo() {
 Grafo::Grafo(const char* arquivoEntrada) {
     ifstream file(arquivoEntrada);
     if (!file.is_open()) {
-        cout << "ERRO: Nao foi possivel abrir o arquivo de entrada." << endl;
+        cout << "ERRO CRITICO: Nao foi possivel abrir o arquivo: " << arquivoEntrada << endl;
         exit(1);
     }
 
+    string linha;
     int digrafo, pesoNo, pesoAresta;
-    file >> digrafo >> pesoNo >> pesoAresta;
-    this->in_direcionado = (digrafo == 1);
-    this->in_ponderado_vertice = (pesoNo == 1);
-    this->in_ponderado_aresta = (pesoAresta == 1);
 
-    file >> this->ordem;
+    // 1. Lê a primeira linha (flags)
+    if (getline(file, linha)) {
+        stringstream ss(linha);
+        ss >> digrafo >> pesoAresta >> pesoNo;
+        this->in_direcionado = (digrafo == 1);
+        this->in_ponderado_aresta = (pesoAresta == 1);
+        this->in_ponderado_vertice = (pesoNo == 1);
+    }
 
-    for (int i = 0; i < this->ordem; ++i) {
+    // 2. Lê a segunda linha (ordem)
+    if (getline(file, linha)) {
+        stringstream ss(linha);
+        ss >> this->ordem;
+    }
+
+    // 3. Lê os 'ordem' próximos nós
+    for (int i = 0; i < this->ordem && getline(file, linha); ++i) {
+        stringstream ss(linha);
         char id;
         int peso = 0;
-        file >> id;
+        ss >> id;
         if (this->in_ponderado_vertice) {
-            file >> peso;
+            ss >> peso;
         }
         this->insereNo(id, peso);
     }
 
+    // 4. Lê as arestas até o final do arquivo
     char origem, destino;
     int pesoA = 1;
-    while (file >> origem >> destino) {
-        if (this->in_ponderado_aresta) {
-            file >> pesoA;
-        } else {
-            pesoA = 1; // Se não ponderado, o peso da aresta é 1
+    while (getline(file, linha)) {
+        // Ignora linhas vazias que podem existir no final do arquivo
+        if (linha.empty() || linha.find_first_not_of(" \t\n\v\f\r") == string::npos) {
+            continue;
         }
-        this->insereAresta(origem, destino, pesoA);
+        
+        stringstream ss(linha);
+        if (ss >> origem >> destino) {
+            if (this->in_ponderado_aresta) {
+                ss >> pesoA;
+            } else {
+                pesoA = 1;
+            }
+            this->insereAresta(origem, destino, pesoA);
+        }
     }
     file.close();
 }
@@ -88,7 +110,7 @@ void Grafo::insereNo(char id, int peso) {
     novo->id = id;
     novo->peso = peso;
     lista_adj.push_back(novo);
-    ordem++; // Incrementa a ordem do grafo
+    //ordem++; // Incrementa a ordem do grafo (Aparentemente isso nao é necessario e faz dupla.)
 }
 
 // Insere uma aresta entre dois nós 
@@ -96,6 +118,7 @@ void Grafo::insereAresta(char origem_id, char destino_id, int pesoAresta) {
     No* noOrigem = getNo(origem_id);
     No* noDestino = getNo(destino_id);
 
+    
     if (!noOrigem || !noDestino) {
         // Um dos nós não existe, não é possível inserir a aresta
         return;
@@ -369,6 +392,7 @@ void Grafo::dfs_arvore_caminhamento(char u_id, std::set<char>& visitado, Grafo* 
     for (Aresta* aresta : sorted_arestas) {
         char v_id = aresta->id_no_alvo;
         if (visitado.find(v_id) == visitado.end()) {
+            arvore_dfs->insereNo(v_id);
             arvore_dfs->insereAresta(u_id, v_id, aresta->peso); // Adiciona a aresta à árvore
             dfs_arvore_caminhamento(v_id, visitado, arvore_dfs, arestas_arvore);
         }
@@ -926,5 +950,5 @@ bool Grafo::ehConexo() {
     // Para grafos não direcionados, se todos os nós foram visitados, é conexo.
     // Para grafos direcionados, isso verifica apenas se o componente fortemente conectado do nó inicial é o grafo inteiro.
     // A definição de "conexidade" para Prim/Kruskal refere-se a grafos não direcionados.
-    return count_visited == ordem;
+    return count_visited == this->lista_adj.size();
 }

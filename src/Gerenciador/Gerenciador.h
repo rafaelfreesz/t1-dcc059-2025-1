@@ -31,6 +31,8 @@ public:
     static void imprimir_vector_char(const vector<char>& vec);
     static void imprimir_grafo(Grafo* grafo);
     static void imprimir_h_output(int raio, int diametro, const vector<char>& centro, const vector<char>& periferia);
+    
+    static int solicitarInteiro(string mensagem, int ordem);
 };
 
 #endif //GERENCIADOR_H
