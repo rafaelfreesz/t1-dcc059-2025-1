@@ -81,7 +81,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout<<"Digite o tamanho do subconjunto: ";
             cin>>tam;
 
-            if(tam > 0 && tam <= grafo->ordem) {
+            if(tam > 0 && tam <= grafo->getOrdem()) {
 
                 vector<char> ids = get_conjunto_ids(grafo,tam);
                 Grafo* arvore_geradora_minima_prim = grafo->arvore_geradora_minima_prim(ids);
@@ -106,7 +106,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout<<"Digite o tamanho do subconjunto: ";
             cin>>tam;
 
-            if(tam > 0 && tam <= grafo->ordem) {
+            if(tam > 0 && tam <= grafo->getOrdem()) {
 
                 vector<char> ids = get_conjunto_ids(grafo,tam);
                 Grafo* arvore_geradora_minima_kruskal = grafo->arvore_geradora_minima_kruskal(ids);
@@ -186,8 +186,8 @@ vector<char> Gerenciador::get_conjunto_ids(Grafo *grafo, int tam) {
     while((int)ids.size() < tam) {
         char id_no =get_id_entrada();
         bool existe = false;
-        for(No* no: grafo->lista_adj){
-            if(no->id == id_no){
+        for(No* no: grafo->getListaAdj()){
+            if(no->getId() == id_no){
                 existe = true;
                 break;
             }

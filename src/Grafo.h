@@ -12,10 +12,20 @@
 
 using namespace std;
 class Grafo {
+private:
+
+    int ordem;
+    bool in_direcionado;
+    bool in_ponderado_aresta;
+    bool in_ponderado_vertice;
+    vector<No*> lista_adj;
+
 public:
-    Grafo();
+    Grafo(int ordem, bool in_direcionado, bool in_ponderado_aresta, bool in_ponderado_vertice, vector<No*> lista_adj);
     ~Grafo();
 
+    vector<No*> getListaAdj();
+    int getOrdem();
     vector<char> fecho_transitivo_direto(int id_no); // a
     vector<char> fecho_transitivo_indireto(int id_no); // b
     vector<char> caminho_minimo_dijkstra(int id_no_a, int id_no_b); // c
@@ -28,13 +38,6 @@ public:
     vector<char> centro(); // h 3
     vector<char> periferia(); // h 4
     vector<char> vertices_de_articulacao(); // i
-
-
-    int ordem;
-    bool in_direcionado;
-    bool in_ponderado_aresta;
-    bool in_ponderado_vertice;
-    vector<No*> lista_adj;
 };
 
 

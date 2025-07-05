@@ -1,10 +1,25 @@
 #include "Grafo.h"
 
 
-Grafo::Grafo() {
+Grafo::Grafo(int ordem, bool in_direcionado, bool in_ponderado_aresta, bool in_ponderado_vertice, vector<No*> lista_adj) {
+    this->ordem = ordem;
+    this->in_direcionado = in_direcionado;
+    this->in_ponderado_aresta = in_ponderado_aresta;
+    this->in_ponderado_vertice = in_ponderado_vertice;
+    this->lista_adj = lista_adj;
 }
 
 Grafo::~Grafo() {
+}
+
+vector<No*> Grafo::getListaAdj()
+{
+    return lista_adj;
+}
+
+int Grafo::getOrdem()
+{
+    return ordem;
 }
 
 vector<char> Grafo::fecho_transitivo_direto(int id_no) {
