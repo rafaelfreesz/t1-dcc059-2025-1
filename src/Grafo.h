@@ -44,6 +44,8 @@ public:
     bool get_ponderado_vertice()const{return in_ponderado_vertice;};
     vector<No*> get_lista_adj(){return lista_adj;}
     vector<No*> get_vertices(){return vertices;};
+    vector<Aresta*> get_vizinhanca(char id);
+    vector<char> get_ids_vertices();
 
     //setters
     void set_ordem(int new_ordem){ordem = new_ordem;};

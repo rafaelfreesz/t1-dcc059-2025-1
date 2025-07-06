@@ -22,7 +22,10 @@ void Gerenciador::comandos(Grafo *grafo)
 
     if (entrada.size() != 1)
     {
+        cout << endl;
+        cout << endl;
         cout << "Por favor, digite apenas uma letra." << endl;
+        cout << endl;
         comandos(grafo); // volta para o menu
         return;
     }
