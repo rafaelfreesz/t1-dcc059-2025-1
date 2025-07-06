@@ -15,7 +15,7 @@ No::~No()
     }
 }
 
-vector<Aresta *> No::getAresta()
+vector<Aresta *> No::getArestas()
 {
     return this->arestas;
 }
@@ -48,4 +48,9 @@ void No::setId(char id)
 void No::setPeso(int peso)
 {
     this->peso = peso;
+}
+
+void No::adicionarAresta(Aresta* aresta) 
+{
+    arestas.push_back(aresta);
 }

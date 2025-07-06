@@ -22,7 +22,12 @@ void Gerenciador::comandos(Grafo* grafo) {
 
             char id_no = get_id_entrada();
             vector<char> fecho_transitivo_direto = grafo->fecho_transitivo_direto(id_no);
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
+            cout << "Fecho transitivo direto de " << id_no << ": ";
+            for (int i = 0; i < fecho_transitivo_direto.size(); i++)
+            {
+            cout << fecho_transitivo_direto[i] << " ";
+            }
+            cout << endl << endl;
 
             if(pergunta_imprimir_arquivo("fecho_trans_dir.txt")) {
                 cout<<"Metodo de impressao em arquivo nao implementado"<<endl<<endl;

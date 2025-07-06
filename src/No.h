@@ -18,7 +18,7 @@ public:
     No(char id, int peso, vector<Aresta*> arestas = {});
     ~No();
 
-    vector<Aresta *> getAresta();
+    vector<Aresta *> getArestas();
     char getId();
     int getPeso();
 
@@ -26,6 +26,7 @@ public:
     void setArestas(vector<Aresta *> arestas);
     void setId(char id);
     void setPeso(int peso);
+    void adicionarAresta(Aresta* aresta);
 };
 
 

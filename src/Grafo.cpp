@@ -23,8 +23,46 @@ int Grafo::getOrdem()
 }
 
 vector<char> Grafo::fecho_transitivo_direto(int id_no) {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    vector<char> visitados;
+    vector<char> pilha;
+
+    pilha.push_back((char)id_no);
+
+    while (!pilha.empty()) {
+        char atual_id = pilha.back();
+        pilha.pop_back();
+
+        No* atual = 0;
+        for (int i = 0; i < lista_adj.size(); i++) {
+            if (lista_adj[i]->getId() == atual_id) {
+                atual = lista_adj[i];
+                break;
+            }
+        }
+
+        if (atual == 0) continue;
+
+        vector<Aresta*> arestas = atual->getArestas();
+
+        for (int i = 0; i < arestas.size(); i++) {
+            char id_destino = arestas[i]->getIdAlvo();
+
+            bool ja_visitado = false;
+            for (int j = 0; j < visitados.size(); j++) {
+                if (visitados[j] == id_destino) {
+                    ja_visitado = true;
+                    break;
+                }
+            }
+
+            if (!ja_visitado) {
+                visitados.push_back(id_destino);
+                pilha.push_back(id_destino);
+            }
+        }
+    }
+
+    return visitados;
 }
 
 vector<char> Grafo::fecho_transitivo_indireto(int id_no) {
