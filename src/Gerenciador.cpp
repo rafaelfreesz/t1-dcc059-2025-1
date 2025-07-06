@@ -1,6 +1,50 @@
 #include "Gerenciador.h"
 #include <fstream>
 
+// Impressao e escrita - A,B,C,D - Início
+
+static int contador_ordem_arquivo = 0;
+
+void imprimir_vetor_char(const vector<char> &vetor)
+{
+    for (size_t i = 0; i < vetor.size(); ++i)
+    {
+        cout << vetor[i];
+        if (i != vetor.size() - 1)
+        {
+            cout << ",";
+        }
+    }
+    cout << endl;
+}
+
+void salvar_vetor_char_em_arquivo(const vector<char> &vetor, const string &nome_arquivo)
+{
+    int *ponteiroContador = &contador_ordem_arquivo;
+    (*ponteiroContador)++;
+    string caminho_completo = "../output/" + to_string(contador_ordem_arquivo) + nome_arquivo;
+
+    ofstream arquivo(caminho_completo);
+
+    if (!arquivo.is_open())
+    {
+        cout << "Erro ao abrir o arquivo para escrita." << endl;
+        return;
+    }
+
+    for (size_t i = 0; i < vetor.size(); ++i)
+    {
+        arquivo << vetor[i];
+        if (i != vetor.size() - 1)
+        {
+            arquivo << ",";
+        }
+    }
+    arquivo << endl;
+    arquivo.close();
+}
+// Impressao e escrita - A,B,C,D - Fim
+
 void Gerenciador::comandos(Grafo *grafo)
 {
     cout << "Digite uma das opcoes abaixo e pressione enter:" << endl
@@ -39,12 +83,15 @@ void Gerenciador::comandos(Grafo *grafo)
 
         char id_no = get_id_entrada();
         vector<char> fecho_transitivo_direto = grafo->fecho_transitivo_direto(id_no);
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
+
+        cout << "Fecho transitivo direto de " << id_no << ": ";
+        imprimir_vetor_char(fecho_transitivo_direto);
+        cout << endl;
 
         if (pergunta_imprimir_arquivo("fecho_trans_dir.txt"))
         {
-            cout << "Metodo de impressao em arquivo nao implementado" << endl
+            salvar_vetor_char_em_arquivo(fecho_transitivo_direto, "fecho_trans_dir.txt");
+            cout << "Fecho salvo no arquivo fecho_trans_dir.txt" << endl
                  << endl;
         }
 
@@ -64,7 +111,6 @@ void Gerenciador::comandos(Grafo *grafo)
             cout << "Metodo de impressao em arquivo nao implementado" << endl;
         }
 
-        ;
         break;
     }
 
