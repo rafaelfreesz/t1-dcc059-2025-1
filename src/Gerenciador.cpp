@@ -23,9 +23,11 @@ void Gerenciador::comandos(Grafo* grafo) {
             char id_no = get_id_entrada();
             vector<char> fecho_transitivo_direto = grafo->fecho_transitivo_direto(id_no);
             cout << "Fecho transitivo direto de " << id_no << ": ";
-            for (int i = 0; i < fecho_transitivo_direto.size(); i++)
+            for (int i = 0; i < fecho_transitivo_direto.size(); i++) //Imprime o Fecho Transitivo Direto do vértice escolhido
             {
-            cout << fecho_transitivo_direto[i] << " ";
+                cout << fecho_transitivo_direto[i];
+                if (i < fecho_transitivo_direto.size() - 1)
+                cout << ",";
             }
             cout << endl << endl;
 
@@ -33,38 +35,58 @@ void Gerenciador::comandos(Grafo* grafo) {
                 cout<<"Metodo de impressao em arquivo nao implementado"<<endl<<endl;
             }
 
-
             break;
         }
 
-        case 'b':{
+        case 'b': {
 
             char id_no = get_id_entrada();
             vector<char> fecho_transitivo_indireto = grafo->fecho_transitivo_indireto(id_no);
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
+            cout << "Fecho transitivo indireto de "<< id_no << ": ";
+            for (int i = 0; i < fecho_transitivo_indireto.size(); i++) //Imprime o Fecho Transitivo Indireto do vértice escolhido
+            {
+                cout << fecho_transitivo_indireto[i];
+                if (i < fecho_transitivo_indireto.size() - 1)
+                cout << ",";
+            }
+            cout << endl;
 
             if(pergunta_imprimir_arquivo("fecho_trans_indir.txt")) {
                 cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
             }
 
-;
             break;
         }
 
-        case 'c': {
+       case 'c': {
 
             char id_no_1 = get_id_entrada();
             char id_no_2 = get_id_entrada();
-            vector<char> caminho_minimo_dijkstra = grafo->caminho_minimo_dijkstra(id_no_1,id_no_2);
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
+            vector<char> caminho_minimo_dijkstra = grafo->caminho_minimo_dijkstra(id_no_1, id_no_2);
 
-            if(pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+            cout << "Caminho minimo de " << id_no_1 << " ate " << id_no_2 << " (Dijkstra): ";
+            if (caminho_minimo_dijkstra.empty()) //Verifica se há caminho entre os vértices escolhidos
+            {
+                cout << "Não existe caminho entre os vértices." << endl;
+            }
+            else
+            {
+                for (int i = 0; i < caminho_minimo_dijkstra.size(); i++) //Imprime o caminho mínimo entre os vértices escolhidos, segundo o algoritmo de Djkstra
+                {
+                    cout << caminho_minimo_dijkstra[i];
+                    if (i < caminho_minimo_dijkstra.size() - 1)
+                     cout << ",";
+                }
+                cout << endl;
             }
 
+            if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt")) {
+                cout << "Metodo de impressao em arquivo nao implementado" << endl;
+            }
 
             break;
-        }
+}
+
 
         case 'd': {
 
