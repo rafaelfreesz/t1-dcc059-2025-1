@@ -346,61 +346,77 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b) {
 }
 
 vector<char> Grafo::caminho_minimo_floyd(char id_no_a, char id_no_b) {
+    const int INF = 1000000000;
     int n = this->ordem;
-    
-    // Mapear vértices para índices numéricos
+
     vector<char> vertices(n);
-    for(int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         vertices[i] = lista_adj[i]->id;
     }
-    
-    // Inicializar matriz de distâncias e predecessores
-    vector<vector<int>> dist(n, vector<int>(n, numeric_limits<int>::max()));
+
+    vector<vector<int>> dist(n, vector<int>(n, INF));
     vector<vector<int>> next(n, vector<int>(n, -1));
-    
-    // Preencher distâncias iniciais
-    for(int i = 0; i < n; i++) {
+
+    for (int i = 0; i < n; i++) {
         dist[i][i] = 0;
         No* no = lista_adj[i];
-        
-        for(Aresta* aresta : no->arestas) {
-            int j = distance(vertices.begin(), find(vertices.begin(), vertices.end(), aresta->id_no_alvo));
-            dist[i][j] = aresta->peso;
-            next[i][j] = j;
+
+        for (Aresta* aresta : no->arestas) {
+            int j = -1;
+            for (int m = 0; m < n; m++) {
+                if (vertices[m] == aresta->id_no_alvo) {
+                    j = m;
+                    break;
+                }
+            }
+
+            if (j != -1) {
+                dist[i][j] = aresta->peso;
+                next[i][j] = j;
+
+                if (!this->in_direcionado) {
+                    dist[j][i] = aresta->peso;
+                    next[j][i] = i;
+                }
+            }
         }
     }
-    
-    // Algoritmo de Floyd-Warshall
-    for(int k = 0; k < n; k++) {
-        for(int i = 0; i < n; i++) {
-            for(int j = 0; j < n; j++) {
-                if(dist[i][k] != numeric_limits<int>::max() && 
-                   dist[k][j] != numeric_limits<int>::max() &&
-                   dist[i][j] > dist[i][k] + dist[k][j]) {
+
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][k] < INF && dist[k][j] < INF &&
+                    dist[i][j] > dist[i][k] + dist[k][j]) {
                     dist[i][j] = dist[i][k] + dist[k][j];
                     next[i][j] = next[i][k];
                 }
             }
         }
     }
-    
-    // Reconstruir o caminho
-    int u = distance(vertices.begin(), find(vertices.begin(), vertices.end(), id_no_a));
-    int v = distance(vertices.begin(), find(vertices.begin(), vertices.end(), id_no_b));
-    
-    if(next[u][v] == -1) {
-        return {}; // Não há caminho
+
+    int u = -1;
+    int v = -1;
+    for (int i = 0; i < n; i++) {
+        if (vertices[i] == id_no_a) {
+            u = i;
+        }
+        if (vertices[i] == id_no_b) {
+            v = i;
+        }
     }
-    
-    vector<char> path;
-    path.push_back(vertices[u]);
-    
-    while(u != v) {
+
+    if (u == -1 || v == -1 || next[u][v] == -1) {
+        return vector<char>(); 
+    }
+
+    vector<char> caminho;
+    caminho.push_back(vertices[u]);
+    while (u != v) {
         u = next[u][v];
-        path.push_back(vertices[u]);
+        caminho.push_back(vertices[u]);
     }
-    
-    return path;
+
+    return caminho;
 }
 
 Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
@@ -420,129 +436,107 @@ Grafo * Grafo::arvore_caminhamento_profundidade(char id_no) {
 
 vector<vector<int>> Grafo::calcular_matriz_distancias() {
     int n = this->ordem;
+    const int INF = 1000000000;
+    
     vector<char> vertices(n);
-    for(int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         vertices[i] = lista_adj[i]->id;
     }
-    
-    vector<vector<int>> dist(n, vector<int>(n, numeric_limits<int>::max()));
-    
-    for(int i = 0; i < n; i++) {
+
+    vector<vector<int>> dist(n, vector<int>(n, INF));
+    for (int i = 0; i < n; i++) {
         dist[i][i] = 0;
         No* no = lista_adj[i];
-        
-        for(Aresta* aresta : no->arestas) {
+        for (Aresta* aresta : no->arestas) {
             int j = distance(vertices.begin(), find(vertices.begin(), vertices.end(), aresta->id_no_alvo));
             dist[i][j] = aresta->peso;
-            
-            if(!in_direcionado) {
+            if (!in_direcionado) {
                 dist[j][i] = aresta->peso;
             }
         }
     }
-    
-    for(int k = 0; k < n; k++) {
-        for(int i = 0; i < n; i++) {
-            for(int j = 0; j < n; j++) {
-                if(dist[i][k] != numeric_limits<int>::max() && 
-                   dist[k][j] != numeric_limits<int>::max() &&
-                   dist[i][j] > dist[i][k] + dist[k][j]) {
-                    dist[i][j] = dist[i][k] + dist[k][j];
+
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][k] < INF && dist[k][j] < INF) {
+                    if (dist[i][j] > dist[i][k] + dist[k][j]) {
+                        dist[i][j] = dist[i][k] + dist[k][j];
+                    }
                 }
             }
         }
     }
-    
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (dist[i][j] == INF) {
+                dist[i][j] = 0;
+            }
+        }
+    }
+
     return dist;
 }
 
-int Grafo::raio() {
+vector<int> Grafo::excentricidade(){
     vector<vector<int>> dist = calcular_matriz_distancias();
-    int n = this->ordem;
-    
-    vector<int> excentricidades(n, 0);
-    for(int i = 0; i < n; i++) {
-        for(int j = 0; j < n; j++) {
-            if(dist[i][j] > excentricidades[i] && dist[i][j] != numeric_limits<int>::max()) {
-                excentricidades[i] = dist[i][j];
-            }
+    vector<int> excentricidades(this->ordem,0);
+    for(int i = 0; i < this->ordem; i++) {
+        for(int j = 0; j < this->ordem; j++) 
+        {
+            if(i != j)
+                if(dist[i][j] != numeric_limits<int>::max()) 
+                    if(dist[i][j] > excentricidades[i])
+                        excentricidades[i] = dist[i][j];
         }
     }
-    
-    return *min_element(excentricidades.begin(), excentricidades.end());
+    return excentricidades;
+}
+
+int Grafo::raio() {
+    vector<int> excentricidades = excentricidade();
+    int raio = 0;
+    for(int menor : excentricidades) {
+        if((raio == 0 && menor > 0) || (menor > 0 && menor < raio)) {
+            raio = menor;
+        }
+    }
+    return raio;
 }
 
 int Grafo::diametro() {
-    vector<vector<int>> dist = calcular_matriz_distancias();
-    int n = this->ordem;
-    
-    vector<int> excentricidades(n, 0);
-    for(int i = 0; i < n; i++) {
-        for(int j = 0; j < n; j++) {
-            if(dist[i][j] > excentricidades[i] && dist[i][j] != numeric_limits<int>::max()) {
-                excentricidades[i] = dist[i][j];
-            }
+    vector<int> excentricidades = excentricidade();
+    int diametro = 0;
+    for(int maior : excentricidades) {
+        if(maior != 0 && maior > diametro) {
+            diametro = maior;
         }
     }
-    
-    return *max_element(excentricidades.begin(), excentricidades.end());
+    return diametro;
 }
 
 vector<char> Grafo::centro() {
-    vector<vector<int>> dist = calcular_matriz_distancias();
-    int n = this->ordem;
-    vector<char> vertices(n);
-    for(int i = 0; i < n; i++) {
-        vertices[i] = lista_adj[i]->id;
-    }
-    
-    vector<int> excentricidades(n, 0);
-    for(int i = 0; i < n; i++) {
-        for(int j = 0; j < n; j++) {
-            if(dist[i][j] > excentricidades[i] && dist[i][j] != numeric_limits<int>::max()) {
-                excentricidades[i] = dist[i][j];
-            }
-        }
-    }
-    
-    int raio = *min_element(excentricidades.begin(), excentricidades.end());
+    vector<int> excentricidades = excentricidade();
     vector<char> centros;
-    
-    for(int i = 0; i < n; i++) {
-        if(excentricidades[i] == raio) {
-            centros.push_back(vertices[i]);
+    int Raio = raio();
+    for(int i = 0; i < this->ordem; i++) {
+        if(excentricidades[i] == Raio) {
+            centros.push_back(lista_adj[i]->id);
         }
     }
-    
     return centros;
 }
 
 vector<char> Grafo::periferia() {
-    vector<vector<int>> dist = calcular_matriz_distancias();
-    int n = this->ordem;
-    vector<char> vertices(n);
-    for(int i = 0; i < n; i++) {
-        vertices[i] = lista_adj[i]->id;
-    }
-    
-    vector<int> excentricidades(n, 0);
-    for(int i = 0; i < n; i++) {
-        for(int j = 0; j < n; j++) {
-            if(dist[i][j] > excentricidades[i] && dist[i][j] != numeric_limits<int>::max()) {
-                excentricidades[i] = dist[i][j];
-            }
-        }
-    }
-    
-    int diametro = *max_element(excentricidades.begin(), excentricidades.end());
+    vector<int> excentricidades = excentricidade();
     vector<char> periferias;
-    
-    for(int i = 0; i < n; i++) {
-        if(excentricidades[i] == diametro) {
-            periferias.push_back(vertices[i]);
+    int Diametro = diametro();
+    for(int i = 0; i < this->ordem; i++) {
+        if(excentricidades[i] == Diametro) {
+            periferias.push_back(lista_adj[i]->id);
         }
     }
-    
     return periferias;
 }
 
