@@ -43,7 +43,54 @@ void salvar_vetor_char_em_arquivo(const vector<char> &vetor, const string &nome_
     arquivo << endl;
     arquivo.close();
 }
+
 // Impressao e escrita - A,B,C,D - Fim
+
+// Impressao e escrita E,F - Início
+
+void imprimir_lista_adjacencias(Grafo *grafo)
+{
+    vector<char> ids = grafo->get_ids_vertices();
+    for (char id : ids)
+    {
+        cout << id << ":";
+        vector<Aresta *> arestas = grafo->get_vizinhanca(id);
+        bool primeiro = true;
+        for (Aresta *a : arestas)
+        {
+            cout << (primeiro ? " " : " -> ") << a->id_no_alvo;
+            primeiro = false;
+        }
+        cout << endl;
+    }
+}
+
+void imprimir_lista_adjacencias_em_arquivo(const string &nome_arquivo, Grafo *grafo)
+{
+    ofstream arquivo(nome_arquivo);
+    if (!arquivo.is_open())
+    {
+        cerr << "Erro ao abrir o arquivo " << nome_arquivo << endl;
+        return;
+    }
+
+    vector<char> ids = grafo->get_ids_vertices();
+    for (char id : ids)
+    {
+        arquivo << id << ":";
+        vector<Aresta *> arestas = grafo->get_vizinhanca(id);
+        bool primeiro = true;
+        for (Aresta *a : arestas)
+        {
+            arquivo << (primeiro ? " " : " -> ") << a->id_no_alvo;
+            primeiro = false;
+        }
+        arquivo << endl;
+    }
+
+    arquivo.close();
+}
+// Impressao e escrita E,F - Fim
 
 void Gerenciador::comandos(Grafo *grafo)
 {
@@ -125,14 +172,17 @@ void Gerenciador::comandos(Grafo *grafo)
         vector<char> caminho_minimo_dijkstra = grafo->caminho_minimo_dijkstra(id_no_1, id_no_2);
 
         cout << "Caminho mínimo (Dijkstra): ";
-
+        imprimir_vetor_char(caminho_minimo_dijkstra);
+        /*
         for (size_t i = 0; i < caminho_minimo_dijkstra.size(); ++i)
         {
             cout << caminho_minimo_dijkstra[i];
             if (i != caminho_minimo_dijkstra.size() - 1)
                 cout << ",";
         }
-        cout << endl << endl;
+        cout << endl
+             << endl;
+        */
 
         // Impressão no arquivo
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
@@ -150,7 +200,7 @@ void Gerenciador::comandos(Grafo *grafo)
         char id_no_2 = get_id_entrada();
         vector<char> caminho_minimo_floyd = grafo->caminho_minimo_floyd(id_no_1, id_no_2);
 
-        cout << "Caminho mínimo (Dijkstra): ";
+        cout << "Caminho mínimo (Floyd): ";
 
         for (size_t i = 0; i < caminho_minimo_floyd.size(); ++i)
         {
@@ -158,7 +208,8 @@ void Gerenciador::comandos(Grafo *grafo)
             if (i != caminho_minimo_floyd.size() - 1)
                 cout << ",";
         }
-        cout << endl << endl;
+        cout << endl
+             << endl;
 
         // Impressão no arquivo
         if (pergunta_imprimir_arquivo("caminho_minimo_floyd.txt"))
@@ -171,29 +222,42 @@ void Gerenciador::comandos(Grafo *grafo)
 
     case 'e':
     {
-
         int tam;
         cout << "Digite o tamanho do subconjunto: ";
         cin >> tam;
 
         if (tam > 0 && tam <= grafo->get_ordem())
         {
-
             vector<char> ids = get_conjunto_ids(grafo, tam);
-            Grafo *arvore_geradora_minima_prim = grafo->arvore_geradora_minima_prim(ids);
-            cout << "Metodo de impressao em tela nao implementado" << endl
-                 << endl;
+            Grafo *agm = grafo->arvore_geradora_minima_prim(ids);
+
+            cout << "Árvore Geradora Mínima (Prim):\n";
+            //imprimir_lista_adjacencias(agm);
 
             if (pergunta_imprimir_arquivo("agm_prim.txt"))
             {
-                cout << "Metodo de impressao em arquivo nao implementado" << endl;
+                ofstream arq("agm_prim.txt");
+                for (char id : agm->get_ids_vertices())
+                {
+                    arq << id << ": ";
+                    vector<Aresta *> viz = agm->get_vizinhanca(id);
+                    for (size_t i = 0; i < viz.size(); ++i)
+                    {
+                        arq << viz[i]->id_no_alvo;
+                        if (i < viz.size() - 1)
+                            arq << " -> ";
+                    }
+                    arq << endl;
+                }
+                arq.close();
+                cout << "Arquivo salvo como agm_prim.txt" << endl;
             }
 
-            delete arvore_geradora_minima_prim;
+            delete agm;
         }
         else
         {
-            cout << "Valor invalido" << endl;
+            cout << "Valor inválido\n";
         }
 
         break;
@@ -293,7 +357,7 @@ char Gerenciador::get_id_entrada()
     char id;
     cin >> id;
     cout << endl;
-    
+
     return id;
 }
 

@@ -316,6 +316,10 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
     return caminho;
 }
 
+/// DIJKSTRA - FIM
+
+/// AUXILIARES CAMINHO MINIMO - INICIO
+
 vector<Aresta *> Grafo::get_vizinhanca(char id)
 {
     for (No *no : lista_adj)
@@ -341,7 +345,9 @@ vector<char> Grafo::get_ids_vertices()
     return ids;
 }
 
-/// DIJKSTRA - FIM
+/// AUXILIARES CAMINHO MINIMO - INICIO
+
+/// FLOYD - INICIO
 
 vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b)
 {
@@ -411,6 +417,30 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b)
 
     return caminho;
 }
+
+/// FLOYD - FIM
+
+/// AGM - PRIM - INICIO
+
+// IMPRESSAO E ESCRITA - AGM - INICIO
+
+void imprimir_lista_adjacencias(Grafo* grafo) {
+    vector<char> ids = grafo->get_ids_vertices();
+
+    for (char id : ids) {
+        cout << id << ": ";
+        vector<Aresta*> vizinhos = grafo->get_vizinhanca(id);
+
+        for (size_t i = 0; i < vizinhos.size(); ++i) {
+            cout << vizinhos[i]->id_no_alvo;
+            if (i < vizinhos.size() - 1) cout << " -> ";
+        }
+
+        cout << endl;
+    }
+}
+
+// IMPRESSAO E ESC
 
 Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
 {
