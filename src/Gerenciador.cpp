@@ -71,7 +71,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             }
             else
             {
-                for (int i = 0; i < caminho_minimo_dijkstra.size(); i++) //Imprime o caminho mínimo entre os vértices escolhidos, segundo o algoritmo de Djkstra
+                for (int i = 0; i < caminho_minimo_dijkstra.size(); i++) //Imprime o caminho mínimo entre os vértices escolhidos, segundo o algoritmo de Dijkstra
                 {
                     cout << caminho_minimo_dijkstra[i];
                     if (i < caminho_minimo_dijkstra.size() - 1)

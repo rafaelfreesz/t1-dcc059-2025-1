@@ -23,92 +23,107 @@ int Grafo::getOrdem()
 }
 
 vector<char> Grafo::fecho_transitivo_direto(int id_no) {
-    vector<char> visitados;
-    vector<char> pilha;
+    vector<char> visitados; //Armazena nós já visitados para evitar repetição.
+    vector<char> pilha; //Pilha para busca em profundidade
 
     pilha.push_back((char)id_no);
 
-    while (!pilha.empty()) {
-        char atual_id = pilha.back();
-        pilha.pop_back();
+    while (!pilha.empty())
+    {
+        char id_atual = pilha.back(); //Pega o último elemento da fila
+        pilha.pop_back(); //Remove da pilha
 
         No* atual = 0;
-        for (int i = 0; i < lista_adj.size(); i++) {
-            if (lista_adj[i]->getId() == atual_id) {
+        for (int i = 0; i < lista_adj.size(); i++)
+        {
+            if (lista_adj[i]->getId() == id_atual)
+            {
                 atual = lista_adj[i];
                 break;
             }
         }
 
-        if (atual == 0) continue;
+        if (atual == 0) continue; //Verifica se encontrou o nó
 
         vector<Aresta*> arestas = atual->getArestas();
 
-        for (int i = 0; i < arestas.size(); i++) {
-            char id_destino = arestas[i]->getIdAlvo();
+        for (int i = 0; i < arestas.size(); i++) //Percorre as arestas do nó atual
+        {
+            char id_alvo = arestas[i]->getIdAlvo();
 
-            bool ja_visitado = false;
-            for (int j = 0; j < visitados.size(); j++) {
-                if (visitados[j] == id_destino) {
+            bool ja_visitado = false; //Evita repetição
+            for (int j = 0; j < visitados.size(); j++)
+            {
+                if (visitados[j] == id_alvo)
+                {
                     ja_visitado = true;
                     break;
                 }
             }
 
-            if (!ja_visitado) {
-                visitados.push_back(id_destino);
-                pilha.push_back(id_destino);
+            if (!ja_visitado)
+            {
+                visitados.push_back(id_alvo); //Marcado como visitado
+                pilha.push_back(id_alvo); //Explorar esse nó depois
             }
         }
     }
 
-    return visitados;
+    return visitados; //Retorna todos os nós alcançáveis a partir de id_no
 }
 
 vector<char> Grafo::fecho_transitivo_indireto(int id_no) {
-    vector<char> resultado;
+    vector<char> resultado; //Armazena os nós que alcançam o id_no
 
-    for (int i = 0; i < lista_adj.size(); i++) {
+    for (int i = 0; i < lista_adj.size(); i++) //Percorre os nós do grafo
+    {
         char id_atual = lista_adj[i]->getId();
 
-        if (id_atual == id_no) continue;
+        if (id_atual == id_no) continue; //Evita a busca de caminho de um nó para ele mesmo
 
-        vector<char> visitados;
-        vector<char> pilha;
-        pilha.push_back(id_atual);
+        vector<char> visitados; //Armazena nós já visitados para evitar repetição.
+        vector<char> pilha; //Pilha para busca em profundidade
+        pilha.push_back(id_atual); //Começa busca pelo nó
 
-        while (!pilha.empty()) {
+        while (!pilha.empty()) //Busca em profundidade
+        {
             char topo = pilha.back();
             pilha.pop_back();
 
-            bool ja_foi = false;
-            for (int v = 0; v < visitados.size(); v++) {
-                if (visitados[v] == topo) {
-                    ja_foi = true;
+            bool ja_visitado = false;
+            for (int v = 0; v < visitados.size(); v++) //Verifica se já foi visitado
+            {
+                if (visitados[v] == topo)
+                {
+                    ja_visitado = true;
                     break;
                 }
             }
-            if (ja_foi) continue;
+            if (ja_visitado) continue;
 
             visitados.push_back(topo);
 
-            if (topo == id_no) {
-                resultado.push_back(id_atual);
-                break;
+            if (topo == id_no)
+            {
+                resultado.push_back(id_atual); //Adiciona id_atual ao resultado
+                break; //Caminho encontrado, logo, não é necessário continuar a busca
             }
 
-            // Encontrar o nó correspondente ao topo
             No* no_topo = 0;
-            for (int j = 0; j < lista_adj.size(); j++) {
-                if (lista_adj[j]->getId() == topo) {
+            for (int j = 0; j < lista_adj.size(); j++) //Continua a busca em profundidade a partir das arestas do topo
+            {
+                if (lista_adj[j]->getId() == topo)
+                {
                     no_topo = lista_adj[j];
                     break;
                 }
             }
 
-            if (no_topo != 0) {
+            if (no_topo != 0)
+            {
                 vector<Aresta*> arestas = no_topo->getArestas();
-                for (int k = 0; k < arestas.size(); k++) {
+                for (int k = 0; k < arestas.size(); k++)
+                {
                     char id_destino = arestas[k]->getIdAlvo();
                     pilha.push_back(id_destino);
                 }
@@ -116,52 +131,55 @@ vector<char> Grafo::fecho_transitivo_indireto(int id_no) {
         }
     }
 
-    return resultado;
+    return resultado; //Retorna nós com caminho até id_no
 }
 
 vector<char> Grafo::caminho_minimo_dijkstra(int id_no_a, int id_no_b) {
-    const int INF = 1000000;
-    vector<char> vertices;
-
-    // Passo 1: extrair todos os IDs
-    for (int i = 0; i < lista_adj.size(); i++) {
+    const int infinito = 1000000; //Representa um valor "infinito"
+    vector<char> vertices; //Guarda ids dos nós
+ 
+    for (int i = 0; i < lista_adj.size(); i++)
+    {
         vertices.push_back(lista_adj[i]->getId());
     }
 
-    // Passo 2: inicializar distâncias e visitados
-    int dist[256];       // índice pelo valor ASCII do ID
-    bool visitado[256] = {false};
-    char anterior[256];  // para reconstruir caminho
+    int dist[256]; //Distância mínima até cada nó
+    bool visitado[256] = {false}; //Verifica nós já visitados
+    char anterior[256]; //Guarda o anterior a cada nó visitado
 
-    for (int i = 0; i < 256; i++) {
-        dist[i] = INF;
+    for (int i = 0; i < 256; i++)
+    {
+        dist[i] = infinito;
         anterior[i] = '\0';
     }
 
-    dist[(int)id_no_a] = 0;
+    dist[(int)id_no_a] = 0; //Distância até o nó origem é 0
 
-    while (true) {
-        // Encontrar o vértice não visitado com menor distância
+    while (true) //loop Dijkstra
+    {
         char atual = '\0';
-        int menor_dist = INF;
+        int menor_dist = infinito;
 
-        for (int i = 0; i < vertices.size(); i++) {
+        for (int i = 0; i < vertices.size(); i++) //Seleciona nó com menor distância ainda não visitado
+        {
             char id = vertices[i];
-            if (!visitado[(int)id] && dist[(int)id] < menor_dist) {
+            if (!visitado[(int)id] && dist[(int)id] < menor_dist)
+            {
                 menor_dist = dist[(int)id];
                 atual = id;
             }
         }
 
-        if (atual == '\0') break; // nenhum vértice restante
-        if (atual == id_no_b) break; // destino encontrado
+        if (atual == '\0') break; //Não há mais nós acessíveis
+        if (atual == id_no_b) break; //Atingiu nó alvo
 
         visitado[(int)atual] = true;
 
-        // Acessar vizinhos de 'atual'
         No* no_atual = nullptr;
-        for (int i = 0; i < lista_adj.size(); i++) {
-            if (lista_adj[i]->getId() == atual) {
+        for (int i = 0; i < lista_adj.size(); i++) //Atualiza distância dos vizinhos
+        {
+            if (lista_adj[i]->getId() == atual)
+            {
                 no_atual = lista_adj[i];
                 break;
             }
@@ -170,29 +188,31 @@ vector<char> Grafo::caminho_minimo_dijkstra(int id_no_a, int id_no_b) {
         if (no_atual == nullptr) continue;
 
         vector<Aresta*> arestas = no_atual->getArestas();
-        for (int j = 0; j < arestas.size(); j++) {
+        for (int j = 0; j < arestas.size(); j++) //Atualiza se encontrar melhor caminho
+        {
             char vizinho = arestas[j]->getIdAlvo();
             int peso = arestas[j]->getPeso();
 
-            if (dist[(int)vizinho] > dist[(int)atual] + peso) {
+            if (dist[(int)vizinho] > dist[(int)atual] + peso)
+            {
                 dist[(int)vizinho] = dist[(int)atual] + peso;
-                anterior[(int)vizinho] = atual;
+                anterior[(int)vizinho] = atual; //Guarda anterior
             }
         }
     }
 
-    // Reconstruir caminho
     vector<char> caminho;
     char atual = id_no_b;
 
-    while (atual != '\0') {
+    while (atual != '\0') //Reconstrução do caminho final
+    {
         caminho.insert(caminho.begin(), atual);
         atual = anterior[(int)atual];
     }
 
-    // Se não encontrou o destino, o primeiro não será o de origem
-    if (caminho.size() == 0 || caminho[0] != id_no_a) {
-        return {}; // caminho inexistente
+    if (caminho.size() == 0 || caminho[0] != id_no_a) //Caso não haja caminho válido
+    {
+        return {};
     }
 
     return caminho;
