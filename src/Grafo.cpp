@@ -9,6 +9,7 @@
 #include <queue>
 #include <climits>
 #include <algorithm>
+#include <unordered_map> 
 
 using namespace std;
 
@@ -193,20 +194,41 @@ vector<char> Grafo::fecho_transitivo_direto(char id_no)
 }
 
 // Retorna o fecho transitivo indireto de um nó
-vector<char> Grafo::fecho_transitivo_indireto(char id_no)
+void Grafo::aux_dfs_reverso(char id_atual, set<char>& visitado, const unordered_map<char, vector<No*>>& lista_adjacencia_inversa)
 {
-    set<char> fecho;
-    for (No *no : lista_adj)
+    if (visitado.find(id_atual) != visitado.end())
+        return;
+
+    visitado.insert(id_atual);
+
+    auto it = lista_adjacencia_inversa.find(id_atual);
+    if (it != lista_adjacencia_inversa.end())
     {
-        set<char> visitado;
-        aux_dfs(no, visitado);
-        if (visitado.find(id_no) != visitado.end())
+        for (No* no_origem : it->second)
         {
-            fecho.insert(no->get_id());
+            aux_dfs_reverso(no_origem->get_id(), visitado, lista_adjacencia_inversa);
         }
     }
-    fecho.erase(id_no);
-    return vector<char>(fecho.begin(), fecho.end());
+}
+
+vector<char> Grafo::fecho_transitivo_indireto(char id_no)
+{
+    // Constrói a lista de adjacência inversa
+    unordered_map<char, vector<No*>> lista_adjacencia_inversa;
+    for (No* no : lista_adj)
+    {
+        for (Aresta* aresta : no->get_arestas())
+        {
+            lista_adjacencia_inversa[aresta->id_no_alvo].push_back(no);
+        }
+    }
+
+    set<char> visitado;
+    aux_dfs_reverso(id_no, visitado, lista_adjacencia_inversa);
+
+    visitado.erase(id_no); // não inclui o próprio nó
+
+    return vector<char>(visitado.begin(), visitado.end());
 }
 
 

@@ -61,6 +61,10 @@ private:
     bool in_ponderado_aresta;
     bool in_ponderado_vertice;
     vector<No*> lista_adj;
+    private:
+    //funcao auxiliar para DFS
+    void aux_dfs_reverso(char id_atual, set<char>& visitado, const unordered_map<char, vector<No*>>& lista_adjacencia_inversa);
+
 };
 
 
