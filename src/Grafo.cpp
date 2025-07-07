@@ -9,7 +9,7 @@
 #include <queue>
 #include <climits>
 #include <algorithm>
-#include <unordered_map> 
+#include <unordered_map>
 
 using namespace std;
 
@@ -231,7 +231,6 @@ vector<char> Grafo::fecho_transitivo_indireto(char id_no)
     return vector<char>(visitado.begin(), visitado.end());
 }
 
-
 /// DIJKSTRA - INÍCIO
 
 vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
@@ -239,20 +238,20 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
     vector<char> ids = this->get_ids_vertices();
     int n = ids.size();
 
-    // Mapeia o ID do vértice para seu índice na matriz
-    auto indice_de = [&](char id) {
-        for (int i = 0; i < n; i++) {
-            if (ids[i] == id) return i;
-        }
-        return -1;
-    };
+        // Mapeia o ID do vértice para seu índice na matriz
+        auto indice_de = [&](char id) {
+            for (int i = 0; i < n; i++) {
+                if (ids[i] == id) return i;
+            }
+            return -1;
+        };
 
-    int origem = indice_de(id_no_a);
-    int destino = indice_de(id_no_b);
+        int origem = indice_de(id_no_a);
+        int destino = indice_de(id_no_b);
 
-    //cout << "ID origem: " << id_no_a << " (" << origem << ") | ID destino: " << id_no_b << " (" << destino << ")\n";
 
-    if (origem == -1 || destino == -1) {
+    if (origem == -1 || destino == -1)
+    {
         cout << "Origem ou destino não encontrados!\n";
         return {};
     }
@@ -266,22 +265,27 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> fila;
     fila.push({0, origem});
 
-    while (!fila.empty()) {
+    while (!fila.empty())
+    {
         int atual = fila.top().second;
         fila.pop();
 
-        if (visitado[atual]) continue;
+        if (visitado[atual])
+            continue;
         visitado[atual] = 1;
 
-        vector<Aresta*> vizinhos = this->get_vizinhanca(ids[atual]);
+        vector<Aresta *> vizinhos = this->get_vizinhanca(ids[atual]);
 
-        for (Aresta* a : vizinhos) {
+        for (Aresta *a : vizinhos)
+        {
             int viz = indice_de(a->id_no_alvo);
-            if (viz == -1) continue;
+            if (viz == -1)
+                continue;
 
             int peso = this->get_ponderado_aresta() ? a->peso : 1;
 
-            if (dist[atual] + peso < dist[viz]) {
+            if (dist[atual] + peso < dist[viz])
+            {
                 dist[viz] = dist[atual] + peso;
                 anterior[viz] = atual;
                 fila.push({dist[viz], viz});
@@ -291,12 +295,15 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
 
     // Reconstrução do caminho
     vector<char> caminho;
-    for (int v = destino; v != -1; v = anterior[v]) {
+    for (int v = destino; v != -1; v = anterior[v])
+    {
         caminho.push_back(ids[v]);
-        if (v == origem) break;
+        if (v == origem)
+            break;
     }
 
-    if (caminho.back() != id_no_a) {
+    if (caminho.back() != id_no_a)
+    {
         cout << "Caminho não encontrado.\n";
         return {};
     }
@@ -309,32 +316,100 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
     return caminho;
 }
 
-vector<Aresta*> Grafo::get_vizinhanca(char id) {
-    for (No* no : lista_adj) {
-        if (no != nullptr && no->get_id() == id) {
+vector<Aresta *> Grafo::get_vizinhanca(char id)
+{
+    for (No *no : lista_adj)
+    {
+        if (no != nullptr && no->get_id() == id)
+        {
             return no->get_arestas();
         }
     }
     return {};
 }
 
-vector<char> Grafo::get_ids_vertices() {
+vector<char> Grafo::get_ids_vertices()
+{
     vector<char> ids;
-    for (No* no : lista_adj) {
-        if (no != nullptr) {
+    for (No *no : lista_adj)
+    {
+        if (no != nullptr)
+        {
             ids.push_back(no->get_id());
         }
     }
     return ids;
 }
 
-
 /// DIJKSTRA - FIM
 
 vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b)
 {
-    cout << "Metodo nao implementado" << endl;
-    return {};
+    vector<char> ids = this->get_ids_vertices();
+    int n = ids.size();
+
+    unordered_map<char, int> id_para_indice;
+    for (int i = 0; i < n; ++i) id_para_indice[ids[i]] = i;
+
+    if (id_para_indice.find(id_no) == id_para_indice.end() ||
+        id_para_indice.find(id_no_b) == id_para_indice.end()) {
+        cout << "Origem ou destino não encontrados!\n";
+        return {};
+    }
+
+    vector<vector<int>> dist(n, vector<int>(n, INT_MAX));
+    vector<vector<int>> pred(n, vector<int>(n, -1));
+
+    // Inicializa a matriz de distâncias
+    for (int i = 0; i < n; ++i) dist[i][i] = 0;
+
+    for (No* no : lista_adj) {
+        int u = id_para_indice[no->get_id()];
+        for (Aresta* a : no->get_arestas()) {
+            int v = id_para_indice[a->id_no_alvo];
+            int peso = get_ponderado_aresta() ? a->peso : 1;
+            dist[u][v] = peso;
+            pred[u][v] = u;
+
+            // Se o grafo não for direcionado, adiciona o inverso
+            if (!get_direcionado()) {
+                dist[v][u] = peso;
+                pred[v][u] = v;
+            }
+        }
+    }
+
+    // Algoritmo de Floyd-Warshall
+    for (int k = 0; k < n; ++k)
+        for (int i = 0; i < n; ++i)
+            for (int j = 0; j < n; ++j)
+                if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX &&
+                    dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                    pred[i][j] = pred[k][j];
+                }
+
+    // Reconstrói o caminho
+    int origem = id_para_indice[id_no];
+    int destino = id_para_indice[id_no_b];
+
+    if (dist[origem][destino] == INT_MAX) {
+        cout << "Caminho não encontrado.\n";
+        return {};
+    }
+
+    vector<char> caminho;
+    for (int at = destino; at != origem; at = pred[origem][at]) {
+        if (at == -1) {
+            cout << "Caminho não encontrado.\n";
+            return {};
+        }
+        caminho.push_back(ids[at]);
+    }
+    caminho.push_back(ids[origem]);
+    reverse(caminho.begin(), caminho.end());
+
+    return caminho;
 }
 
 Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
