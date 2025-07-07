@@ -87,31 +87,38 @@ Não serão avaliados trabalhos com erros de compilação. Por isso a importânc
 Procure o professor ou o tutor para tirar suas dúvidas no horário de atendimento ou durante as aulas.
 
 ## Estrutura de diretórios
+```
+.
+├── .vscode
+│   ├── launch.json
+│   ├── settings.json
+│   └── tasks.json
 ├── arvore_caminhamento_profundidade.txt
 ├── execGrupoX
 ├── instancias
-    ├── g_10_0.20_1_0_0.txt
-    ├── g_10_0.30_0_0_0.txt
-    ├── g_10_0.30_1_0_2.txt
-    ├── g_10_0.40_1_1_1.txt
-    ├── grafo01.txt
-    ├── grafo02.txt
-    ├── grafoG.txt
-    └── readme.txt
+│   ├── g_10_0.20_1_0_0.txt
+│   ├── g_10_0.30_0_0_0.txt
+│   ├── g_10_0.30_1_0_2.txt
+│   ├── g_10_0.40_1_1_1.txt
+│   ├── grafo01.txt
+│   ├── grafo02.txt
+│   ├── grafoG.txt
+│   └── readme.txt
 ├── msc
-    └── arquivo.jpg
+│   └── arquivo.jpg
 ├── readme.md
 └── src
     ├── Aresta
-        ├── Aresta.cpp
-        └── Aresta.h
+    │   ├── Aresta.cpp
+    │   └── Aresta.h
     ├── Gerenciador
-        ├── Gerenciador.cpp
-        └── Gerenciador.h
+    │   ├── Gerenciador.cpp
+    │   └── Gerenciador.h
     ├── Grafo
-        ├── Grafo.cpp
-        └── Grafo.h
+    │   ├── Grafo.cpp
+    │   └── Grafo.h
     ├── No
-        ├── No.cpp
-        └── No.h
+    │   ├── No.cpp
+    │   └── No.h
     └── main.cpp
+```
