@@ -437,6 +437,7 @@ Grafo * Grafo::arvore_caminhamento_profundidade(char id_no) {
 vector<vector<int>> Grafo::calcular_matriz_distancias() {
     int n = this->ordem;
     const int INF = 1000000000;
+    int peso = 0;
     
     vector<char> vertices(n);
     for (int i = 0; i < n; i++) {
@@ -449,9 +450,13 @@ vector<vector<int>> Grafo::calcular_matriz_distancias() {
         No* no = lista_adj[i];
         for (Aresta* aresta : no->arestas) {
             int j = distance(vertices.begin(), find(vertices.begin(), vertices.end(), aresta->id_no_alvo));
-            dist[i][j] = aresta->peso;
+            if(in_ponderado_aresta == true)
+                peso = aresta->peso;
+            else
+                peso = 1;
+            dist[i][j] = peso;
             if (!in_direcionado) {
-                dist[j][i] = aresta->peso;
+                dist[j][i] = peso;
             }
         }
     }
@@ -486,7 +491,7 @@ vector<int> Grafo::excentricidade(){
         for(int j = 0; j < this->ordem; j++) 
         {
             if(i != j)
-                if(dist[i][j] != numeric_limits<int>::max()) 
+                if(dist[i][j] != 0) 
                     if(dist[i][j] > excentricidades[i])
                         excentricidades[i] = dist[i][j];
         }
