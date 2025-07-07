@@ -1,4 +1,6 @@
 #include "Grafo.h"
+#include <fstream>
+#include <sstream>
 
 
 Grafo::Grafo(int ordem, bool in_direcionado, bool in_ponderado_aresta, bool in_ponderado_vertice, vector<No*> lista_adj) {
@@ -9,7 +11,82 @@ Grafo::Grafo(int ordem, bool in_direcionado, bool in_ponderado_aresta, bool in_p
     this->lista_adj = lista_adj;
 }
 
-Grafo::~Grafo() {
+Grafo::Grafo(const string &caminho)
+{
+
+    this->ordem = 0;
+    ifstream arquivo(caminho);
+    string linha;
+
+    if (!arquivo.is_open())
+    {
+        cerr << "Nao foi possivel abrir o arquivo: " << caminho << endl;
+        return;
+    }
+
+    cout << "Iniciando leitura do grafo a partir do arquivo: " << caminho << endl;
+
+    if (getline(arquivo, linha))
+    {
+        stringstream ss(linha);
+        int eh_direcionado, pondera_arestas, pondera_vertices;
+        ss >> eh_direcionado >> pondera_arestas >> pondera_vertices;
+
+        this->in_direcionado = (eh_direcionado == 1);
+        this->in_ponderado_aresta = (pondera_arestas == 1);
+        this->in_ponderado_vertice = (pondera_vertices == 1);
+    }
+
+    int total_vertices = 0;
+    if (getline(arquivo, linha))
+    {
+        stringstream ss(linha);
+        ss >> total_vertices;
+    }
+
+    for (int i = 0; i < total_vertices; ++i)
+    {
+        if (getline(arquivo, linha))
+        {
+            stringstream ss(linha);
+            char identificador;
+            int peso_vertice = 0;
+
+            ss >> identificador;
+            if (this->in_ponderado_vertice)
+            {
+                ss >> peso_vertice;
+            }
+
+            this->adicionaNo(identificador, peso_vertice);
+        }
+    }
+
+    while (getline(arquivo, linha))
+    {
+        stringstream ss(linha);
+        char origem_id, destino_id;
+        int peso_aresta = 0;
+
+        ss >> origem_id >> destino_id;
+
+        if (this->in_ponderado_aresta)
+        {
+            ss >> peso_aresta;
+        }
+
+        this->adicionaAresta(origem_id, destino_id, peso_aresta);
+    }
+
+    arquivo.close();
+
+    cout << "Leitura do grafo concluída!" << endl;
+}
+
+Grafo::~Grafo()
+{
+    for (No *no : lista_adj)
+    delete no;
 }
 
 vector<No*> Grafo::getListaAdj()
@@ -20,6 +97,51 @@ vector<No*> Grafo::getListaAdj()
 int Grafo::getOrdem()
 {
     return ordem;
+}
+
+void Grafo::adicionaNo(char id, int peso)
+{
+    No* no = new No(id, peso, {});
+    lista_adj.push_back(no);
+    this->ordem++;
+}
+
+void Grafo::adicionaAresta(char id_origem, char id_alvo, int peso)
+{
+    No* no_origem = nullptr;
+    No* no_destino = nullptr;
+
+    for (int i = 0; i < lista_adj.size(); ++i)
+    {
+        No* no = lista_adj[i];
+
+        if (no->getId() == id_origem)
+        {
+            no_origem = no;
+        }
+
+        if (no->getId() == id_alvo)
+        {
+            no_destino = no;
+        }
+
+        if (no_origem && no_destino)
+        {
+            break;
+        }
+    }
+
+    if (no_origem != nullptr)
+    {
+        Aresta* nova_aresta = new Aresta(id_origem, id_alvo, peso);
+        no_origem->adicionarAresta(nova_aresta);
+    }
+
+    if (!in_direcionado && no_origem != nullptr && no_destino != nullptr)
+    {
+        Aresta* aresta_inversa = new Aresta(id_alvo, id_alvo, peso);
+        no_destino->adicionarAresta(aresta_inversa);
+    }
 }
 
 vector<char> Grafo::fecho_transitivo_direto(int id_no) {

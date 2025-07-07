@@ -6,6 +6,12 @@
 using namespace std;
 int main(int argc, char *argv[])
 {
+    if (argc < 2)
+    {
+        cout << "Uso: ./main <nome_do_arquivo>\n";
+        //return 1;
+    }
+
     Aresta* a_b = new Aresta('A', 'B', 1);
     Aresta* a_d = new Aresta('A', 'D', 1);
     Aresta* b_c = new Aresta('B', 'C', 1);

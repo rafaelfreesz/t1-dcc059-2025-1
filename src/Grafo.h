@@ -24,12 +24,15 @@ private:
 public:
     Grafo(int ordem, bool in_direcionado, bool in_ponderado_aresta, bool in_ponderado_vertice, vector<No*> lista_adj);
     ~Grafo();
+    Grafo(const string &caminho);
 
     void calcular_raio_diametro_centro_periferia();
     vector<int> dijkstra_distancias(char origem);
     void imprimirDistancias(char origem);
     int getIndiceNo(char id);
     No* getNoById(char id);
+    void adicionaNo(char id, int peso);
+    void adicionaAresta(char id_origem, char id_alvo, int peso);
 
     vector<No*> getListaAdj();
     int getOrdem();
