@@ -3,8 +3,8 @@
 **Departamento de Ciência da Computação**
 **DCC059 – Teoria dos Grafos – Turma A**
 **Semestre 2025/1 - Profa Luciana Brugiolo - Tutor Rafael Freesz**
-**Grupo: Guilherme Monteiro/202165562c e Gabriel Campos/**
-**Data entrega: 30/06**
+**Grupo: Guilherme Monteiro/202165562c e Gabriel Campos Lima Alves/202176005**
+**Data entrega: 07/07**
 
 Este documento traz a especificação do Trabalho 1, atividade avaliativa do tipo “Trabalho Prático”, e serve de base para todas as atividades de implementação cobradas ao longo do curso da disciplina DCC059 - Teoria dos Grafos no semestre letivo 2025-1.
 
@@ -85,3 +85,33 @@ Você deve informar isso no relatório e haverá algum desconto na nota, depende
 Não serão avaliados trabalhos com erros de compilação. Por isso a importância de se usar apenas funções do padrão Ansi.
 8.	***Tenho outra pergunta/dúvida a respeito do trabalho.***
 Procure o professor ou o tutor para tirar suas dúvidas no horário de atendimento ou durante as aulas.
+
+## Estrutura de diretórios
+├── arvore_caminhamento_profundidade.txt
+├── execGrupoX
+├── instancias
+    ├── g_10_0.20_1_0_0.txt
+    ├── g_10_0.30_0_0_0.txt
+    ├── g_10_0.30_1_0_2.txt
+    ├── g_10_0.40_1_1_1.txt
+    ├── grafo01.txt
+    ├── grafo02.txt
+    ├── grafoG.txt
+    └── readme.txt
+├── msc
+    └── arquivo.jpg
+├── readme.md
+└── src
+    ├── Aresta
+        ├── Aresta.cpp
+        └── Aresta.h
+    ├── Gerenciador
+        ├── Gerenciador.cpp
+        └── Gerenciador.h
+    ├── Grafo
+        ├── Grafo.cpp
+        └── Grafo.h
+    ├── No
+        ├── No.cpp
+        └── No.h
+    └── main.cpp
