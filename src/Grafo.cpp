@@ -195,7 +195,7 @@ vector<char> Grafo::fecho_transitivo_direto(char id_no)
 }
 
 // Retorna o fecho transitivo indireto de um nó
-void Grafo::aux_dfs_reverso(char id_atual, set<char>& visitado, const unordered_map<char, vector<No*>>& lista_adjacencia_inversa)
+void Grafo::aux_dfs_reverso(char id_atual, set<char> &visitado, const unordered_map<char, vector<No *>> &lista_adjacencia_inversa)
 {
     if (visitado.find(id_atual) != visitado.end())
         return;
@@ -205,7 +205,7 @@ void Grafo::aux_dfs_reverso(char id_atual, set<char>& visitado, const unordered_
     auto it = lista_adjacencia_inversa.find(id_atual);
     if (it != lista_adjacencia_inversa.end())
     {
-        for (No* no_origem : it->second)
+        for (No *no_origem : it->second)
         {
             aux_dfs_reverso(no_origem->get_id(), visitado, lista_adjacencia_inversa);
         }
@@ -215,10 +215,10 @@ void Grafo::aux_dfs_reverso(char id_atual, set<char>& visitado, const unordered_
 vector<char> Grafo::fecho_transitivo_indireto(char id_no)
 {
     // Constrói a lista de adjacência inversa
-    unordered_map<char, vector<No*>> lista_adjacencia_inversa;
-    for (No* no : lista_adj)
+    unordered_map<char, vector<No *>> lista_adjacencia_inversa;
+    for (No *no : lista_adj)
     {
-        for (Aresta* aresta : no->get_arestas())
+        for (Aresta *aresta : no->get_arestas())
         {
             lista_adjacencia_inversa[aresta->id_no_alvo].push_back(no);
         }
@@ -239,17 +239,19 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
     vector<char> ids = this->get_ids_vertices();
     int n = ids.size();
 
-        // Mapeia o ID do vértice para seu índice na matriz
-        auto indice_de = [&](char id) {
-            for (int i = 0; i < n; i++) {
-                if (ids[i] == id) return i;
-            }
-            return -1;
-        };
+    // Mapeia o ID do vértice para seu índice na matriz
+    auto indice_de = [&](char id)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            if (ids[i] == id)
+                return i;
+        }
+        return -1;
+    };
 
-        int origem = indice_de(id_no_a);
-        int destino = indice_de(id_no_b);
-
+    int origem = indice_de(id_no_a);
+    int destino = indice_de(id_no_b);
 
     if (origem == -1 || destino == -1)
     {
@@ -356,10 +358,12 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b)
     int n = ids.size();
 
     unordered_map<char, int> id_para_indice;
-    for (int i = 0; i < n; ++i) id_para_indice[ids[i]] = i;
+    for (int i = 0; i < n; ++i)
+        id_para_indice[ids[i]] = i;
 
     if (id_para_indice.find(id_no) == id_para_indice.end() ||
-        id_para_indice.find(id_no_b) == id_para_indice.end()) {
+        id_para_indice.find(id_no_b) == id_para_indice.end())
+    {
         cout << "Origem ou destino não encontrados!\n";
         return {};
     }
@@ -368,18 +372,22 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b)
     vector<vector<int>> pred(n, vector<int>(n, -1));
 
     // Inicializa a matriz de distâncias
-    for (int i = 0; i < n; ++i) dist[i][i] = 0;
+    for (int i = 0; i < n; ++i)
+        dist[i][i] = 0;
 
-    for (No* no : lista_adj) {
+    for (No *no : lista_adj)
+    {
         int u = id_para_indice[no->get_id()];
-        for (Aresta* a : no->get_arestas()) {
+        for (Aresta *a : no->get_arestas())
+        {
             int v = id_para_indice[a->id_no_alvo];
             int peso = get_ponderado_aresta() ? a->peso : 1;
             dist[u][v] = peso;
             pred[u][v] = u;
 
             // Se o grafo não for direcionado, adiciona o inverso
-            if (!get_direcionado()) {
+            if (!get_direcionado())
+            {
                 dist[v][u] = peso;
                 pred[v][u] = v;
             }
@@ -391,7 +399,8 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b)
         for (int i = 0; i < n; ++i)
             for (int j = 0; j < n; ++j)
                 if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX &&
-                    dist[i][k] + dist[k][j] < dist[i][j]) {
+                    dist[i][k] + dist[k][j] < dist[i][j])
+                {
                     dist[i][j] = dist[i][k] + dist[k][j];
                     pred[i][j] = pred[k][j];
                 }
@@ -400,14 +409,17 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b)
     int origem = id_para_indice[id_no];
     int destino = id_para_indice[id_no_b];
 
-    if (dist[origem][destino] == INT_MAX) {
+    if (dist[origem][destino] == INT_MAX)
+    {
         cout << "Caminho não encontrado.\n";
         return {};
     }
 
     vector<char> caminho;
-    for (int at = destino; at != origem; at = pred[origem][at]) {
-        if (at == -1) {
+    for (int at = destino; at != origem; at = pred[origem][at])
+    {
+        if (at == -1)
+        {
             cout << "Caminho não encontrado.\n";
             return {};
         }
@@ -423,22 +435,23 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b)
 
 /// AGM - PRIM - INICIO
 
-
 Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
 {
-    if (ids_nos.empty()) return nullptr;
+    if (ids_nos.empty())
+        return nullptr;
 
-    Grafo* agm = new Grafo();
+    Grafo *agm = new Grafo();
     agm->set_direcionado(false);
     agm->set_ponderado_aresta(true);
     agm->set_ponderado_vertice(false);
 
     set<char> visitado;
-    map<char, No*> mapa_nos;
+    map<char, No *> mapa_nos;
 
     // Adiciona todos os nós ao novo grafo AGM
-    for (char id : ids_nos) {
-        No* no = new No(id);
+    for (char id : ids_nos)
+    {
+        No *no = new No(id);
         mapa_nos[id] = no;
         agm->adiciona_no(no);
     }
@@ -450,29 +463,39 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
     char atual = ids_nos[0];
     visitado.insert(atual);
 
-    for (Aresta* a : get_vizinhanca(atual)) {
-        if (find(ids_nos.begin(), ids_nos.end(), a->id_no_alvo) != ids_nos.end()) {
+    for (Aresta *a : get_vizinhanca(atual))
+    {
+        if (find(ids_nos.begin(), ids_nos.end(), a->id_no_alvo) != ids_nos.end())
+        {
             heap.emplace(a->peso, atual, a->id_no_alvo);
         }
     }
 
     cout << "Criando AGM..." << endl;
 
-    while (!heap.empty() && visitado.size() < ids_nos.size()) {
-        auto [peso, origem, destino] = heap.top();
+    while (!heap.empty() && visitado.size() < ids_nos.size())
+    {
+        auto tupla = heap.top();
+        auto peso = std::get<0>(tupla);
+        auto origem = std::get<1>(tupla);
+        auto destino = std::get<2>(tupla);
+
         heap.pop();
 
-        if (visitado.count(destino)) continue;
+        if (visitado.count(destino))
+            continue;
         visitado.insert(destino);
 
         mapa_nos[origem]->add_aresta(destino, peso);
-        mapa_nos[destino]->add_aresta(origem, peso);  // grafo não direcionado
+        mapa_nos[destino]->add_aresta(origem, peso); // grafo não direcionado
 
         cout << "Adicionando aresta " << origem << " - " << destino << " (" << peso << ")" << endl;
 
-        for (Aresta* a : get_vizinhanca(destino)) {
+        for (Aresta *a : get_vizinhanca(destino))
+        {
             if (!visitado.count(a->id_no_alvo) &&
-                find(ids_nos.begin(), ids_nos.end(), a->id_no_alvo) != ids_nos.end()) {
+                find(ids_nos.begin(), ids_nos.end(), a->id_no_alvo) != ids_nos.end())
+            {
                 heap.emplace(a->peso, destino, a->id_no_alvo);
             }
         }
@@ -482,11 +505,138 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
     return agm;
 }
 
-Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
-{
-    cout << "Metodo nao implementado" << endl;
-    return nullptr;
+// Classe auxiliar UnionFind para o algoritmo de Kruskal
+// Implementa a estrutura de conjunto disjunto (disjoint set union - DSU),
+// usada para detectar ciclos e unir componentes em grafos
+
+class UnionFind {
+public:
+    // Construtor: cria n conjuntos disjuntos, cada elemento é seu próprio pai
+    UnionFind(int n) {
+        parent.resize(n);
+        rank.resize(n, 0);
+        for (int i = 0; i < n; ++i) {
+            parent[i] = i;
+        }
+    }
+
+    // Encontra o representante (pai) do conjunto onde o elemento x está,
+    // com compressão de caminho para otimizar futuras consultas
+    int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    // Une os conjuntos que contêm x e y.
+    // Retorna true se a união foi feita (estavam em conjuntos diferentes),
+    // ou false se já estavam no mesmo conjunto (união não feita para evitar ciclo)
+    bool unite(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+
+        if (rootX == rootY) {
+            return false; // já estão unidos, não une para evitar ciclo
+        }
+
+        // Une o conjunto de menor rank ao de maior rank para balancear a árvore
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } else if (rank[rootY] < rank[rootX]) {
+            parent[rootY] = rootX;
+        } else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+        return true;
+    }
+
+private:
+    std::vector<int> parent; // parent[i] é o pai do elemento i
+    std::vector<int> rank;   // rank[i] é a altura da árvore cujo i é raiz
+};
+
+// Retorna um novo grafo com a Árvore Geradora Mínima usando o algoritmo de Kruskal
+Grafo* Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos) {
+    // Verifica se a lista de nós está vazia
+    if (ids_nos.empty())
+        return nullptr;
+
+    // Cria um mapa de ID para índice numérico (necessário para o UnionFind)
+    unordered_map<char, int> id_para_indice;
+    for (int i = 0; i < (int)ids_nos.size(); i++) {
+        id_para_indice[ids_nos[i]] = i;
+    }
+
+    // Cria um novo grafo para armazenar a AGM
+    Grafo* agm = new Grafo();
+    agm->set_direcionado(false);
+    agm->set_ponderado_aresta(true);
+    agm->set_ponderado_vertice(false);
+
+    // Cria os nós no novo grafo e armazena ponteiros para fácil acesso
+    unordered_map<char, No*> mapa_nos;
+    for (char id : ids_nos) {
+        No* no = new No(id);
+        mapa_nos[id] = no;
+        agm->adiciona_no(no);
+    }
+
+    // Cria uma lista de todas as arestas entre os nós do subconjunto
+    vector<tuple<int, char, char>> arestas; // (peso, origem, destino)
+    for (char origem_id : ids_nos) {
+        No* no_origem = nullptr;
+        for (No* no : lista_adj) {
+            if (no->get_id() == origem_id) {
+                no_origem = no;
+                break;
+            }
+        }
+        if (!no_origem) continue;
+
+        // Percorre arestas e adiciona somente uma direção (evita duplicação)
+        for (Aresta* a : no_origem->get_arestas()) {
+            char destino_id = a->id_no_alvo;
+            if (id_para_indice.count(destino_id) && origem_id < destino_id) {
+                int peso = get_ponderado_aresta() ? a->peso : 1;
+                arestas.emplace_back(peso, origem_id, destino_id);
+            }
+        }
+    }
+
+    // Ordena as arestas pelo peso (menor peso primeiro)
+    sort(arestas.begin(), arestas.end(), [](auto& a, auto& b) {
+        return std::get<0>(a) < std::get<0>(b);
+    });
+
+    // Inicializa estrutura UnionFind com número de nós do subconjunto
+    UnionFind uf((int)ids_nos.size());
+
+    // Percorre arestas em ordem crescente de peso
+    for (size_t i = 0; i < arestas.size(); ++i) {
+        auto tupla = arestas[i];
+        int peso = std::get<0>(tupla);
+        char origem = std::get<1>(tupla);
+        char destino = std::get<2>(tupla);
+
+        int idx_orig = id_para_indice[origem];
+        int idx_dest = id_para_indice[destino];
+
+        // Se a aresta não forma ciclo (os nós estão em componentes diferentes)
+        if (uf.unite(idx_orig, idx_dest)) {
+            // Adiciona a aresta ao grafo AGM
+            mapa_nos[origem]->add_aresta(destino, peso);
+            mapa_nos[destino]->add_aresta(origem, peso); // não direcionado
+
+            cout << "Adicionando aresta " << origem << " - " << destino << " (" << peso << ")" << endl;
+        }
+    }
+
+    agm->set_ordem((int)ids_nos.size());
+    return agm;
 }
+
 
 Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
 {
