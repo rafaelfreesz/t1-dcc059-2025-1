@@ -156,30 +156,6 @@ void Gerenciador::comandos(Grafo* grafo) {
         }
 
         case 'h': {
-            int raio_grafo = grafo->raio();
-            int diametro_grafo = grafo->diametro();
-            vector<char> centro_grafo = grafo->centro();
-            vector<char> periferia_grafo = grafo->periferia();
-            grafo->imprimirPropriedades(raio_grafo, diametro_grafo, centro_grafo, periferia_grafo);
-
-            if(pergunta_imprimir_arquivo("propriedades_grafo.txt")) {
-                grafo->salvarPropriedades(raio_grafo, diametro_grafo, centro_grafo, periferia_grafo, "propriedades_grafo.txt");
-
-            }
-            break;
-        }
-
-        // case 'i': {
-
-        //     vector<char> articulacao = grafo->vertices_de_articulacao();
-        //     cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
-
-        //     if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
-        //         cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
-        //     }
-
-        //     break;
-        // }
 
         case '0': {
             exit(0);
