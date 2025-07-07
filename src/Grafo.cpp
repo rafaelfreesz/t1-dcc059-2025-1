@@ -440,7 +440,7 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
     for (char id : ids_nos) {
         No* no = new No(id);
         mapa_nos[id] = no;
-        agm->get_lista_adj().push_back(no);
+        agm->adiciona_no(no);
     }
 
     // Estrutura de min-heap: (peso, origem, destino)
@@ -456,6 +456,8 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
         }
     }
 
+    cout << "Criando AGM..." << endl;
+
     while (!heap.empty() && visitado.size() < ids_nos.size()) {
         auto [peso, origem, destino] = heap.top();
         heap.pop();
@@ -465,6 +467,8 @@ Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
 
         mapa_nos[origem]->add_aresta(destino, peso);
         mapa_nos[destino]->add_aresta(origem, peso);  // grafo não direcionado
+
+        cout << "Adicionando aresta " << origem << " - " << destino << " (" << peso << ")" << endl;
 
         for (Aresta* a : get_vizinhanca(destino)) {
             if (!visitado.count(a->id_no_alvo) &&

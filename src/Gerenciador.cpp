@@ -50,13 +50,15 @@ void salvar_vetor_char_em_arquivo(const vector<char> &vetor, const string &nome_
 
 void imprimir_lista_adjacencias(Grafo *grafo)
 {
-    vector<char> ids = grafo->get_ids_vertices();
-    for (char id : ids)
+    vector<No*> lista = grafo->get_lista_adj();
+
+    for (No* no : lista)
     {
-        cout << id << ":";
-        vector<Aresta *> arestas = grafo->get_vizinhanca(id);
+        cout << no->get_id() << ":";
+        vector<Aresta*> arestas = grafo->get_vizinhanca(no->get_id());
+
         bool primeiro = true;
-        for (Aresta *a : arestas)
+        for (Aresta* a : arestas)
         {
             cout << (primeiro ? " " : " -> ") << a->id_no_alvo;
             primeiro = false;
@@ -65,22 +67,27 @@ void imprimir_lista_adjacencias(Grafo *grafo)
     }
 }
 
-void imprimir_lista_adjacencias_em_arquivo(const string &nome_arquivo, Grafo *grafo)
+void salvar_lista_adjacencias_em_arquivo(const string &nome_arquivo, Grafo *grafo)
 {
-    ofstream arquivo(nome_arquivo);
+    
+    string caminho_completo = "../output/" + to_string(contador_ordem_arquivo) + nome_arquivo;
+    ofstream arquivo(caminho_completo);
+
     if (!arquivo.is_open())
     {
         cerr << "Erro ao abrir o arquivo " << nome_arquivo << endl;
         return;
     }
 
-    vector<char> ids = grafo->get_ids_vertices();
-    for (char id : ids)
+    vector<No*> lista = grafo->get_lista_adj();
+
+    for (No* no : lista)
     {
-        arquivo << id << ":";
-        vector<Aresta *> arestas = grafo->get_vizinhanca(id);
+        arquivo << no->get_id() << ":";
+        vector<Aresta*> arestas = grafo->get_vizinhanca(no->get_id());
+
         bool primeiro = true;
-        for (Aresta *a : arestas)
+        for (Aresta* a : arestas)
         {
             arquivo << (primeiro ? " " : " -> ") << a->id_no_alvo;
             primeiro = false;
@@ -224,21 +231,7 @@ void Gerenciador::comandos(Grafo *grafo)
 
             if (pergunta_imprimir_arquivo("agm_prim.txt"))
             {
-                ofstream arq("agm_prim.txt");
-                for (char id : agm->get_ids_vertices())
-                {
-                    arq << id << ": ";
-                    vector<Aresta *> viz = agm->get_vizinhanca(id);
-                    for (size_t i = 0; i < viz.size(); ++i)
-                    {
-                        arq << viz[i]->id_no_alvo;
-                        if (i < viz.size() - 1)
-                            arq << " -> ";
-                    }
-                    arq << endl;
-                }
-                arq.close();
-                cout << "Arquivo salvo como agm_prim.txt" << endl;
+                salvar_lista_adjacencias_em_arquivo("agm_prim.txt", agm);
             }
 
             delete agm;

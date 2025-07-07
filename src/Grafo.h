@@ -20,6 +20,7 @@ public:
     ~Grafo();
 
     void carregaArquivo(const string& grafo);
+
     void aux_dfs(No* no, set<char>& visitado);
     vector<char> fecho_transitivo_direto(char id_no); // a
     vector<char> fecho_transitivo_indireto(char id_no); // b
@@ -28,6 +29,7 @@ public:
 
     Grafo* arvore_geradora_minima_prim(vector<char> ids_nos); // e
     Grafo* arvore_geradora_minima_kruskal(vector<char> ids_nos); // f
+
     Grafo* arvore_caminhamento_profundidade(char id_no); // g
     int raio(); // h 1
     int diametro(); // h 2
@@ -35,6 +37,7 @@ public:
     vector<char> periferia(); // h 4
     vector<char> vertices_de_articulacao(); // i
 
+    void adiciona_no(No* no) { lista_adj.push_back(no); };
     void imprimeInfo() const;
 
     //getters
