@@ -5,6 +5,7 @@
 #include <set>
 #include <fstream>
 #include <sstream>
+#include <stack>
 #include <string>
 #include <vector>
 #include <queue>
@@ -738,8 +739,240 @@ vector<char> Grafo::periferia()
     return periphery;
 }
 
+// Função auxiliar para DFS usada no Kosaraju
+void Grafo::fillOrder(char v, set<char>& visited, stack<char>& Stack) {
+    visited.insert(v);
+    No* no = get_no_by_id(v);
+    if (no) {
+        for (Aresta* a : no->get_arestas()) {
+            char neighbor = a->id_no_alvo;
+            if (visited.find(neighbor) == visited.end()) {
+                fillOrder(neighbor, visited, Stack);
+            }
+        }
+    }
+    Stack.push(v);
+}
+// Função auxiliar para DFS no grafo transposto
+void Grafo::DFSUtil(char v, set<char>& visited) {
+    visited.insert(v);
+    No* no = get_no_by_id(v);
+    if (no) {
+        for (Aresta* a : no->get_arestas()) {
+            char neighbor = a->id_no_alvo;
+            if (visited.find(neighbor) == visited.end()) {
+                DFSUtil(neighbor, visited);
+            }
+        }
+    }
+}
+Grafo* Grafo::getTranspose() {
+    Grafo* reversed = new Grafo();
+    reversed->set_direcionado(true);
+    reversed->set_ponderado_aresta(in_ponderado_aresta);
+    reversed->set_ponderado_vertice(in_ponderado_vertice);
+    reversed->set_ordem(ordem);
+
+    // Adiciona todos os vértices
+    for (No* originalNode : lista_adj) {
+        No* newNode = new No(originalNode->get_id(), originalNode->get_peso());
+        reversed->adiciona_no(newNode);
+    }
+
+    // Adiciona arestas invertidas
+    for (No* originalNode : lista_adj) {
+        char u = originalNode->get_id();
+        for (Aresta* a : originalNode->get_arestas()) {
+            char v = a->id_no_alvo;
+            No* reversedNode = reversed->get_no_by_id(v);
+            if (reversedNode) {
+                reversedNode->add_aresta(u, a->peso);
+            }
+        }
+    }
+
+    return reversed;
+}
+// Conta o número de componentes fortemente conectados (Kosaraju)
+int Grafo::countSCC() {
+    stack<char> Stack;
+    set<char> visited;
+
+    // Primeira DFS para preencher a pilha
+    for (No* no : lista_adj) {
+        char id = no->get_id();
+        if (visited.find(id) == visited.end()) {
+            fillOrder(id, visited, Stack);
+        }
+    }
+
+    // Cria grafo transposto
+    Grafo* reversed = getTranspose();
+    
+    // Reseta visited para segunda DFS
+    visited.clear();
+    int count = 0;
+
+    // Segunda DFS no grafo transposto
+    while (!Stack.empty()) {
+        char id = Stack.top();
+        Stack.pop();
+
+        if (visited.find(id) == visited.end()) {
+            reversed->DFSUtil(id, visited);
+            count++;
+        }
+    }
+
+    delete reversed;
+    return count;
+}
+
+// Remove um vértice e todas as arestas associadas
+void Grafo::remove_vertex(char v) {
+    auto it_node = lista_adj.begin();
+    while (it_node != lista_adj.end()) {
+        if ((*it_node)->get_id() == v) {
+            delete *it_node;
+            it_node = lista_adj.erase(it_node);
+            break;
+        } else {
+            ++it_node;
+        }
+    }
+    
+    // Remove incident edges
+    for (No* no : lista_adj) {
+        // Get reference to edges vector
+        vector<Aresta*>& arestas = no->get_arestas(); 
+        auto it_edge = arestas.begin();
+        while (it_edge != arestas.end()) {
+            if ((*it_edge)->id_no_alvo == v) {
+                delete *it_edge;
+                it_edge = arestas.erase(it_edge);
+            } else {
+                ++it_edge;
+            }
+        }
+    }
+    ordem--;
+}
+
+// Função principal para grafos direcionados
+vector<char> Grafo::directed_articulation_points() {
+    vector<char> articulation_points;
+    int originalSCC = countSCC();
+
+    // Cria cópia do grafo para manipulação
+    Grafo* tempGraph = new Grafo();
+    *tempGraph = *this;  // Assume que o operador de cópia está implementado
+
+    for (No* no : lista_adj) {
+        char id = no->get_id();
+        
+        // Remove o vértice e conta SCCs
+        tempGraph->remove_vertex(id);
+        int newSCC = tempGraph->countSCC();
+        
+        // Restaura o grafo original
+        *tempGraph = *this;
+        
+        // Verifica se o número de SCCs aumentou
+        if (newSCC > originalSCC) {
+            articulation_points.push_back(id);
+        }
+    }
+
+    delete tempGraph;
+    return articulation_points;
+}
 vector<char> Grafo::vertices_de_articulacao()
 {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
+    // Verifica se o grafo é direcionado
+    if (in_direcionado) {
+        return directed_articulation_points();
+    } else {
+
+        // Mapeamentos para armazenar estados dos vértices
+        unordered_map<char, int> disc;    // Tempo de descoberta
+        unordered_map<char, int> low;     // Valor low (menor tempo alcançável)
+        unordered_map<char, char> parent; // Pai na árvore DFS
+        unordered_map<char, bool> visited;// Marcador de visitação
+        unordered_map<char, bool> isAP;   // Indica se é ponto de articulação
+
+        for (No* no : lista_adj) {
+            char id = no->get_id();
+            disc[id] = -1;
+            low[id] = -1;
+            parent[id] = '\0'; // '\0' indica ausência de pai
+            visited[id] = false;
+            isAP[id] = false;
+        }
+
+        int time = 0; // Contador global de tempo
+
+        // Função DFS recursiva para encontrar pontos de articulação
+        function<void(char)> dfs = [&](char u) {
+            visited[u] = true;
+            disc[u] = low[u] = ++time;
+            int children = 0; // Contador de filhos na árvore DFS
+
+            // Encontra o nó correspondente na lista de adjacência
+            No* no_u = nullptr;
+            for (No* no : lista_adj) {
+                if (no->get_id() == u) {
+                    no_u = no;
+                    break;
+                }
+            }
+            if (!no_u) return;
+
+            // Explora todos os vizinhos do nó atual
+            for (Aresta* a : no_u->get_arestas()) {
+                char v = a->id_no_alvo;
+
+                if (!visited[v]) {
+                    children++;
+                    parent[v] = u;
+                    dfs(v);
+
+                    // Atualiza o valor low de u após retornar da DFS
+                    low[u] = min(low[u], low[v]);
+
+                    // Verifica se u é ponto de articulação (não raiz)
+                    if (parent[u] != '\0' && low[v] >= disc[u]) {
+                        isAP[u] = true;
+                    }
+                } 
+                // Atualiza low para arestas de retorno (v já visitado e não é pai de u)
+                else if (v != parent[u]) {
+                    low[u] = min(low[u], disc[v]);
+                }
+            }
+
+            // Verifica se u (raiz) é ponto de articulação
+            if (parent[u] == '\0' && children > 1) {
+                isAP[u] = true;
+            }
+        };
+
+        // Executa DFS para cada componente conexo não visitado
+        for (No* no : lista_adj) {
+            char id = no->get_id();
+            if (!visited[id]) {
+                parent[id] = '\0'; // Configura como raiz do componente
+                dfs(id);
+            }
+        }
+
+        // Coleta todos os vértices de articulação identificados
+        vector<char> articulacoes;
+        for (No* no : lista_adj) {
+            if (isAP[no->get_id()]) {
+                articulacoes.push_back(no->get_id());
+            }
+        }
+
+        return articulacoes;
+    }
 }

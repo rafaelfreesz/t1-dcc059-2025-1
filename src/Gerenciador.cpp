@@ -289,16 +289,19 @@ void Gerenciador::comandos(Grafo *grafo)
     }
     case 'i':
     {
-
         vector<char> articulacao = grafo->vertices_de_articulacao();
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
+        
+        // Print articulation points to screen
+        cout << "Vertices de articulacao: ";
+        imprimir_vetor_char(articulacao);
+        cout << endl;
 
-        if (pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt"))
+        // Save to file if requested
+        if (pergunta_imprimir_arquivo("vertices_articulacao.txt"))
         {
-            cout << "Metodo de impressao em arquivo nao implementado" << endl;
+            salvar_vetor_char_em_arquivo(articulacao, "vertices_articulacao.txt");
+            cout << "Vertices de articulacao salvos no arquivo vertices_articulacao.txt" << endl;
         }
-
         break;
     }
 

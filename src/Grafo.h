@@ -8,6 +8,7 @@
 #include "No.h"
 #include <iostream>
 #include <set>
+#include <stack>
 #include <vector>
 #include <unordered_map>
 
@@ -45,7 +46,12 @@ public:
     int diametro(); // h 2
     vector<char> centro(); // h 3
     vector<char> periferia(); // h 4
-
+    void fillOrder(char v, set<char>& visited, stack<char>& Stack);
+    void DFSUtil(char v, set<char>& visited);
+    Grafo* getTranspose();
+    vector<char> directed_articulation_points();
+    void remove_vertex(char v);
+    int countSCC();
     vector<char> vertices_de_articulacao(); // i
 
     void adiciona_no(No* no) { lista_adj.push_back(no); };
