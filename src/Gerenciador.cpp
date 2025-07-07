@@ -115,7 +115,7 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout << "Caminho minimo de " << id_no_1 << " ate " << id_no_2 << " (Dijkstra): ";
             if (caminho_minimo_dijkstra.empty()) //Verifica se há caminho entre os vértices escolhidos
             {
-                cout << "Não existe caminho entre os vértices." << endl;
+                cout << "Nao ha caminho entre os nos." << endl;
             }
             else
             {

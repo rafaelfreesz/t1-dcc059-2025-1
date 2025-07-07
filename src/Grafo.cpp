@@ -80,7 +80,7 @@ Grafo::Grafo(const string &caminho)
 
     arquivo.close();
 
-    cout << "Leitura do grafo concluída!" << endl;
+    cout << "Leitura do grafo concluida!" << endl;
 }
 
 Grafo::~Grafo()
