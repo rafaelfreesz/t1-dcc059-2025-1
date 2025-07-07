@@ -8,6 +8,7 @@
 #include <vector>
 #include <queue>
 #include <climits>
+#include <algorithm>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ Grafo::Grafo()
 }
 
 // Construtor que recebe o nome do arquivo e carrega o grafo
-Grafo::Grafo(const std::string &nome_arquivo) : Grafo()
+Grafo::Grafo(const string &nome_arquivo) : Grafo()
 {
     carregaArquivo(nome_arquivo);
 }
@@ -216,6 +217,7 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
     vector<char> ids = this->get_ids_vertices();
     int n = ids.size();
 
+    // Mapeia o ID do vértice para seu índice na matriz
     auto indice_de = [&](char id) {
         for (int i = 0; i < n; i++) {
             if (ids[i] == id) return i;
@@ -225,7 +227,13 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
 
     int origem = indice_de(id_no_a);
     int destino = indice_de(id_no_b);
-    if (origem == -1 || destino == -1) return {};
+
+    //cout << "ID origem: " << id_no_a << " (" << origem << ") | ID destino: " << id_no_b << " (" << destino << ")\n";
+
+    if (origem == -1 || destino == -1) {
+        cout << "Origem ou destino não encontrados!\n";
+        return {};
+    }
 
     vector<int> dist(n, INT_MAX);
     vector<int> visitado(n, 0);
@@ -259,26 +267,28 @@ vector<char> Grafo::caminho_minimo_dijkstra(char id_no_a, char id_no_b)
         }
     }
 
-    // Reconstruir caminho
+    // Reconstrução do caminho
     vector<char> caminho;
     for (int v = destino; v != -1; v = anterior[v]) {
         caminho.push_back(ids[v]);
         if (v == origem) break;
     }
 
-    if (caminho.back() != id_no_a) return {};
-
-    // Inversão manual
-    vector<char> caminho_invertido;
-    for (int i = caminho.size() - 1; i >= 0; i--) {
-        caminho_invertido.push_back(caminho[i]);
+    if (caminho.back() != id_no_a) {
+        cout << "Caminho não encontrado.\n";
+        return {};
     }
 
-    return caminho_invertido;
+    // Inverte caminho
+    reverse(caminho.begin(), caminho.end());
+
+    cout << endl;
+
+    return caminho;
 }
 
 vector<Aresta*> Grafo::get_vizinhanca(char id) {
-    for (No* no : vertices) {
+    for (No* no : lista_adj) {
         if (no != nullptr && no->get_id() == id) {
             return no->get_arestas();
         }
@@ -288,7 +298,7 @@ vector<Aresta*> Grafo::get_vizinhanca(char id) {
 
 vector<char> Grafo::get_ids_vertices() {
     vector<char> ids;
-    for (No* no : vertices) {
+    for (No* no : lista_adj) {
         if (no != nullptr) {
             ids.push_back(no->get_id());
         }
