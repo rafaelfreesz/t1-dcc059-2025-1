@@ -3,7 +3,7 @@
 **Departamento de Ciência da Computação**<br>
 **DCC059 – Teoria dos Grafos – Turma A**<br>
 **Semestre 2025/1 - Profa Luciana Brugiolo - Tutor Rafael Freesz**<br>
-**Grupo: Guilherme Monteiro/202165562c e Gabriel Campos Lima Alves/202176005**<br>
+**Grupo: Guilherme Monteiro M:202165562c e Gabriel Campos Lima Alves M:202176005**<br>
 **Data entrega: 07/07**
 
 Este documento traz a especificação do Trabalho 1, atividade avaliativa do tipo “Trabalho Prático”, e serve de base para todas as atividades de implementação cobradas ao longo do curso da disciplina DCC059 - Teoria dos Grafos no semestre letivo 2025-1.
