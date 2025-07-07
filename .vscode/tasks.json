@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compilar C++",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g",
+                "${workspaceFolder}/src/main.cpp",
+                "${workspaceFolder}/src/Aresta.cpp",
+                "${workspaceFolder}/src/Grafo.cpp",
+                "${workspaceFolder}/src/Gerenciador.cpp",
+                "${workspaceFolder}/src/No.cpp",
+                "-o",
+                "${workspaceFolder}/src/output/main.exe"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ]
+}

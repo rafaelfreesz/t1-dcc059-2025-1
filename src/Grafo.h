@@ -8,6 +8,7 @@
 #include "No.h"
 #include <iostream>
 #include <vector>
+#include <map>  // Para usar std::map
 
 
 using namespace std;
@@ -23,6 +24,12 @@ private:
 public:
     Grafo(int ordem, bool in_direcionado, bool in_ponderado_aresta, bool in_ponderado_vertice, vector<No*> lista_adj);
     ~Grafo();
+
+    void calcular_raio_diametro_centro_periferia();
+    vector<int> dijkstra_distancias(char origem);
+    void imprimirDistancias(char origem);
+    int getIndiceNo(char id);
+    No* getNoById(char id);
 
     vector<No*> getListaAdj();
     int getOrdem();

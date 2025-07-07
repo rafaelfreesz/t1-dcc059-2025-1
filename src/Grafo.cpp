@@ -262,3 +262,132 @@ vector<char> Grafo::vertices_de_articulacao() {
     cout<<"Metodo nao implementado"<<endl;
     return {};
 }
+
+int Grafo::getIndiceNo(char id) {
+    for (int i = 0; i < (int)lista_adj.size(); i++) {
+        if (lista_adj[i]->getId() == id)
+            return i;
+    }
+    return -1;
+}
+
+No* Grafo::getNoById(char id) {
+    for (int i = 0; i < (int)lista_adj.size(); i++) {
+        if (lista_adj[i]->getId() == id)
+            return lista_adj[i];
+    }
+    return nullptr;
+}
+
+vector<int> Grafo::dijkstra_distancias(char origem) {
+    int n = lista_adj.size();
+    vector<int> dist(n, 999999); // 999999 como "infinito"
+    vector<bool> visitado(n, false);
+
+    int origem_idx = getIndiceNo(origem);
+    dist[origem_idx] = 0;
+
+    for (int count = 0; count < n - 1; count++) {
+        // Encontra o vértice com menor distância ainda não visitado
+        int min_dist = 999999;
+        int u = -1;
+
+        for (int i = 0; i < n; i++) {
+            if (!visitado[i] && dist[i] < min_dist) {
+                min_dist = dist[i];
+                u = i;
+            }
+        }
+
+        if (u == -1) break;
+
+        visitado[u] = true;
+        No* no_u = lista_adj[u];
+
+        for (int j = 0; j < (int)no_u->getArestas().size(); j++) {
+            Aresta* aresta = no_u->getArestas()[j]; 
+            char destino = aresta->getIdAlvo();;
+            int peso = aresta->getPeso();
+            int v = getIndiceNo(destino);
+
+            if (!visitado[v] && dist[u] + peso < dist[v]) {
+                dist[v] = dist[u] + peso;
+            }
+        }
+    }
+
+    return dist;
+}
+
+void Grafo::imprimirDistancias(char origem) {
+    vector<int> dist = dijkstra_distancias(origem);
+    cout << "Distancias a partir do vertice " << origem << ":\n";
+    for (int i = 0; i < (int)lista_adj.size(); i++) {
+        cout << origem << " -> " << lista_adj[i]->getId() << " = ";
+        if (dist[i] >= 999999)
+            cout << "infinito\n";
+        else
+            cout << dist[i] << "\n";
+    }
+}
+
+void Grafo::calcular_raio_diametro_centro_periferia() {
+    int n = lista_adj.size();
+    vector<int> excentricidades(n, 0); // para armazenar a excentricidade de cada vértice
+
+    // Passo 1: calcular excentricidade de cada vértice
+    for (int i = 0; i < n; i++) {
+        char id_origem = lista_adj[i]->getId();
+        vector<int> dist = dijkstra_distancias(id_origem);
+
+        int maior_dist = -1;
+        for (int j = 0; j < n; j++) {
+            if (dist[j] < 999999 && dist[j] > maior_dist) {
+                maior_dist = dist[j];
+            }
+        }
+        excentricidades[i] = maior_dist;
+    }
+
+    // Passo 2: calcular raio e diametro
+    int raio = 999999;
+    int diametro = -1;
+
+    for (int i = 0; i < n; i++) {
+        if (excentricidades[i] < raio) {
+            raio = excentricidades[i];
+        }
+        if (excentricidades[i] > diametro) {
+            diametro = excentricidades[i];
+        }
+    }
+
+    // Passo 3: encontrar centro e periferia
+    vector<char> centro;
+    vector<char> periferia;
+
+    for (int i = 0; i < n; i++) {
+        if (excentricidades[i] == raio) {
+            centro.push_back(lista_adj[i]->getId());
+        }
+        if (excentricidades[i] == diametro) {
+            periferia.push_back(lista_adj[i]->getId());
+        }
+    }
+
+    // Impressão
+    cout << "Raio: " << raio << endl;
+    cout << "Diametro: " << diametro << endl;
+
+    cout << "Centro: ";
+    for (int i = 0; i < (int)centro.size(); i++) {
+        cout << centro[i] << " ";
+    }
+    cout << endl;
+
+    cout << "Periferia: ";
+    for (int i = 0; i < (int)periferia.size(); i++) {
+        cout << periferia[i] << " ";
+    }
+    cout << endl << endl;
+}

@@ -23,10 +23,10 @@ void Gerenciador::comandos(Grafo* grafo) {
             char id_no = get_id_entrada();
             vector<char> fecho_transitivo_direto = grafo->fecho_transitivo_direto(id_no);
             cout << "Fecho transitivo direto de " << id_no << ": ";
-            for (int i = 0; i < fecho_transitivo_direto.size(); i++) //Imprime o Fecho Transitivo Direto do vértice escolhido
+            for (int i = 0; i < (int)fecho_transitivo_direto.size(); i++) //Imprime o Fecho Transitivo Direto do vértice escolhido
             {
                 cout << fecho_transitivo_direto[i];
-                if (i < fecho_transitivo_direto.size() - 1)
+                if (i < (int)fecho_transitivo_direto.size() - 1)
                 cout << ",";
             }
             cout << endl << endl;
@@ -43,10 +43,10 @@ void Gerenciador::comandos(Grafo* grafo) {
             char id_no = get_id_entrada();
             vector<char> fecho_transitivo_indireto = grafo->fecho_transitivo_indireto(id_no);
             cout << "Fecho transitivo indireto de "<< id_no << ": ";
-            for (int i = 0; i < fecho_transitivo_indireto.size(); i++) //Imprime o Fecho Transitivo Indireto do vértice escolhido
+            for (int i = 0; i < (int)fecho_transitivo_indireto.size(); i++) //Imprime o Fecho Transitivo Indireto do vértice escolhido
             {
                 cout << fecho_transitivo_indireto[i];
-                if (i < fecho_transitivo_indireto.size() - 1)
+                if (i < (int)fecho_transitivo_indireto.size() - 1)
                 cout << ",";
             }
             cout << endl;
@@ -71,10 +71,10 @@ void Gerenciador::comandos(Grafo* grafo) {
             }
             else
             {
-                for (int i = 0; i < caminho_minimo_dijkstra.size(); i++) //Imprime o caminho mínimo entre os vértices escolhidos, segundo o algoritmo de Dijkstra
+                for (int i = 0; i < (int)caminho_minimo_dijkstra.size(); i++) //Imprime o caminho mínimo entre os vértices escolhidos, segundo o algoritmo de Dijkstra
                 {
                     cout << caminho_minimo_dijkstra[i];
-                    if (i < caminho_minimo_dijkstra.size() - 1)
+                    if (i < (int)caminho_minimo_dijkstra.size() - 1)
                      cout << ",";
                 }
                 cout << endl;
@@ -167,13 +167,7 @@ void Gerenciador::comandos(Grafo* grafo) {
         }
 
         case 'h': {
-            vector<char> articulacao = grafo->vertices_de_articulacao();
-            cout<<"Metodo de impressao em tela nao implementado"<<endl<<endl;
-
-            if(pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
-            }
-
+            grafo->calcular_raio_diametro_centro_periferia();
             break;
         }
         case 'i': {
