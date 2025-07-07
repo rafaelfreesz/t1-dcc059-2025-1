@@ -32,7 +32,31 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout << endl << endl;
 
             if(pergunta_imprimir_arquivo("fecho_trans_dir.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl<<endl;
+                ofstream out("fecho_trans_dir.txt");
+                if (!out.is_open())
+                {
+                    cout << "ERRO!" << endl;
+                }
+                else
+                {
+                    out << "Fecho transitivo direto do no " << id_no << ": ";
+                    if (fecho_transitivo_direto.empty())
+                    {
+                        out << "Nao ha caminho para " << id_no << ".";
+                    }
+                    else
+                    {
+                        for (size_t i = 0; i < fecho_transitivo_direto.size(); ++i)
+                        {
+                            out << fecho_transitivo_direto[i];
+                            if (i != fecho_transitivo_direto.size() - 1)
+                                out << ",";
+                        }
+                    }
+                    out << endl;
+                    out.close();
+                    cout << "Fecho transitivo direto salvo em fecho_trans_dir.txt" << endl;
+                }
             }
 
             break;
@@ -52,7 +76,31 @@ void Gerenciador::comandos(Grafo* grafo) {
             cout << endl;
 
             if(pergunta_imprimir_arquivo("fecho_trans_indir.txt")) {
-                cout<<"Metodo de impressao em arquivo nao implementado"<<endl;
+                ofstream out("fecho_trans_indir.txt");
+                if (!out.is_open())
+                {
+                    cout << "ERRO!" << endl;
+                }
+                else
+                {
+                    out << "Fecho transitivo indireto do no " << id_no << ": ";
+                    if (fecho_transitivo_indireto.empty())
+                    {
+                        out << "Nao ha caminho para " << id_no << ".";
+                    }
+                    else
+                    {
+                        for (size_t i = 0; i < fecho_transitivo_indireto.size(); ++i)
+                        {
+                            out << fecho_transitivo_indireto[i];
+                            if (i != fecho_transitivo_indireto.size() - 1)
+                                out << ",";
+                        }
+                    }
+                    out << endl;
+                    out.close();
+                    cout << "Fecho transitivo indireto salvo em fecho_trans_indir.txt" << endl;
+                }
             }
 
             break;
@@ -81,7 +129,28 @@ void Gerenciador::comandos(Grafo* grafo) {
             }
 
             if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt")) {
-                cout << "Metodo de impressao em arquivo nao implementado" << endl;
+                ofstream outFile("caminho_minimo_dijkstra.txt");
+                if (outFile.is_open())
+                {
+                    if (caminho_minimo_dijkstra.empty())
+                    {
+                        outFile << "Nao ha caminho entre " << id_no_1 << " e " << id_no_2 << "." << endl;
+                    }
+                    else
+                    {
+                        for (size_t i = 0; i < caminho_minimo_dijkstra.size(); ++i)
+                        {
+                            outFile << caminho_minimo_dijkstra[i] << (i == caminho_minimo_dijkstra.size() - 1 ? "" : ",");
+                        }
+                        outFile << endl;
+                    }
+                    cout << "Caminho minimo salvo em caminho_minimo_dijkstra.txt" << endl;
+                    outFile.close();
+                }
+                else
+                {
+                    cout << "ERRO!" << endl;
+                }
             }
 
             break;
