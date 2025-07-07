@@ -135,6 +135,7 @@ void Gerenciador::comandos(Grafo *grafo)
         imprimir_vetor_char(fecho_transitivo_direto);
         cout << endl;
 
+        // Impressão no arquivo
         if (pergunta_imprimir_arquivo("fecho_trans_dir.txt"))
         {
             salvar_vetor_char_em_arquivo(fecho_transitivo_direto, "fecho_trans_dir.txt");
@@ -146,23 +147,24 @@ void Gerenciador::comandos(Grafo *grafo)
     }
 
     case 'b':
-{
-    char id_no = get_id_entrada();
-    vector<char> fecho_transitivo_indireto = grafo->fecho_transitivo_indireto(id_no);
-
-    cout << "Fecho transitivo indireto de " << id_no << ": ";
-    imprimir_vetor_char(fecho_transitivo_indireto);
-    cout << endl;
-
-    if (pergunta_imprimir_arquivo("fecho_trans_indir.txt"))
     {
-        salvar_vetor_char_em_arquivo(fecho_transitivo_indireto, "fecho_trans_indir.txt");
-        cout << "Fecho salvo no arquivo fecho_trans_indir.txt" << endl << endl;
+        char id_no = get_id_entrada();
+        vector<char> fecho_transitivo_indireto = grafo->fecho_transitivo_indireto(id_no);
+
+        cout << "Fecho transitivo indireto de " << id_no << ": ";
+        imprimir_vetor_char(fecho_transitivo_indireto);
+        cout << endl;
+
+        // Impressão no arquivo
+        if (pergunta_imprimir_arquivo("fecho_trans_indir.txt"))
+        {
+            salvar_vetor_char_em_arquivo(fecho_transitivo_indireto, "fecho_trans_indir.txt");
+            cout << "Fecho salvo no arquivo fecho_trans_indir.txt" << endl
+                 << endl;
+        }
+
+        break;
     }
-
-    break;
-}
-
 
     case 'c':
     {
@@ -173,16 +175,7 @@ void Gerenciador::comandos(Grafo *grafo)
 
         cout << "Caminho mínimo (Dijkstra): ";
         imprimir_vetor_char(caminho_minimo_dijkstra);
-        /*
-        for (size_t i = 0; i < caminho_minimo_dijkstra.size(); ++i)
-        {
-            cout << caminho_minimo_dijkstra[i];
-            if (i != caminho_minimo_dijkstra.size() - 1)
-                cout << ",";
-        }
-        cout << endl
-             << endl;
-        */
+        cout << endl;
 
         // Impressão no arquivo
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
@@ -202,14 +195,9 @@ void Gerenciador::comandos(Grafo *grafo)
 
         cout << "Caminho mínimo (Floyd): ";
 
-        for (size_t i = 0; i < caminho_minimo_floyd.size(); ++i)
-        {
-            cout << caminho_minimo_floyd[i];
-            if (i != caminho_minimo_floyd.size() - 1)
-                cout << ",";
-        }
-        cout << endl
-             << endl;
+        imprimir_vetor_char(caminho_minimo_floyd);
+
+        cout << endl;
 
         // Impressão no arquivo
         if (pergunta_imprimir_arquivo("caminho_minimo_floyd.txt"))
@@ -232,7 +220,7 @@ void Gerenciador::comandos(Grafo *grafo)
             Grafo *agm = grafo->arvore_geradora_minima_prim(ids);
 
             cout << "Árvore Geradora Mínima (Prim):\n";
-            //imprimir_lista_adjacencias(agm);
+            imprimir_lista_adjacencias(agm);
 
             if (pergunta_imprimir_arquivo("agm_prim.txt"))
             {

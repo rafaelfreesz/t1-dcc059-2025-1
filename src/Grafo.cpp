@@ -10,6 +10,7 @@
 #include <climits>
 #include <algorithm>
 #include <unordered_map>
+#include <map>
 
 using namespace std;
 
@@ -422,30 +423,59 @@ vector<char> Grafo::caminho_minimo_floyd(char id_no, char id_no_b)
 
 /// AGM - PRIM - INICIO
 
-// IMPRESSAO E ESCRITA - AGM - INICIO
-
-void imprimir_lista_adjacencias(Grafo* grafo) {
-    vector<char> ids = grafo->get_ids_vertices();
-
-    for (char id : ids) {
-        cout << id << ": ";
-        vector<Aresta*> vizinhos = grafo->get_vizinhanca(id);
-
-        for (size_t i = 0; i < vizinhos.size(); ++i) {
-            cout << vizinhos[i]->id_no_alvo;
-            if (i < vizinhos.size() - 1) cout << " -> ";
-        }
-
-        cout << endl;
-    }
-}
-
-// IMPRESSAO E ESC
 
 Grafo *Grafo::arvore_geradora_minima_prim(vector<char> ids_nos)
 {
-    cout << "Metodo nao implementado" << endl;
-    return nullptr;
+    if (ids_nos.empty()) return nullptr;
+
+    Grafo* agm = new Grafo();
+    agm->set_direcionado(false);
+    agm->set_ponderado_aresta(true);
+    agm->set_ponderado_vertice(false);
+
+    set<char> visitado;
+    map<char, No*> mapa_nos;
+
+    // Adiciona todos os nós ao novo grafo AGM
+    for (char id : ids_nos) {
+        No* no = new No(id);
+        mapa_nos[id] = no;
+        agm->get_lista_adj().push_back(no);
+    }
+
+    // Estrutura de min-heap: (peso, origem, destino)
+    using ParAresta = tuple<float, char, char>;
+    priority_queue<ParAresta, vector<ParAresta>, greater<ParAresta>> heap;
+
+    char atual = ids_nos[0];
+    visitado.insert(atual);
+
+    for (Aresta* a : get_vizinhanca(atual)) {
+        if (find(ids_nos.begin(), ids_nos.end(), a->id_no_alvo) != ids_nos.end()) {
+            heap.emplace(a->peso, atual, a->id_no_alvo);
+        }
+    }
+
+    while (!heap.empty() && visitado.size() < ids_nos.size()) {
+        auto [peso, origem, destino] = heap.top();
+        heap.pop();
+
+        if (visitado.count(destino)) continue;
+        visitado.insert(destino);
+
+        mapa_nos[origem]->add_aresta(destino, peso);
+        mapa_nos[destino]->add_aresta(origem, peso);  // grafo não direcionado
+
+        for (Aresta* a : get_vizinhanca(destino)) {
+            if (!visitado.count(a->id_no_alvo) &&
+                find(ids_nos.begin(), ids_nos.end(), a->id_no_alvo) != ids_nos.end()) {
+                heap.emplace(a->peso, destino, a->id_no_alvo);
+            }
+        }
+    }
+
+    agm->set_ordem(agm->get_lista_adj().size());
+    return agm;
 }
 
 Grafo *Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos)
