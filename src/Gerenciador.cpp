@@ -43,61 +43,7 @@ void salvar_vetor_char_em_arquivo(const vector<char> &vetor, const string &nome_
     arquivo << endl;
     arquivo.close();
 }
-
 // Impressao e escrita - A,B,C,D - Fim
-
-// Impressao e escrita E,F - Início
-
-void imprimir_lista_adjacencias(Grafo *grafo)
-{
-    vector<No*> lista = grafo->get_lista_adj();
-
-    for (No* no : lista)
-    {
-        cout << no->get_id() << ":";
-        vector<Aresta*> arestas = grafo->get_vizinhanca(no->get_id());
-
-        bool primeiro = true;
-        for (Aresta* a : arestas)
-        {
-            cout << (primeiro ? " " : " -> ") << a->id_no_alvo;
-            primeiro = false;
-        }
-        cout << endl;
-    }
-}
-
-void salvar_lista_adjacencias_em_arquivo(const string &nome_arquivo, Grafo *grafo)
-{
-    
-    string caminho_completo = "../output/" + to_string(contador_ordem_arquivo) + nome_arquivo;
-    ofstream arquivo(caminho_completo);
-
-    if (!arquivo.is_open())
-    {
-        cerr << "Erro ao abrir o arquivo " << nome_arquivo << endl;
-        return;
-    }
-
-    vector<No*> lista = grafo->get_lista_adj();
-
-    for (No* no : lista)
-    {
-        arquivo << no->get_id() << ":";
-        vector<Aresta*> arestas = grafo->get_vizinhanca(no->get_id());
-
-        bool primeiro = true;
-        for (Aresta* a : arestas)
-        {
-            arquivo << (primeiro ? " " : " -> ") << a->id_no_alvo;
-            primeiro = false;
-        }
-        arquivo << endl;
-    }
-
-    arquivo.close();
-}
-// Impressao e escrita E,F - Fim
 
 void Gerenciador::comandos(Grafo *grafo)
 {
@@ -142,7 +88,6 @@ void Gerenciador::comandos(Grafo *grafo)
         imprimir_vetor_char(fecho_transitivo_direto);
         cout << endl;
 
-        // Impressão no arquivo
         if (pergunta_imprimir_arquivo("fecho_trans_dir.txt"))
         {
             salvar_vetor_char_em_arquivo(fecho_transitivo_direto, "fecho_trans_dir.txt");
@@ -155,21 +100,18 @@ void Gerenciador::comandos(Grafo *grafo)
 
     case 'b':
     {
+
         char id_no = get_id_entrada();
         vector<char> fecho_transitivo_indireto = grafo->fecho_transitivo_indireto(id_no);
+        cout << "Metodo de impressao em tela nao implementado" << endl
+             << endl;
 
-        cout << "Fecho transitivo indireto de " << id_no << ": ";
-        imprimir_vetor_char(fecho_transitivo_indireto);
-        cout << endl;
-
-        // Impressão no arquivo
         if (pergunta_imprimir_arquivo("fecho_trans_indir.txt"))
         {
-            salvar_vetor_char_em_arquivo(fecho_transitivo_indireto, "fecho_trans_indir.txt");
-            cout << "Fecho salvo no arquivo fecho_trans_indir.txt" << endl
-                 << endl;
+            cout << "Metodo de impressao em arquivo nao implementado" << endl;
         }
 
+        ;
         break;
     }
 
@@ -179,15 +121,12 @@ void Gerenciador::comandos(Grafo *grafo)
         char id_no_1 = get_id_entrada();
         char id_no_2 = get_id_entrada();
         vector<char> caminho_minimo_dijkstra = grafo->caminho_minimo_dijkstra(id_no_1, id_no_2);
+        cout << "Metodo de impressao em tela nao implementado" << endl
+             << endl;
 
-        cout << "Caminho mínimo (Dijkstra): ";
-        imprimir_vetor_char(caminho_minimo_dijkstra);
-        cout << endl;
-
-        // Impressão no arquivo
         if (pergunta_imprimir_arquivo("caminho_minimo_dijkstra.txt"))
         {
-            salvar_vetor_char_em_arquivo(caminho_minimo_dijkstra, "caminho_minimo_dijkstra.txt");
+            cout << "Metodo de impressao em arquivo nao implementado" << endl;
         }
 
         break;
@@ -199,46 +138,41 @@ void Gerenciador::comandos(Grafo *grafo)
         char id_no_1 = get_id_entrada();
         char id_no_2 = get_id_entrada();
         vector<char> caminho_minimo_floyd = grafo->caminho_minimo_floyd(id_no_1, id_no_2);
+        cout << "Metodo de impressao em tela nao implementado" << endl
+             << endl;
 
-        cout << "Caminho mínimo (Floyd): ";
-
-        imprimir_vetor_char(caminho_minimo_floyd);
-
-        cout << endl;
-
-        // Impressão no arquivo
         if (pergunta_imprimir_arquivo("caminho_minimo_floyd.txt"))
         {
-            salvar_vetor_char_em_arquivo(caminho_minimo_floyd, "caminho_minimo_floyd.txt");
+            cout << "Metodo de impressao em arquivo nao implementado" << endl;
         }
 
         break;
     }
-
     case 'e':
     {
+
         int tam;
         cout << "Digite o tamanho do subconjunto: ";
         cin >> tam;
 
         if (tam > 0 && tam <= grafo->get_ordem())
         {
-            vector<char> ids = get_conjunto_ids(grafo, tam);
-            Grafo *agm = grafo->arvore_geradora_minima_prim(ids);
 
-            cout << "Árvore Geradora Mínima (Prim):\n";
-            imprimir_lista_adjacencias(agm);
+            vector<char> ids = get_conjunto_ids(grafo, tam);
+            Grafo *arvore_geradora_minima_prim = grafo->arvore_geradora_minima_prim(ids);
+            cout << "Metodo de impressao em tela nao implementado" << endl
+                 << endl;
 
             if (pergunta_imprimir_arquivo("agm_prim.txt"))
             {
-                salvar_lista_adjacencias_em_arquivo("agm_prim.txt", agm);
+                cout << "Metodo de impressao em arquivo nao implementado" << endl;
             }
 
-            delete agm;
+            delete arvore_geradora_minima_prim;
         }
         else
         {
-            cout << "Valor inválido\n";
+            cout << "Valor invalido" << endl;
         }
 
         break;
@@ -293,13 +227,62 @@ void Gerenciador::comandos(Grafo *grafo)
 
     case 'h':
     {
-        vector<char> articulacao = grafo->vertices_de_articulacao();
-        cout << "Metodo de impressao em tela nao implementado" << endl
-             << endl;
+        int raio = grafo->raio();
+        cout << "Raio do grafo: " << raio << endl;
 
-        if (pergunta_imprimir_arquivo("arvore_caminhamento_profundidade.txt"))
+        // Calculando diâmetro
+        int diametro = grafo->diametro();
+        cout << "Diâmetro do grafo: " << diametro << endl;
+
+        // Calculando centro
+        vector<char> centro = grafo->centro();
+        cout << "Centro do grafo: ";
+        imprimir_vetor_char(centro);
+        cout << endl;
+
+        // Calculando periferia
+        vector<char> periferia = grafo->periferia();
+        cout << "Periferia do grafo: ";
+        imprimir_vetor_char(periferia);
+        cout << endl;
+
+        // Perguntar se deseja salvar em arquivo
+        if (pergunta_imprimir_arquivo("grafo_raio_diametro_centro_periferia.txt"))
         {
-            cout << "Metodo de impressao em arquivo nao implementado" << endl;
+            ofstream arquivo("../output/grafo_raio_diametro_centro_periferia.txt");
+
+            if (!arquivo.is_open())
+            {
+                cout << "Erro ao abrir o arquivo para escrita." << endl;
+                break;
+            }
+
+            arquivo << "Raio do grafo: " << raio << endl;
+            arquivo << "Diâmetro do grafo: " << diametro << endl;
+            arquivo << "Centro do grafo: ";
+            for (size_t i = 0; i < centro.size(); ++i)
+            {
+                arquivo << centro[i];
+                if (i != centro.size() - 1)
+                {
+                    arquivo << ",";
+                }
+            }
+            arquivo << endl;
+
+            arquivo << "Periferia do grafo: ";
+            for (size_t i = 0; i < periferia.size(); ++i)
+            {
+                arquivo << periferia[i];
+                if (i != periferia.size() - 1)
+                {
+                    arquivo << ",";
+                }
+            }
+            arquivo << endl;
+
+            arquivo.close();
+            cout << "Raio, Diâmetro, Centro e Periferia salvos no arquivo grafo_raio_diametro_centro_periferia.txt" << endl;
         }
 
         break;
@@ -338,7 +321,6 @@ char Gerenciador::get_id_entrada()
     char id;
     cin >> id;
     cout << endl;
-
     return id;
 }
 

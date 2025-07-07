@@ -31,10 +31,21 @@ public:
     Grafo* arvore_geradora_minima_kruskal(vector<char> ids_nos); // f
 
     Grafo* arvore_caminhamento_profundidade(char id_no); // g
+    vector<int> computeEccentricities();
+    No* get_no_by_id(char id) {
+        for (No* no : lista_adj) {
+            if (no->get_id() == id) {
+                return no;
+            }
+        }
+        return nullptr;
+    }
+    unordered_map<char, int> dijkstra_distancia(char id_no);
     int raio(); // h 1
     int diametro(); // h 2
     vector<char> centro(); // h 3
     vector<char> periferia(); // h 4
+
     vector<char> vertices_de_articulacao(); // i
 
     void adiciona_no(No* no) { lista_adj.push_back(no); };

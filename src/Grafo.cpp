@@ -1,6 +1,7 @@
 #include "Grafo.h"
 #include "No.h"
 #include <cstdlib>
+#include <functional>
 #include <set>
 #include <fstream>
 #include <sstream>
@@ -643,33 +644,102 @@ Grafo *Grafo::arvore_caminhamento_profundidade(char id_no)
     cout << "Metodo nao implementado" << endl;
     return nullptr;
 }
+unordered_map<char, int> Grafo::dijkstra_distancia(char id_no) {
+    unordered_map<char, int> dist;
+    for (No *no : lista_adj) {
+        dist[no->get_id()] = INT_MAX;
+    }
 
+    if (dist.find(id_no) == dist.end()) return dist;
+
+    priority_queue<pair<int, char>, vector<pair<int, char>>, greater<>> pq;
+    dist[id_no] = 0;
+    pq.push({0, id_no});
+
+    while (!pq.empty()) {
+        int d = pq.top().first;
+        char u = pq.top().second;
+        pq.pop();
+
+        if (d != dist[u]) continue;
+
+        No* orig_u = get_no_by_id(u);
+        if (!orig_u) continue;
+
+        for (Aresta* a : orig_u->get_arestas()) {
+            char v = a->id_no_alvo;
+            int weight = a->peso;
+
+            if (dist[u] + weight < dist[v]) {
+                dist[v] = dist[u] + weight;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    return dist;
+}
+
+// Calcula excentricidades de todos os nós
+vector<int> Grafo::computeEccentricities() {
+    vector<int> eccs;
+    for (No *no : lista_adj) {
+        char id = no->get_id();
+        unordered_map<char, int> dist_map = dijkstra_distancia(id);
+        int ecc = 0;
+        for (auto &p : dist_map) {
+            if (p.second != INT_MAX && p.second > ecc) {
+                ecc = p.second;
+            }
+        }
+        eccs.push_back(ecc);
+    }
+    return eccs;
+}
 int Grafo::raio()
 {
-    cout << "Metodo nao implementado" << endl;
-    return 0;
+    if (lista_adj.empty()) return 0;
+    vector<int> eccs = computeEccentricities();
+    return *min_element(eccs.begin(), eccs.end());
 }
 
 int Grafo::diametro()
 {
-    cout << "Metodo nao implementado" << endl;
-    return 0;
+    if (lista_adj.empty()) return 0;
+    vector<int> eccs = computeEccentricities();
+    return *max_element(eccs.begin(), eccs.end());
 }
 
 vector<char> Grafo::centro()
 {
-    cout << "Metodo nao implementado" << endl;
-    return {};
+    vector<char> center;
+    if (lista_adj.empty()) return center;
+    vector<int> eccs = computeEccentricities();
+    int min_ecc = *min_element(eccs.begin(), eccs.end());
+    for (int i = 0; i < lista_adj.size(); i++) {
+        if (eccs[i] == min_ecc) {
+            center.push_back(lista_adj[i]->get_id());
+        }
+    }
+    return center;
+
 }
 
 vector<char> Grafo::periferia()
 {
-    cout << "Metodo nao implementado" << endl;
-    return {};
+    vector<char> periphery;
+    if (lista_adj.empty()) return periphery;
+    vector<int> eccs = computeEccentricities();
+    int max_ecc = *max_element(eccs.begin(), eccs.end());
+    for (int i = 0; i < lista_adj.size(); i++) {
+        if (eccs[i] == max_ecc) {
+            periphery.push_back(lista_adj[i]->get_id());
+        }
+    }
+    return periphery;
 }
 
 vector<char> Grafo::vertices_de_articulacao()
 {
-    cout << "Metodo nao implementado" << endl;
+    cout<<"Metodo nao implementado"<<endl;
     return {};
 }
