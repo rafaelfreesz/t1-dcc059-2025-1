@@ -467,31 +467,6 @@ Grafo* Grafo::arvore_caminhamento_profundidade(int id_no) {
     return new Grafo(nos_arvore.size(), false, true, false, nos_arvore);
 }
 
-int Grafo::raio() {
-    cout<<"Metodo nao implementado"<<endl;
-    return 0;
-}
-
-int Grafo::diametro() {
-    cout<<"Metodo nao implementado"<<endl;
-    return 0;
-}
-
-vector<char> Grafo::centro() {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
-}
-
-vector<char> Grafo::periferia() {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
-}
-
-vector<char> Grafo::vertices_de_articulacao() {
-    cout<<"Metodo nao implementado"<<endl;
-    return {};
-}
-
 int Grafo::getIndiceNo(char id) {
     for (int i = 0; i < (int)lista_adj.size(); i++) {
         if (lista_adj[i]->getId() == id)
@@ -562,7 +537,7 @@ void Grafo::imprimirDistancias(char origem) {
 
 void Grafo::calcular_raio_diametro_centro_periferia() {
     int n = lista_adj.size();
-    vector<int> excentricidades(n, 0); // para armazenar a excentricidade de cada vértice
+    vector<int> excentricidades(n, 0); //Para armazenar a excentricidade de cada vértice
 
     //Calcula excentricidade de cada vértice
     for (int i = 0; i < n; i++) {
@@ -604,19 +579,23 @@ void Grafo::calcular_raio_diametro_centro_periferia() {
         }
     }
 
-    // Impressão
+    //Impressão
     cout << "Raio: " << raio << endl;
     cout << "Diametro: " << diametro << endl;
 
     cout << "Centro: ";
     for (int i = 0; i < (int)centro.size(); i++) {
-        cout << centro[i] << " ";
+        cout << centro[i];
+    if (i < (int)centro.size() - 1)
+    cout << ",";
     }
     cout << endl;
 
     cout << "Periferia: ";
     for (int i = 0; i < (int)periferia.size(); i++) {
-        cout << periferia[i] << " ";
+        cout << periferia[i];
+    if (i < (int)periferia.size() - 1)
+    cout << ",";
     }
     cout << endl << endl;
 }
