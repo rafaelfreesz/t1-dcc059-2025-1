@@ -1,6 +1,9 @@
 #include "Grafo.h"
 #include <fstream>
 #include <sstream>
+#include <algorithm>
+#include <unordered_map>
+#include <stack>
 
 
 Grafo::Grafo(int ordem, bool in_direcionado, bool in_ponderado_aresta, bool in_ponderado_vertice, vector<No*> lista_adj) {
@@ -350,14 +353,118 @@ Grafo * Grafo::arvore_geradora_minima_prim(vector<char> ids_nos) {
     return nullptr;
 }
 
-Grafo * Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos) {
-    cout<<"Metodo nao implementado"<<endl;
-    return nullptr;
+Grafo* Grafo::arvore_geradora_minima_kruskal(vector<char> ids_nos) {
+    if (ids_nos.empty()) return nullptr;
+
+    // 1. Coletar todas as arestas válidas entre os nós do subconjunto
+    vector<tuple<char, char, int>> arestas; // (origem, destino, peso)
+    
+    for (char id : ids_nos) {
+        No* no = getNoById(id);
+        if (!no) continue;
+        
+        for (Aresta* a : no->getArestas()) {
+            char destino = a->getIdAlvo();
+            if (find(ids_nos.begin(), ids_nos.end(), destino) != ids_nos.end()) {
+                arestas.emplace_back(id, destino, a->getPeso());
+            }
+        }
+    }
+
+    // 2. Ordenar arestas por peso
+    sort(arestas.begin(), arestas.end(), 
+        [](const auto& a, const auto& b) { return get<2>(a) < get<2>(b); });
+
+    // 3. Union-Find (Disjoint Set)
+    unordered_map<char, char> parent;
+    for (char id : ids_nos) {
+        parent[id] = id;
+    }
+    
+    auto find = [&](char u) {
+        while (parent[u] != u) {
+            parent[u] = parent[parent[u]]; // Path compression
+            u = parent[u];
+        }
+        return u;
+    };
+
+    // 4. Construir AGM
+    vector<No*> nos_agm;
+    unordered_map<char, No*> no_map;
+    
+    for (char id : ids_nos) {
+        No* novo_no = new No(id, 0); // Corrigido de M0 para No
+        nos_agm.push_back(novo_no);
+        no_map[id] = novo_no;
+    }
+
+    for (const auto& aresta : arestas) { // Modificado para evitar problemas com structured binding
+        char u = get<0>(aresta);
+        char v = get<1>(aresta);
+        int peso = get<2>(aresta);
+        
+        char root_u = find(u);
+        char root_v = find(v);
+        
+        if (root_u != root_v) {
+            parent[root_v] = root_u;
+            no_map[u]->adicionarAresta(new Aresta(u, v, peso));
+            no_map[v]->adicionarAresta(new Aresta(v, u, peso)); // Para grafo não direcionado
+        }
+    }
+
+    return new Grafo(ids_nos.size(), false, true, false, nos_agm);
 }
 
-Grafo * Grafo::arvore_caminhamento_profundidade(int id_no) {
-    cout<<"Metodo nao implementado"<<endl;
-    return nullptr;
+Grafo* Grafo::arvore_caminhamento_profundidade(int id_no) {
+    No* no_inicial = getNoById(id_no);
+    if (!no_inicial) return nullptr;
+
+    // Estruturas para a busca
+    unordered_map<char, bool> visitado;
+    vector<No*> nos_arvore;
+    unordered_map<char, No*> no_map;
+
+    // Criar nó raiz
+    No* raiz = new No(id_no, 0);
+    nos_arvore.push_back(raiz);
+    no_map[id_no] = raiz;
+    visitado[id_no] = true;
+
+    // Pilha para DFS: (nó atual, nó pai na árvore)
+    stack<pair<char, char>> pilha;
+    pilha.push({id_no, '\0'});
+
+    while (!pilha.empty()) {
+        char atual_id = pilha.top().first;
+        char pai_id = pilha.top().second;
+        pilha.pop();
+
+        No* atual = getNoById(atual_id);
+        if (!atual) continue;
+
+        for (Aresta* a : atual->getArestas()) {
+            char vizinho_id = a->getIdAlvo();
+            
+            if (!visitado[vizinho_id]) {
+                // É uma aresta da árvore
+                No* novo_no = new No(vizinho_id, 0);
+                nos_arvore.push_back(novo_no);
+                no_map[vizinho_id] = novo_no;
+                no_map[atual_id]->adicionarAresta(new Aresta(atual_id, vizinho_id, a->getPeso()));
+                visitado[vizinho_id] = true;
+                pilha.push({vizinho_id, atual_id});
+            }
+            else if (vizinho_id != pai_id) {
+                // É uma aresta de retorno (não adicionamos à árvore, mas poderíamos marcar)
+                // Para destacar, poderíamos adicionar como uma aresta especial
+                // Nesta implementação, estamos ignorando arestas de retorno
+            }
+        }
+    }
+
+    return new Grafo(nos_arvore.size(), false, true, false, nos_arvore);
 }
 
 int Grafo::raio() {
