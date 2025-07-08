@@ -564,7 +564,7 @@ void Grafo::calcular_raio_diametro_centro_periferia() {
     int n = lista_adj.size();
     vector<int> excentricidades(n, 0); // para armazenar a excentricidade de cada vértice
 
-    // Passo 1: calcular excentricidade de cada vértice
+    //Calcula excentricidade de cada vértice
     for (int i = 0; i < n; i++) {
         char id_origem = lista_adj[i]->getId();
         vector<int> dist = dijkstra_distancias(id_origem);
@@ -578,7 +578,7 @@ void Grafo::calcular_raio_diametro_centro_periferia() {
         excentricidades[i] = maior_dist;
     }
 
-    // Passo 2: calcular raio e diametro
+    //Calcula raio e diametro
     int raio = 999999;
     int diametro = -1;
 
@@ -591,7 +591,7 @@ void Grafo::calcular_raio_diametro_centro_periferia() {
         }
     }
 
-    // Passo 3: encontrar centro e periferia
+    //Encontra centro e periferia
     vector<char> centro;
     vector<char> periferia;
 
