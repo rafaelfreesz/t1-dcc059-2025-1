@@ -952,3 +952,50 @@ bool Grafo::ehConexo() {
     // A definição de "conexidade" para Prim/Kruskal refere-se a grafos não direcionados.
     return count_visited == this->lista_adj.size();
 }
+
+// Retorna todas as arestas do grafo como pares (origem, destino)
+std::vector<std::pair<char, char>> Grafo::getTodasArestas() const {
+    std::vector<std::pair<char, char>> arestas;
+    std::set<std::pair<char, char>> arestas_set; // Para evitar duplicatas em grafos não direcionados
+    for (const No* no : lista_adj) {
+        for (const Aresta* aresta : no->arestas) {
+            char origem = no->id;
+            char destino = aresta->id_no_alvo;
+            if (!in_direcionado) {
+                // Ordena o par para evitar duplicatas
+                if (origem > destino) std::swap(origem, destino);
+            }
+            std::pair<char, char> par = {origem, destino};
+            if (arestas_set.find(par) == arestas_set.end()) {
+                arestas.push_back(par);
+                arestas_set.insert(par);
+            }
+        }
+    }
+    return arestas;
+}
+
+// Retorna todas as arestas adjacentes a uma aresta (compartilham um vértice)
+std::vector<std::pair<char, char>> Grafo::getArestasAdjacentes(const std::pair<char, char>& aresta) const {
+    std::vector<std::pair<char, char>> adjacentes;
+    char u = aresta.first;
+    char v = aresta.second;
+    auto todas = getTodasArestas();
+    for (const auto& a : todas) {
+        if (a == aresta) continue;
+        if (a.first == u || a.second == u || a.first == v || a.second == v) {
+            adjacentes.push_back(a);
+        }
+    }
+    return adjacentes;
+}
+
+// Retorna o número total de arestas
+int Grafo::getNumArestas() const {
+    return getTodasArestas().size();
+}
+
+// Retorna o número total de vértices
+int Grafo::getNumVertices() const {
+    return ordem;
+}

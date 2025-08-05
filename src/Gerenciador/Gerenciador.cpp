@@ -1,7 +1,9 @@
 #include "Gerenciador.h"
+
 #include <fstream>
 #include <cctype> // Para formatação de caracteres (tolower)
 #include <limits> // Para numeric_limits
+#include "../SolucionadorEDS/SolucionadorEDS.h"
 
 
 
@@ -17,6 +19,7 @@ void Gerenciador::comandos(Grafo* grafo) {
         cout << "(f) Arvore Geradora Minima (Algoritmo de Kruskal);" << endl;
         cout << "(g) Arvore de caminhamento em profundidade;" << endl;
         cout << "(h) Raio, diametro, centro e periferia do grafo;" << endl;
+        cout << "(i) Edge Dominating Set (Algoritmo Guloso);" << endl;
         cout << "(0) Sair;" << endl << endl;
 
         char resp;
@@ -44,6 +47,73 @@ void Gerenciador::comandos(Grafo* grafo) {
                         outfile << endl;
                         outfile.close();
                         cout << "Saida salva em fecho_trans_dir.txt" << endl;
+                    } else {
+                        cout << "ERRO: Nao foi possivel criar o arquivo de saida." << endl;
+                    }
+                }
+                break;
+            }
+            case 'i': {
+                // Edge Dominating Set - escolha do método
+                cout << "Escolha o método para resolver o Conjunto Dominante de Arestas:" << endl;
+                cout << "(1) Guloso" << endl;
+                cout << "(2) Guloso Randomizado Adaptativo (GRA)" << endl;
+                cout << "(3) Guloso Randomizado Adaptativo Reativo (GRAR)" << endl;
+                int metodo = 0;
+                cin >> metodo;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                SolucionadorEDS solucionador(grafo);
+                std::vector<std::pair<char, char>> sol;
+                string nome_arquivo;
+                if (metodo == 1) {
+                    sol = solucionador.executarGuloso();
+                    nome_arquivo = "eds_guloso.txt";
+                    cout << "Conjunto Dominante de Arestas (Guloso):" << endl;
+                } else if (metodo == 2) {
+                    int iter, seed;
+                    double alpha;
+                    cout << "Digite o número de iterações: ";
+                    cin >> iter;
+                    cout << "Digite a semente de randomização: ";
+                    cin >> seed;
+                    cout << "Digite o valor de alpha (ex: 0.3): ";
+                    cin >> alpha;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    sol = solucionador.executarGRA(iter, seed, alpha);
+                    nome_arquivo = "eds_gra.txt";
+                    cout << "Conjunto Dominante de Arestas (GRA):" << endl;
+                } else if (metodo == 3) {
+                    int iter, seed;
+                    cout << "Digite o número de iterações: ";
+                    cin >> iter;
+                    cout << "Digite a semente de randomização: ";
+                    cin >> seed;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    sol = solucionador.executarGRAR(iter, seed);
+                    nome_arquivo = "eds_grar.txt";
+                    cout << "Conjunto Dominante de Arestas (GRAR):" << endl;
+                } else {
+                    cout << "Método inválido." << endl;
+                    break;
+                }
+                if (sol.empty()) {
+                    cout << "Nenhuma aresta selecionada." << endl;
+                } else {
+                    for (const auto& aresta : sol) {
+                        cout << aresta.first << "-" << aresta.second << " ";
+                    }
+                    cout << endl;
+                }
+                if (pergunta_imprimir_arquivo(nome_arquivo)) {
+                    ofstream outfile(nome_arquivo);
+                    if (outfile.is_open()) {
+                        for (size_t i = 0; i < sol.size(); ++i) {
+                            outfile << sol[i].first << "-" << sol[i].second;
+                            if (i < sol.size() - 1) outfile << ",";
+                        }
+                        outfile << endl;
+                        outfile.close();
+                        cout << "Saida salva em " << nome_arquivo << endl;
                     } else {
                         cout << "ERRO: Nao foi possivel criar o arquivo de saida." << endl;
                     }

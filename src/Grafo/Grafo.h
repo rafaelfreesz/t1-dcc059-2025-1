@@ -42,6 +42,11 @@ public:
     void insereNo(char id, int peso = 0);
     void insereAresta(char origem, char destino, int pesoAresta = 1); // Removido pesoNo pois não é usado nas arestas diretamente 
 
+    // Métodos auxiliares para Edge Dominating Set
+    std::vector<std::pair<char, char>> getTodasArestas() const;
+    std::vector<std::pair<char, char>> getArestasAdjacentes(const std::pair<char, char>& aresta) const;
+    int getNumArestas() const;
+    int getNumVertices() const;
     // Atributos do grafo [cite: 12, 11, 4, 2]
     int ordem; // Número de vértices [cite: 12]
     bool in_direcionado; // Se é direcionado [cite: 11]
