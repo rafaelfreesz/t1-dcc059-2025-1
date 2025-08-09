@@ -65,8 +65,12 @@ void Gerenciador::comandos(Grafo* grafo) {
                 SolucionadorEDS solucionador(grafo);
                 std::vector<std::pair<char, char>> sol;
                 string nome_arquivo;
+                double tempo = 0.0;
                 if (metodo == 1) {
+                    auto start = std::chrono::high_resolution_clock::now();
                     sol = solucionador.executarGuloso();
+                    auto end = std::chrono::high_resolution_clock::now();
+                    tempo = std::chrono::duration<double>(end - start).count();
                     nome_arquivo = "eds_guloso.txt";
                     cout << "Conjunto Dominante de Arestas (Guloso):" << endl;
                 } else if (metodo == 2) {
@@ -79,7 +83,10 @@ void Gerenciador::comandos(Grafo* grafo) {
                     cout << "Digite o valor de alpha (ex: 0.3): ";
                     cin >> alpha;
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    auto start = std::chrono::high_resolution_clock::now();
                     sol = solucionador.executarGRA(iter, seed, alpha);
+                    auto end = std::chrono::high_resolution_clock::now();
+                    tempo = std::chrono::duration<double>(end - start).count();
                     nome_arquivo = "eds_gra.txt";
                     cout << "Conjunto Dominante de Arestas (GRA):" << endl;
                 } else if (metodo == 3) {
@@ -89,7 +96,10 @@ void Gerenciador::comandos(Grafo* grafo) {
                     cout << "Digite a semente de randomização: ";
                     cin >> seed;
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    auto start = std::chrono::high_resolution_clock::now();
                     sol = solucionador.executarGRAR(iter, seed);
+                    auto end = std::chrono::high_resolution_clock::now();
+                    tempo = std::chrono::duration<double>(end - start).count();
                     nome_arquivo = "eds_grar.txt";
                     cout << "Conjunto Dominante de Arestas (GRAR):" << endl;
                 } else {
@@ -103,6 +113,8 @@ void Gerenciador::comandos(Grafo* grafo) {
                         cout << aresta.first << "-" << aresta.second << " ";
                     }
                     cout << endl;
+                    cout << "Qualidade da solução (tamanho do conjunto): " << sol.size() << endl;
+                    cout << "Tempo de execução (segundos): " << tempo << endl;
                 }
                 if (pergunta_imprimir_arquivo(nome_arquivo)) {
                     ofstream outfile(nome_arquivo);
@@ -487,10 +499,9 @@ void Gerenciador::imprimir_grafo(Grafo* grafo) {
 }
 
 void Gerenciador::imprimir_h_output(int raio, int diametro, const vector<char>& centro, const vector<char>& periferia) { 
-    cout << "Raio: " << raio << endl; // Valor do raio 
-    cout << "Diametro: " << diametro << endl; // Valor do diametro 
-
-    cout << "Centro: "; // vector<char> do centro 
+    cout << "Raio: " << raio << endl;
+    cout << "Diametro: " << diametro << endl;
+    cout << "Centro: ";
     if (centro.empty()) {
         cout << "Nenhum";
     } else {
@@ -502,8 +513,7 @@ void Gerenciador::imprimir_h_output(int raio, int diametro, const vector<char>& 
         }
     }
     cout << endl;
-
-    cout << "Periferia: "; // vector<char> da periferia 
+    cout << "Periferia: ";
     if (periferia.empty()) {
         cout << "Nenhum";
     } else {
