@@ -22,6 +22,7 @@ public:
     static void imprimir_grafo(Grafo* grafo);
     static void imprimir_h_output(int raio, int diametro, const std::vector<char>& centro, const std::vector<char>& periferia);
     static int solicitarInteiro(std::string mensagem, int ordem);
+    static void gerarRelatorioAutomaticoEDS();
 };
 
 #endif //GERENCIADOR_H

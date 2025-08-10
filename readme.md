@@ -6,6 +6,7 @@
 **Grupo:**
 - Guilherme Monteiro (M:202165562c)
 - Gabriel Campos Lima Alves (M:202176005)
+- Anderson Teixeira de Oliveira
 **Data entrega: 12/08**
 
 Este documento descreve o Trabalho Prático 2, que consiste na extensão do TAD de grafos desenvolvido no TP1, incluindo agora algoritmos gulosos para o problema do **Conjunto Dominante de Arestas** (Edge Dominating Set), além de experimentos automáticos e geração de relatório.

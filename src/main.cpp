@@ -11,6 +11,7 @@
 #include <iomanip>
 #include "Grafo/Grafo.h"
 #include "SolucionadorEDS/SolucionadorEDS.h"
+#include "Gerenciador/Gerenciador.h"
 
 struct ExecutionResult {
     double solution_value;
@@ -151,88 +152,12 @@ void generate_report(
 }
 
 int main(int argc, char* argv[]) {
-    // Instâncias e melhores soluções conhecidas
-    std::map<std::string, int> best_solutions = {
-        {"g_25_0.16_0_1_0", 100}, {"g_25_0.16_0_1_1", 36}, {"g_25_0.21_0_1_0", 30},
-        {"g_25_0.21_0_1_1", 44}, {"g_25_0.26_0_1_0", 33}, {"g_25_0.26_0_1_1", 34},
-        {"g_40_0.10_0_1_0", 48}, {"g_40_0.10_0_1_1", 44}, {"g_40_0.15_0_1_0", 35},
-        {"g_40_0.15_0_1_1", 36}, {"g_40_0.20_0_1_0", 38}, {"g_40_0.20_0_1_0_2", 32},
-        {"g_60_0.07_0_1_0", 38}, {"g_60_0.07_0_1_1", 32}, {"g_60_0.12_0_1_0", 36},
-        {"g_60_0.12_0_1_1", 31}, {"g_60_0.17_0_1_0", 61}, {"g_60_0.17_0_1_1", 30}
-    };
-
-    std::vector<double> alpha_values = {0.2, 0.3, 0.4};
-    const int num_executions = 10;
-    const int num_randomized_calls = 30;
-    const int num_reactive_calls = 300;
-    int semente = 42; // Semente fixa para reprodutibilidade
-
-    std::map<std::string, std::vector<ExecutionResult>> greedy_results;
-    std::map<std::string, std::map<double, std::vector<ExecutionResult>>> randomized_results;
-    std::map<std::string, std::vector<ExecutionResult>> reactive_results;
-
-    // Inicializa os vetores
-    for (const auto& pair : best_solutions) {
-        greedy_results[pair.first] = {};
-        for (double alpha : alpha_values) randomized_results[pair.first][alpha] = {};
-        reactive_results[pair.first] = {};
-    }
-
-    // Mapeamento dos nomes esperados para os arquivos reais
-    std::vector<std::string> real_files = {
-        "grafo-t2-1.txt", "grafo-t2-2.txt", "grafo-t2-3.txt", "grafo-t2-4.txt", "grafo-t2-5.txt", "grafo-t2-6.txt",
-        "grafo-t2-7.txt", "grafo-t2-8.txt", "grafo-t2-9.txt", "grafo-t2-10.txt", "grafo-t2-11.txt", "grafo-t2-12.txt",
-        "grafo-t2-13.txt", "grafo-t2-14.txt", "grafo-t2-15.txt", "grafo-t2-16.txt", "grafo-t2-17.txt", "grafo-t2-18.txt"
-    };
-    std::vector<std::string> expected_names = {
-        "g_25_0.16_0_1_0", "g_25_0.16_0_1_1", "g_25_0.21_0_1_0", "g_25_0.21_0_1_1", "g_25_0.26_0_1_0", "g_25_0.26_0_1_1",
-        "g_40_0.10_0_1_0", "g_40_0.10_0_1_1", "g_40_0.15_0_1_0", "g_40_0.15_0_1_1", "g_40_0.20_0_1_0", "g_40_0.20_0_1_0_2",
-        "g_60_0.07_0_1_0", "g_60_0.07_0_1_1", "g_60_0.12_0_1_0", "g_60_0.12_0_1_1", "g_60_0.17_0_1_0", "g_60_0.17_0_1_1"
-    };
-    std::map<std::string, std::string> instance_to_file;
-    for (size_t i = 0; i < expected_names.size(); ++i) {
-        instance_to_file[expected_names[i]] = real_files[i];
-    }
-
-    // Loop de experimentos
-    for (const auto& pair : best_solutions) {
-        std::string instance = pair.first;
-        std::string path = "../instancias_t2/" + instance_to_file[instance];
-        Grafo* grafo = new Grafo(path.c_str());
-        SolucionadorEDS solver(grafo);
-
-        // Guloso padrão
-        for (int i = 0; i < num_executions; ++i) {
-            auto start = std::chrono::high_resolution_clock::now();
-            auto sol = solver.executarGuloso();
-            auto end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> duration = end - start;
-            greedy_results[instance].push_back({(double)sol.size(), duration.count()});
-        }
-
-        // Guloso randomizado para cada alfa
-        for (double alpha : alpha_values) {
-            for (int i = 0; i < num_executions; ++i) {
-                auto start = std::chrono::high_resolution_clock::now();
-                auto sol = solver.executarGRA(num_randomized_calls, semente + i, alpha);
-                auto end = std::chrono::high_resolution_clock::now();
-                std::chrono::duration<double> duration = end - start;
-                randomized_results[instance][alpha].push_back({(double)sol.size(), duration.count()});
-            }
-        }
-
-        // Guloso randomizado reativo
-        for (int i = 0; i < num_executions; ++i) {
-            auto start = std::chrono::high_resolution_clock::now();
-            auto sol = solver.executarGRAR(num_reactive_calls, semente + i);
-            auto end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<double> duration = end - start;
-            reactive_results[instance].push_back({(double)sol.size(), duration.count()});
-        }
-
-        delete grafo;
-    }
-
-    generate_report("relatorio_resultados.csv", best_solutions, alpha_values, greedy_results, randomized_results, reactive_results);
+    // Sempre carrega o menu interativo do Gerenciador
+    std::string path;
+    std::cout << "Digite o caminho do arquivo de grafo para o menu interativo (ex: instancias_t2/grafo-t2-1.txt): ";
+    std::getline(std::cin, path);
+    Grafo* grafo = new Grafo(path.c_str());
+    Gerenciador::comandos(grafo);
+    delete grafo;
     return 0;
 }
