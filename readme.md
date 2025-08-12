@@ -43,6 +43,10 @@ Projeto dos TPs 1 e 2 da disciplina DCC059 — Teoria dos Grafos (UFJF). O TP1 i
 **Semestre:** 2025/1  
 **Docente/Tutor:** Profa. Luciana Brugiolo • Tutor Rafael Freesz  
 **Data de entrega:** 12/08  
+**Grupo: **
+  - Guilherme Monteiro de Souza (M:202165562C)
+  - Gabriel Campos Lima Alves (M:202176005)
+  - Anderson Teixeira de Oliveira (M:202265504AB)
 Para a equipe completa, veja [Autores](#authors).
 
 ## Objetivos
