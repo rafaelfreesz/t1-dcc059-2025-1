@@ -7,26 +7,18 @@
 
 <h3 align="center">TP1 + TP2 — Teoria dos Grafos (UFJF/DCC059)</h3>
 
-<div align="center">
-
-  [![Status](https://img.shields.io/badge/status-active-success.svg)]() 
-  [![Linguagem](https://img.shields.io/badge/lang-C%2B%2B17-blue.svg)]()
-
-</div>
-
----
-
-<p align="center">
-  Implementação do TAD de Grafos (TP1) e heurísticas para Edge Dominating Set — EDS (TP2: Guloso, GRA, GRAR),
-  com menu interativo e execução automática de experimentos gerando relatório tabular.
-  <br>
-</p>
-
 ## 📝 Table of Contents
 - [Sobre](#about)
 - [Informações iniciais](#getting_started)
-- [Utilização](#usage)
+- [Informações do trabalho](#work_info)
+- [Objetivos](#objetivos)
+- [Orientações](#orientacoes)
+- [Estrutura de Diretórios](#estrutura-de-diretorios)
+- [Formato dos Arquivos de Instância](#formato-dos-arquivos-de-instancia)
 - [Como Compilar e Executar](#como-compilar-e-executar)
+- [Utilização](#usage)
+- [Sobre o Relatório Gerado](#sobre-o-relatorio-gerado)
+- [Opções do Sistema](#opcoes-do-sistema)
 - [Tecnologias](#built_using)
 - [Autores](#authors)
 - [Menções](#acknowledgement)
@@ -44,28 +36,17 @@ Projeto dos TPs 1 e 2 da disciplina DCC059 — Teoria dos Grafos (UFJF). O TP1 i
 - O caminho da instância é informado via prompt ao iniciar o binário.
 - A geração do relatório é feita pela opção (`r`) no menu; a saída é `relatorio_resultados.txt` no diretório atual.
 
-## 🎈 Utilização <a name="usage"></a>
-1) Compile a partir de `src/` e execute `./execGrupoX`.
-2) Quando solicitado, informe o caminho do grafo, por exemplo `instancias_t0/grafo-t0-1.txt`.
-3) No menu:
-   - Use (`i`) para resolver EDS (Guloso, GRA, GRAR) na instância carregada e opcionalmente salvar o resultado.
-   - Use (`r`) para rodar automaticamente os experimentos do TP2 em `instancias_t2/` e gerar `relatorio_resultados.txt`.
-
-# Trabalho 2
-**Universidade Federal de Juiz de Fora**  
-**Departamento de Ciência da Computação**  
-**DCC059 – Teoria dos Grafos – Turma A**  
-**Semestre 2025/1 - Profa Luciana Brugiolo - Tutor Rafael Freesz**  
-**Grupo:**
-- Guilherme Monteiro de Souza (M:202165562C)
-- Gabriel Campos Lima Alves (M:202176005)
-- Anderson Teixeira de Oliveira (M:202265504AB)
-
-**Data entrega: 12/08**
-
-Este documento descreve o Trabalho Prático 2, que consiste na extensão do TAD de grafos desenvolvido no TP1, incluindo agora algoritmos gulosos para o problema do **Conjunto Dominante de Arestas** (Edge Dominating Set), além de experimentos automáticos e geração de relatório.
+## 📌 Informações do trabalho <a name = "work_info"></a>
+**Universidade:** Universidade Federal de Juiz de Fora (UFJF)  
+**Departamento:** Ciência da Computação (DCC)  
+**Disciplina:** DCC059 – Teoria dos Grafos – Turma A  
+**Semestre:** 2025/1  
+**Docente/Tutor:** Profa. Luciana Brugiolo • Tutor Rafael Freesz  
+**Data de entrega:** 12/08  
+Para a equipe completa, veja [Autores](#authors).
 
 ## Objetivos
+<a name = "objetivos"></a>
 
 - Implementar e comparar algoritmos:
   - Guloso padrão
@@ -75,6 +56,7 @@ Este documento descreve o Trabalho Prático 2, que consiste na extensão do TAD 
 - Gerar relatório tabular com os resultados dos experimentos.
 
 ## Orientações
+<a name = "orientacoes"></a>
 
 - O código é em C++ puro, sem dependências externas.
 - O grafo é representado por lista de adjacência.
@@ -83,6 +65,7 @@ Este documento descreve o Trabalho Prático 2, que consiste na extensão do TAD 
 - O relatório é gerado ao escolher a opção `r` no menu (execução automática dos experimentos).
 
 ## Estrutura de Diretórios
+<a name = "estrutura-de-diretorios"></a>
 
 ```
 .
@@ -114,6 +97,7 @@ Este documento descreve o Trabalho Prático 2, que consiste na extensão do TAD 
 > **Obs:** As pastas `imagens/` e os arquivos de instância são apenas para teste e experimentação. O código só utiliza os arquivos `.txt` das instâncias.
 
 ## Formato dos Arquivos de Instância
+<a name = "formato-dos-arquivos-de-instancia"></a>
 
 Veja o arquivo `instancias_t0/readme.txt` para detalhes completos.  
 Exemplo de início de arquivo:
@@ -133,6 +117,7 @@ a e 1
 ```
 
 ## Como Compilar e Executar
+<a name = "como-compilar-e-executar"></a>
 
 ### 1. Compilação
 
@@ -166,7 +151,15 @@ Para rodar todos os experimentos do TP2 e gerar o relatório tabular dos algorit
 - No menu, escolha a opção `r` (Gerar relatório de resultados). Isso chama `Gerenciador::gerarRelatorioAutomaticoEDS`, que executa os algoritmos Guloso, GRA e GRAR sobre as instâncias mapeadas de `instancias_t2/`.
 - O arquivo `relatorio_resultados.txt` será salvo no diretório atual de execução (por exemplo, se você executou em `src/`, o arquivo ficará em `src/`).
 
+## 🎈 Utilização <a name="usage"></a>
+1) Compile a partir de `src/` e execute `./execGrupoX`.
+2) Quando solicitado, informe o caminho do grafo, por exemplo `instancias_t0/grafo-t0-1.txt`.
+3) No menu:
+  - Use (`i`) para resolver EDS (Guloso, GRA, GRAR) na instância carregada e opcionalmente salvar o resultado.
+  - Use (`r`) para rodar automaticamente os experimentos do TP2 em `instancias_t2/` e gerar `relatorio_resultados.txt`.
+
 ## Sobre o Relatório Gerado
+<a name = "sobre-o-relatorio-gerado"></a>
 
 O arquivo `relatorio_resultados.txt` contém:
 - Tabela com o melhor e a média das soluções encontradas por cada algoritmo.
@@ -174,6 +167,7 @@ O arquivo `relatorio_resultados.txt` contém:
 - Tabela de tempo médio de execução (em segundos).
 
 ## Opções do Sistema
+<a name = "opcoes-do-sistema"></a>
 
 A seguir estão as opções disponíveis no menu interativo (carregado após você informar o caminho do arquivo de grafo no prompt). Em várias opções, o sistema perguntará se deseja salvar a saída em arquivo; quando aceito, o arquivo é criado no diretório atual de execução.
 
@@ -231,3 +225,18 @@ A seguir estão as opções disponíveis no menu interativo (carregado após voc
 
 - (`0`) Sair
   - Encerra o programa.
+
+## Tecnologias <a name="built_using"></a>
+- C++17
+- g++
+- Linux/WSL/macOS
+
+## Autores <a name="authors"></a>
+Grupo:
+- Guilherme Monteiro de Souza (M:202165562C)
+- Gabriel Campos Lima Alves (M:202176005)
+- Anderson Teixeira de Oliveira (M:202265504AB)
+
+## Menções <a name="acknowledgement"></a>
+- Profa. Luciana Brugiolo (disciplina DCC059)
+- Tutor Rafael Freesz
