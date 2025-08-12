@@ -120,11 +120,61 @@ O arquivo `relatorio_resultados.txt` contém:
 - Tabela de desvio percentual em relação à melhor solução conhecida.
 - Tabela de tempo médio de execução (em segundos).
 
-## Observações Finais
+## Opções do Sistema
 
-- O código está limpo, modular e sem dependências externas.
-- Todos os algoritmos e métricas estão documentados no código-fonte.
-- Para dúvidas sobre o formato das instâncias, consulte `instancias_t0/readme.txt`.
-- Para dúvidas sobre o uso, consulte este README ou o tutor/professora.
-- O programa solicita o caminho do arquivo de grafo via prompt (não por argumento de linha de comando).
-- Para gerar o relatório, utilize a opção `r` no menu interativo conforme descrito acima.
+A seguir estão as opções disponíveis no menu interativo (carregado após você informar o caminho do arquivo de grafo no prompt). Em várias opções, o sistema perguntará se deseja salvar a saída em arquivo; quando aceito, o arquivo é criado no diretório atual de execução.
+
+- (`a`) Fecho transitivo direto de um nó
+  - Requisitos: grafo direcionado.
+  - Entrada: ID de um nó.
+  - Saída opcional em arquivo: `fecho_trans_dir.txt`.
+
+- (`b`) Fecho transitivo indireto de um nó
+  - Requisitos: grafo direcionado.
+  - Entrada: ID de um nó.
+  - Saída opcional em arquivo: `fecho_trans_indir.txt`.
+
+- (`c`) Caminho mínimo (Dijkstra)
+  - Requisitos: grafo ponderado nas arestas.
+  - Entrada: IDs de nó origem e destino.
+  - Saída opcional em arquivo: `caminho_minimo_dijkstra.txt`.
+
+- (`d`) Caminho mínimo (Floyd)
+  - Requisitos: grafo ponderado nas arestas.
+  - Entrada: IDs de nó origem e destino.
+  - Saída opcional em arquivo: `caminho_minimo_floyd.txt`.
+
+- (`e`) Árvore Geradora Mínima (Algoritmo de Prim)
+  - Requisitos: grafo não direcionado, ponderado nas arestas e conexo.
+  - Entrada: tamanho do subconjunto (entre 2 e ordem do grafo) e os IDs dos nós.
+  - Saída opcional em arquivo: `agm_prim.txt`.
+
+- (`f`) Árvore Geradora Mínima (Algoritmo de Kruskal)
+  - Requisitos: grafo não direcionado, ponderado nas arestas e conexo.
+  - Entrada: tamanho do subconjunto (entre 2 e ordem do grafo) e os IDs dos nós.
+  - Saída opcional em arquivo: `agm_kruskal.txt`.
+
+- (`g`) Árvore de caminhamento em profundidade
+  - Requisitos: —
+  - Entrada: ID do nó inicial.
+  - Saída opcional em arquivo: `arvore_caminhamento_profundidade.txt`.
+
+- (`h`) Raio, diâmetro, centro e periferia do grafo
+  - Requisitos: grafo não direcionado (ponderação nas arestas é opcional).
+  - Saída opcional em arquivo: `raio_diametro_centro_periferia.txt`.
+
+- (`i`) Edge Dominating Set (Conjunto Dominante de Arestas)
+  - Submenu de métodos:
+    - (1) Guloso
+    - (2) Guloso Randomizado Adaptativo (GRA): solicita número de iterações, semente e α (alpha).
+    - (3) Guloso Randomizado Adaptativo Reativo (GRAR): solicita número de iterações e semente.
+  - Exibe a solução (arestas), qualidade (tamanho do conjunto) e tempo de execução.
+  - Saída opcional em arquivo: `eds_guloso.txt`, `eds_gra.txt` ou `eds_grar.txt`.
+
+- (`r`) Gerar relatório de resultados
+  - Executa automaticamente os algoritmos (Guloso, GRA e GRAR) nas instâncias mapeadas de `instancias_t2/`.
+  - Gera o arquivo `relatorio_resultados.txt` no diretório atual, com tabelas de melhor/média, desvio percentual e tempos.
+  - Dica: ao iniciar o programa, informe qualquer instância válida só para entrar no menu e então pressione `r`.
+
+- (`0`) Sair
+  - Encerra o programa.
