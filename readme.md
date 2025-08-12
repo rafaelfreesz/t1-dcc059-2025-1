@@ -4,7 +4,7 @@
 **DCC059 – Teoria dos Grafos – Turma A**  
 **Semestre 2025/1 - Profa Luciana Brugiolo - Tutor Rafael Freesz**  
 **Grupo:**
-- Guilherme Monteiro (M:202165562c)
+- Guilherme Monteiro de Souza (M:202165562c)
 - Gabriel Campos Lima Alves (M:202176005)
 - Anderson Teixeira de Oliveira (M:202265504AB)
 
