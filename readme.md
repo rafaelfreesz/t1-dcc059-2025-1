@@ -1,4 +1,57 @@
 # Trabalho 2
+<p align="center">
+  <a href="https://www.ufjf.br/" rel="noopener">
+    <img width=261 height=148 src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Logo_da_UFJF.png/640px-Logo_da_UFJF.png" alt="Logo UFJF">
+  </a>
+</p>
+
+<h3 align="center">TP1 + TP2 — Teoria dos Grafos (UFJF/DCC059)</h3>
+
+<div align="center">
+
+  [![Status](https://img.shields.io/badge/status-active-success.svg)]() 
+  [![Linguagem](https://img.shields.io/badge/lang-C%2B%2B17-blue.svg)]()
+
+</div>
+
+---
+
+<p align="center">
+  Implementação do TAD de Grafos (TP1) e heurísticas para Edge Dominating Set — EDS (TP2: Guloso, GRA, GRAR),
+  com menu interativo e execução automática de experimentos gerando relatório tabular.
+  <br>
+</p>
+
+## 📝 Table of Contents
+- [Sobre](#about)
+- [Informações iniciais](#getting_started)
+- [Utilização](#usage)
+- [Como Compilar e Executar](#como-compilar-e-executar)
+- [Tecnologias](#built_using)
+- [Autores](#authors)
+- [Menções](#acknowledgement)
+
+## 🧐 Sobre <a name = "about"></a>
+Projeto dos TPs 1 e 2 da disciplina DCC059 — Teoria dos Grafos (UFJF). O TP1 implementa o TAD de grafos em C++ (lista de adjacência) com operações clássicas: fechos transitivos, caminhos mínimos (Dijkstra, Floyd), árvores geradoras mínimas (Prim/Kruskal), árvore de caminhamento em profundidade, e medidas (raio, diâmetro, centro, periferia). O TP2 estende o sistema com heurísticas para o problema Edge Dominating Set (EDS): Guloso, GRA e GRAR, além de execução automática nas instâncias t2 e geração de relatório tabular (relatorio_resultados.txt), tudo acessado via menu interativo.
+
+## 🏁 Informações iniciais <a name = "getting_started"></a>
+### Pré-requisitos
+- Compilador C++ com suporte a C++17 (g++ recomendado)
+- Ambiente Linux/WSL/macOS (sem dependências externas)
+
+### Visão geral
+- Compilação e execução estão detalhadas em [Como Compilar e Executar](#como-compilar-e-executar).
+- O caminho da instância é informado via prompt ao iniciar o binário.
+- A geração do relatório é feita pela opção (`r`) no menu; a saída é `relatorio_resultados.txt` no diretório atual.
+
+## 🎈 Utilização <a name="usage"></a>
+1) Compile a partir de `src/` e execute `./execGrupoX`.
+2) Quando solicitado, informe o caminho do grafo, por exemplo `instancias_t0/grafo-t0-1.txt`.
+3) No menu:
+   - Use (`i`) para resolver EDS (Guloso, GRA, GRAR) na instância carregada e opcionalmente salvar o resultado.
+   - Use (`r`) para rodar automaticamente os experimentos do TP2 em `instancias_t2/` e gerar `relatorio_resultados.txt`.
+
+# Trabalho 2
 **Universidade Federal de Juiz de Fora**  
 **Departamento de Ciência da Computação**  
 **DCC059 – Teoria dos Grafos – Turma A**  
