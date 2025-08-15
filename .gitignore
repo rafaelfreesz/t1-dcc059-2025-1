@@ -1,0 +1,8 @@
+# Arquivos de compilação e executáveis do C++
+*.o
+*.d
+*.exe
+execGrupoX
+
+# Arquivos de saída gerados pelo programa
+relatorio_resultados.txt

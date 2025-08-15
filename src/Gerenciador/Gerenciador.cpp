@@ -9,21 +9,23 @@
 #include <numeric>
 #include <iomanip>
 #include <algorithm>
+#include <limits>
 
 #include "../SolucionadorEDS/SolucionadorEDS.h"
 #include "../Grafo/Grafo.h"
 
 // Implementação da geração automática de relatório EDS
+// Cole esta função completa no seu arquivo Gerenciador.cpp, substituindo a versão antiga.
 void Gerenciador::gerarRelatorioAutomaticoEDS() {
-    // Instâncias e melhores soluções conhecidas
-    std::map<std::string, int> best_solutions = {
-        {"g_25_0.16_0_1_0", 100}, {"g_25_0.16_0_1_1", 36}, {"g_25_0.21_0_1_0", 30},
-        {"g_25_0.21_0_1_1", 44}, {"g_25_0.26_0_1_0", 33}, {"g_25_0.26_0_1_1", 34},
-        {"g_40_0.10_0_1_0", 48}, {"g_40_0.10_0_1_1", 44}, {"g_40_0.15_0_1_0", 35},
-        {"g_40_0.15_0_1_1", 36}, {"g_40_0.20_0_1_0", 38}, {"g_40_0.20_0_1_0_2", 32},
-        {"g_60_0.07_0_1_0", 38}, {"g_60_0.07_0_1_1", 32}, {"g_60_0.12_0_1_0", 36},
-        {"g_60_0.12_0_1_1", 31}, {"g_60_0.17_0_1_0", 61}, {"g_60_0.17_0_1_1", 30}
-    };
+    // Implementação da geração automática de relatório EDS
+    std::cout << "\n======================================================\n";
+    std::cout << "INICIANDO GERACAO DO RELATORIO DE DESEMPENHO..." << std::endl;
+    std::cout << "Isso pode levar alguns minutos...\n";
+    std::cout << "======================================================\n\n";
+
+    // PONTO CRÍTICO 1: O mapa 'best_solutions' com valores fixos é APAGADO daqui.
+    // Em seu lugar, criamos um mapa vazio para os 'best' que vamos CALCULAR.
+    std::map<std::string, int> dynamic_best_solutions;
 
     std::vector<double> alpha_values = {0.2, 0.3, 0.4};
     const int num_executions = 10;
@@ -40,12 +42,7 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
     std::map<std::string, std::map<double, std::vector<ExecutionResult>>> randomized_results;
     std::map<std::string, std::vector<ExecutionResult>> reactive_results;
 
-    // Inicializa os vetores
-    for (const auto& pair : best_solutions) {
-        greedy_results[pair.first] = {};
-        for (double alpha : alpha_values) randomized_results[pair.first][alpha] = {};
-        reactive_results[pair.first] = {};
-    }
+    // O bloco de inicialização de vetores foi removido pois agora é feito dinamicamente.
 
     // Mapeamento dos nomes esperados para os arquivos reais
     std::vector<std::string> real_files = {
@@ -78,11 +75,12 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
     };
 
     // Loop de experimentos
-    for (const auto& pair : best_solutions) {
-        std::string instance = pair.first;
-        std::string path = "instancias_t2/" + instance_to_file[instance];
+    for (const auto& instance : expected_names) {
+        std::string path = "instancias_t2/" + instance_to_file.at(instance);
         Grafo* grafo = new Grafo(path.c_str());
         SolucionadorEDS solver(grafo);
+
+        int current_instance_best = std::numeric_limits<int>::max();
 
         // Guloso padrão
         for (int i = 0; i < num_executions; ++i) {
@@ -91,6 +89,7 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
             auto end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> duration = end - start;
             greedy_results[instance].push_back({(double)sol.size(), duration.count()});
+            current_instance_best = std::min(current_instance_best, (int)sol.size());
         }
 
         // Guloso randomizado para cada alfa
@@ -101,6 +100,7 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = end - start;
                 randomized_results[instance][alpha].push_back({(double)sol.size(), duration.count()});
+                current_instance_best = std::min(current_instance_best, (int)sol.size());
             }
         }
 
@@ -111,7 +111,11 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
             auto end = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> duration = end - start;
             reactive_results[instance].push_back({(double)sol.size(), duration.count()});
+            current_instance_best = std::min(current_instance_best, (int)sol.size());
         }
+        
+        dynamic_best_solutions[instance] = current_instance_best;
+        std::cout << "Instancia " << instance << " processada. Melhor valor encontrado: " << current_instance_best << std::endl;
 
         delete grafo;
     }
@@ -146,7 +150,9 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
     }
     report_file << std::setw(16) << "Reativo(Melhor)" << std::setw(16) << "Reativo(Média)" << "\n";
     report_file << std::string(110, '-') << "\n";
-    for (const auto& pair : best_solutions) {
+    
+    
+    for (const auto& pair : dynamic_best_solutions) {
         std::string instance = pair.first;
         double best_val = static_cast<double>(pair.second);
         std::string nome_simples = simplifica_nome(instance);
@@ -169,6 +175,7 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
         report_file << std::setw(16) << best_reactive << std::setw(16) << avg_reactive << "\n";
     }
 
+    //Tabela 2: Desvio percentual em relação ao best
     report_file << "\n==============================\n";
     report_file << "TABELA 2: DESVIO PERCENTUAL EM RELAÇÃO AO BEST\n";
     report_file << "------------------------------\n";
@@ -176,7 +183,9 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
     for (double alpha : alpha_values) report_file << std::setw(18) << ("Rand(" + std::to_string(alpha) + ")");
     report_file << std::setw(16) << "Reativo" << "\n";
     report_file << std::string(70, '-') << "\n";
-    for (const auto& pair : best_solutions) {
+    
+    
+    for (const auto& pair : dynamic_best_solutions) {
         std::string instance = pair.first;
         double best_val = static_cast<double>(pair.second);
         std::string nome_simples = simplifica_nome(instance);
@@ -199,6 +208,7 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
         report_file << std::setw(16) << dev_reactive << "\n";
     }
 
+    //Tabela 3: Tempos médios de processamento
     report_file << "\n==============================\n";
     report_file << "TABELA 3: TEMPOS MÉDIOS DE PROCESSAMENTO (SEGUNDOS)\n";
     report_file << "------------------------------\n";
@@ -206,7 +216,9 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
     for (double alpha : alpha_values) report_file << std::setw(18) << ("Rand(" + std::to_string(alpha) + ")");
     report_file << std::setw(16) << "Reativo" << "\n";
     report_file << std::string(70, '-') << "\n";
-    for (const auto& pair : best_solutions) {
+    
+   
+    for (const auto& pair : dynamic_best_solutions) {
         std::string instance = pair.first;
         std::string nome_simples = simplifica_nome(instance);
         std::vector<double> greedy_times;
@@ -226,7 +238,7 @@ void Gerenciador::gerarRelatorioAutomaticoEDS() {
     }
 
     report_file.close();
-    std::cout << "Relatório gerado em 'relatorio_resultados.txt'\n";
+    std::cout << "\nRelatorio gerado em 'relatorio_resultados.txt'\n";
 }
 
 // Menu de comandos
