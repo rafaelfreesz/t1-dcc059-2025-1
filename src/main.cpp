@@ -104,19 +104,19 @@ void generate_report(
         std::string nome_simples = simplifica_nome(instance);
         std::vector<double> greedy_solutions;
         for (const auto& r : greedy_results.at(instance)) greedy_solutions.push_back(r.solution_value);
-        double avg_greedy = mean(greedy_solutions);
+        double avg_greedy = best(greedy_solutions);
         double dev_greedy = calculatePercentageDeviation(avg_greedy, best_val);
         report_file << std::left << std::setw(12) << nome_simples << std::setw(16) << dev_greedy;
         for (double alpha : alpha_values) {
             std::vector<double> rand_solutions;
             for (const auto& r : randomized_results.at(instance).at(alpha)) rand_solutions.push_back(r.solution_value);
-            double avg_rand = mean(rand_solutions);
+            double avg_rand = best(rand_solutions);
             double dev_rand = calculatePercentageDeviation(avg_rand, best_val);
             report_file << std::setw(18) << dev_rand;
         }
         std::vector<double> reactive_solutions;
         for (const auto& r : reactive_results.at(instance)) reactive_solutions.push_back(r.solution_value);
-        double avg_reactive = mean(reactive_solutions);
+        double avg_reactive = best(reactive_solutions);
         double dev_reactive = calculatePercentageDeviation(avg_reactive, best_val);
         report_file << std::setw(16) << dev_reactive << "\n";
     }
